@@ -3,6 +3,7 @@ import GitHub from "next-auth/providers/github"
 import Credentials from "next-auth/providers/credentials"
 import type { Provider } from "next-auth/providers"
 import Google from "@auth/core/providers/google";
+import Spotify from "@auth/core/providers/spotify";
 
 const providers: Provider[] = [
   Credentials({
@@ -22,7 +23,18 @@ const providers: Provider[] = [
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     authorization: {
       params: {
-        scope: 'openid profile email https://www.googleapis.com/auth/calendar.readonly', // your scopes here
+        scope: 'openid profile email https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/gmail.readonly', // your scopes here
+      },
+    },
+  }),
+  Spotify({
+    clientId: process.env.SPOTIFY_CLIENT_ID,
+    clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
+    authorization: {
+      params: {
+        scope: "streaming \
+                       user-read-email \
+                       user-read-private"
       },
     },
   }),
@@ -55,7 +67,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (account && account.provider === "google") {
         token.googleAccessToken = account.access_token;
         token.googleRefreshToken = account.refresh_token;
-        token.googleExpiresAt = account.expires_at;
+        token.googleExpiresAt = account.expires_at; 
+        token.spotifyAccessToken = account.access_token;
+        token.spotifyRefreshToken = account.refresh_token;
+        token.spotifyExpiresAt = account.expires_at;
       }
       return token;
     },
@@ -67,6 +82,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           googleAccessToken: token.googleAccessToken,
           googleRefreshToken: token.googleRefreshToken,
           googleExpiresAt: token.googleExpiresAt,
+          spotifyAccessToken: token.spotifyAccessToken,
+          spotifyRefreshToken: token.spotifyRefreshToken,
+          spotifyExpiresAt: token.spotifyExpiresAt,
         };
       }
       return session;
