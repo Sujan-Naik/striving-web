@@ -7,6 +7,7 @@ export default function Home() {
             <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
                 <HeadedLink variant={VariantEnum.Primary} href={'/calendar'}>Calendar</HeadedLink>
                 <HeadedLink variant={VariantEnum.Primary} href={'/gmail'}>Gmail</HeadedLink>
+                <HeadedLink variant={VariantEnum.Primary} href={'/spotify'}>Spotify</HeadedLink>
             </main>
         </div>
     );

@@ -1,5 +1,10 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+
+mkdir certificates
+mkcert -key-file certificates/localhost-key.pem -cert-file certificates/localhost.pem localhost 192.168.1.225 127.0.0.1 ::1
+
+
 ## Getting Started
 
 First, run the development server:
