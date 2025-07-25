@@ -17,7 +17,15 @@ const providers: Provider[] = [
       }
     },
   }),
-  GitHub,
+  GitHub({
+    clientId: process.env.AUTH_GITHUB_ID,
+    clientSecret: process.env.AUTH_GITHUB_SECRET,
+    authorization: {
+      params: {
+        scope: '',
+      },
+    },
+  }),
   Google({
     clientId: process.env.AUTH_GOOGLE_ID,
     clientSecret: process.env.AUTH_GOOGLE_SECRET,
@@ -69,12 +77,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                   token.googleExpiresAt = account.expires_at;
                 }
 
-        if (account.provider === "spotify")
+        else if (account.provider === "spotify")
         {
-          console.log('wewe')
           token.spotifyAccessToken = account.access_token;
           token.spotifyRefreshToken = account.refresh_token;
           token.spotifyExpiresAt = account.expires_at;
+        }
+        
+        else if (account.provider === "github")
+        {
+          token.githubAccessToken = account.access_token;
+          token.githubRefreshToken = account.refresh_token;
+          token.githubExpiresAt = account.expires_at;
         }
       }
       return token;
@@ -96,7 +110,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           spotifyRefreshToken: token.spotifyRefreshToken,
           spotifyExpiresAt: token.spotifyExpiresAt,
                   };
-
+      } else if (token?.githubAccessToken){
+        session.user = {
+          ...session.user,
+        githubAccessToken: token.githubAccessToken,
+          githubRefreshToken: token.githubRefreshToken,
+          githubExpiresAt: token.githubExpiresAt,
+                  };
       }
       return session;
     },

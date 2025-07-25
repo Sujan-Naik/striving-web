@@ -33,6 +33,10 @@ declare module "next-auth" {
         spotifyAccessToken?: string | null;
       spotifyRefreshToken?: string | null;
       spotifyExpiresAt?: number | null;
+      
+      githubAccessToken?: string | null;
+      githubRefreshToken?: string | null;
+      githubExpiresAt?: number | null;
     } & DefaultSession["user"];
   }
 }
@@ -54,5 +58,9 @@ declare module "next-auth/jwt" {
       spotifyAccessToken?: string;
     spotifyRefreshToken?: string;
     spotifyExpiresAt?: number;
+    
+    githubAccessToken?: string;
+    githubRefreshToken?: string;
+    githubExpiresAt?: number;
   }
 }
