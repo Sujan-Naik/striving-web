@@ -48,6 +48,7 @@ export default async function SignInPage(props: {
               // Signin can fail for a number of reasons, such as the user
               // not existing, or the user not having the correct role.
               // In some cases, you may want to redirect to a custom error
+
               if (error instanceof AuthError) {
                 return redirect(`${SIGNIN_ERROR_URL}?error=${error.type}`)
               }

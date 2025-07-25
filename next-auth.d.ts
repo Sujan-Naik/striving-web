@@ -29,6 +29,10 @@ declare module "next-auth" {
       googleAccessToken?: string | null;
       googleRefreshToken?: string | null;
       googleExpiresAt?: number | null;
+      
+        spotifyAccessToken?: string | null;
+      spotifyRefreshToken?: string | null;
+      spotifyExpiresAt?: number | null;
     } & DefaultSession["user"];
   }
 }
@@ -46,5 +50,9 @@ declare module "next-auth/jwt" {
     googleAccessToken?: string;
     googleRefreshToken?: string;
     googleExpiresAt?: number;
+    
+      spotifyAccessToken?: string;
+    spotifyRefreshToken?: string;
+    spotifyExpiresAt?: number;
   }
 }

@@ -19,8 +19,8 @@ const providers: Provider[] = [
   }),
   GitHub,
   Google({
-    clientId: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    clientId: process.env.AUTH_GOOGLE_ID,
+    clientSecret: process.env.AUTH_GOOGLE_SECRET,
     authorization: {
       params: {
         scope: 'openid profile email https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/gmail.readonly', // your scopes here
@@ -28,15 +28,12 @@ const providers: Provider[] = [
     },
   }),
   Spotify({
-    clientId: process.env.SPOTIFY_CLIENT_ID,
-    clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
-    authorization: {
-      params: {
-        scope: "streaming \
-                       user-read-email \
-                       user-read-private"
-      },
-    },
+    clientId: process.env.AUTH_SPOTIFY_ID,
+    clientSecret: process.env.AUTH_SPOTIFY_SECRET,
+
+    authorization:
+      "https://accounts.spotify.com/authorize?scope=user-read-email,user-read-playback-state,user-modify-playback-state,user-read-currently-playing",
+
   }),
 ]
 
@@ -64,13 +61,21 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return !!auth
     },
     jwt: async ({ token, account }) => {
-      if (account && account.provider === "google") {
-        token.googleAccessToken = account.access_token;
-        token.googleRefreshToken = account.refresh_token;
-        token.googleExpiresAt = account.expires_at; 
-        token.spotifyAccessToken = account.access_token;
-        token.spotifyRefreshToken = account.refresh_token;
-        token.spotifyExpiresAt = account.expires_at;
+      if (account) {
+                if (account.provider === "google") {
+
+                  token.googleAccessToken = account.access_token;
+                  token.googleRefreshToken = account.refresh_token;
+                  token.googleExpiresAt = account.expires_at;
+                }
+
+        if (account.provider === "spotify")
+        {
+          console.log('wewe')
+          token.spotifyAccessToken = account.access_token;
+          token.spotifyRefreshToken = account.refresh_token;
+          token.spotifyExpiresAt = account.expires_at;
+        }
       }
       return token;
     },
@@ -82,10 +87,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           googleAccessToken: token.googleAccessToken,
           googleRefreshToken: token.googleRefreshToken,
           googleExpiresAt: token.googleExpiresAt,
-          spotifyAccessToken: token.spotifyAccessToken,
+
+        };
+      } else if (token?.spotifyAccessToken){
+        session.user = {
+          ...session.user,
+        spotifyAccessToken: token.spotifyAccessToken,
           spotifyRefreshToken: token.spotifyRefreshToken,
           spotifyExpiresAt: token.spotifyExpiresAt,
-        };
+                  };
+
       }
       return session;
     },
