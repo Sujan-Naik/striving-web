@@ -10,7 +10,9 @@ export default function Home() {
                 <HeadedLink variant={VariantEnum.Primary} href={'/spotify'}>Spotify</HeadedLink>
                 <HeadedLink variant={VariantEnum.Primary} href={'/github'}>Github</HeadedLink>
                 <HeadedLink variant={VariantEnum.Primary} href={'/home'}>Home</HeadedLink>
+                <HeadedLink variant={VariantEnum.Primary} href={'/login'}>Login</HeadedLink>
             </main>
         </div>
     );
 }
+

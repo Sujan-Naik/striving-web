@@ -4,6 +4,8 @@ import Credentials from "next-auth/providers/credentials"
 import type { Provider } from "next-auth/providers"
 import Google from "@auth/core/providers/google";
 import Spotify from "@auth/core/providers/spotify";
+import {DrizzleAdapter} from "@auth/drizzle-adapter";
+import {db} from "@/lib/db";
 
 const providers: Provider[] = [
   // Credentials({
@@ -59,60 +61,63 @@ export const providerMap = providers
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers,
+  adapter: DrizzleAdapter(db),
   pages: {
     signIn: "/login",
     signOut: "sign-out",
     error: "/error",
-  },
-  callbacks: {
-    authorized: async ({ auth }) => {
-      // Logged in users are authenticated, otherwise redirect to login page
-      return !!auth
-    },
-     jwt: async ({ token, account }) => {
-  if (account) {
-    // Initialize providers object if it doesn't exist
-    if (!token.providers) {
-      token.providers = {};
-    }
-
-    // Only add tokens if they exist
-    // if (account.access_token && account.refresh_token && account.expires_at) {
-    //   console.log('token stored');
-    //   token.providers[account.provider] = {
-    //     accessToken: account.access_token,
-    //     refreshToken: account.refresh_token,
-    //     expiresAt: account.expires_at,
-    //   };
-    // }
-
-     if (account.access_token) {
-      console.log('token stored');
-      token.providers[account.provider] = {
-        accessToken: account.access_token,
-      };
-    }
-  }
-  return token;
-},
-    session: async ({ session, token }) => {
-  if (token?.providers) {
-    session.user = {
-      ...session.user,
-      providers: token.providers,
-    };
   }
 
-  console.log(session)
-  return session;
-},
 
-    signIn: async ({ user, account, profile }) => {
-    // This is REQUIRED for account linking to work
-      return true
-  },
+//   callbacks: {
+//     authorized: async ({ auth }) => {
+//       // Logged in users are authenticated, otherwise redirect to login page
+//       return !!auth
+//     },
+//      jwt: async ({ token, account }) => {
+//   if (account) {
+//     // Initialize providers object if it doesn't exist
+//     if (!token.providers) {
+//       token.providers = {};
+//     }
+//
+//     // Only add tokens if they exist
+//     // if (account.access_token && account.refresh_token && account.expires_at) {
+//     //   console.log('token stored');
+//     //   token.providers[account.provider] = {
+//     //     accessToken: account.access_token,
+//     //     refreshToken: account.refresh_token,
+//     //     expiresAt: account.expires_at,
+//     //   };
+//     // }
+//
+//      if (account.access_token) {
+//       console.log('token stored');
+//       token.providers[account.provider] = {
+//         accessToken: account.access_token,
+//       };
+//     }
+//   }
+//   return token;
+// },
+//     session: async ({ session, token }) => {
+//   if (token?.providers) {
+//     session.user = {
+//       ...session.user,
+//       providers: token.providers,
+//     };
+//   }
+//
+//   console.log(session)
+//   return session;
+// },
+//
+//     signIn: async ({ user, account, profile }) => {
+//     // This is REQUIRED for account linking to work
+//       return true
+//   },
 
-  },
+  // }
 
 
 })
