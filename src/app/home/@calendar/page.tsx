@@ -9,12 +9,12 @@ export default function Page() {
 
   useEffect(() => {
     const fetchGoogleCalendarEvents = async () => {
-      if (status !== "authenticated" || !session?.user?.googleAccessToken) {
-        // Not authenticated or token not available
+      if (!session?.user?.providers?.google?.accessToken) {
+        alert("Please log in to Google");
         return;
       }
 
-      const accessToken = session.user.googleAccessToken;
+      const accessToken = session.user.providers.google.accessToken;
       try {
         const response = await fetch(
           'https://www.googleapis.com/calendar/v3/calendars/primary/events/',

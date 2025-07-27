@@ -8,13 +8,12 @@ export default function SpotifyPlayer() {
   const [loading, setLoading] = useState(false);
 
   const handlePlayPause = async () => {
-    if (status !== "authenticated" || !session?.user?.spotifyAccessToken) {
-      alert("Please log in to Spotify");
+    if (!session?.user?.providers?.spotify?.accessToken) {
+        alert("Please log in to Spotify");
+        return;
+      }
 
-      return;
-    }
-
-    const accessToken = session.user.spotifyAccessToken;
+      const accessToken = session.user.providers.spotify.accessToken;
     setLoading(true);
     try {
       // Check current playback state

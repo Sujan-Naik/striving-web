@@ -16,18 +16,18 @@ export default function Page() {
 
   useEffect(() => {
     const fetchPublicRepos = async () => {
-      if (status !== "authenticated" || !session?.user?.githubAccessToken) {
-        console.log('no token?')
+      if (!session?.user?.providers?.github?.accessToken) {
+        alert("Please log in to Github");
         setLoading(false);
         return;
       }
 
-      const token = session.user.githubAccessToken;
+      const accessToken = session.user.providers.github.accessToken;
 
       try {
         const response = await fetch('https://api.github.com/user/repos', {
           headers: {
-            Authorization: `token ${token}`,
+            Authorization: `token ${accessToken}`,
             Accept: 'application/vnd.github+json',
           },
         });

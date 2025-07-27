@@ -17,11 +17,12 @@ export default function Page() {
 
   useEffect(() => {
     const fetchGoogleMail = async () => {
-      if (status !== "authenticated" || !session?.user?.googleAccessToken) {
+      if (!session?.user?.providers?.google?.accessToken) {
+        alert("Please log in to Google");
         return;
       }
 
-      const accessToken = session.user.googleAccessToken;
+      const accessToken = session.user.providers.google.accessToken;
       try {
         const response = await fetch(
           'https://gmail.googleapis.com/gmail/v1/users/me/messages',
