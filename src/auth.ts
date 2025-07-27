@@ -25,7 +25,7 @@ const providers: Provider[] = [
     allowDangerousEmailAccountLinking: true,
     authorization: {
       params: {
-        scope: 'user',
+        scope: 'repo',
       },
     },
   }),
