@@ -1,8 +1,9 @@
-import {redirect} from "next/navigation"
-import {auth, providerMap, signIn} from "@/auth"
-import {AuthError} from "next-auth"
-import {getUserAccounts} from "@/lib/accounts"
-import {HeadedLink, VariantEnum} from "headed-ui";
+import { redirect } from "next/navigation"
+import { auth, providerMap, signIn } from "@/auth"
+import { AuthError } from "next-auth"
+import { getUserAccounts } from "@/lib/accounts"
+import { HeadedLink, VariantEnum } from "headed-ui"
+import { isTokenExpired } from "@/lib/utils/token" // Import the utility function
 
 const SIGNIN_ERROR_URL = "/error"
 
@@ -23,7 +24,9 @@ export default async function SignInPage(props: {
     <div className="flex flex-col gap-2">
       {session && (
         <div className="mb-4 p-4 rounded">
-          <HeadedLink variant={VariantEnum.Primary} href={'/'}>Main Page</HeadedLink>
+          <HeadedLink variant={VariantEnum.Primary} href={"/"}>
+            Main Page
+          </HeadedLink>
           <p>Signed in as {session.user?.email}</p>
           <p>Connected providers: {connectedAccounts.map((acc) => acc.provider).join(", ")}</p>
           <details>
@@ -34,7 +37,11 @@ export default async function SignInPage(props: {
       )}
 
       {Object.values(providerMap).map((provider) => {
-        const isConnected = connectedAccounts.some((acc) => acc.provider === provider.id)
+        // Find the specific account data for this provider
+        const accountData = connectedAccounts.find((acc) => acc.provider === provider.id)
+
+        // Determine if the provider is truly connected (has an access token and it's not expired)
+        const isTrulyConnected = accountData && accountData.accessToken && !isTokenExpired(accountData.expiresAt)
 
         return (
           <form
@@ -54,7 +61,7 @@ export default async function SignInPage(props: {
             }}
           >
             <button type="submit">
-              <span>{isConnected ? `✓ ${provider.name} Connected` : `Connect ${provider.name}`}</span>
+              <span>{isTrulyConnected ? `✓ ${provider.name} Connected` : `Connect ${provider.name}`}</span>
             </button>
           </form>
         )

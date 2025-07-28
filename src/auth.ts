@@ -35,6 +35,8 @@ const providers: Provider[] = [
     allowDangerousEmailAccountLinking: true,
     authorization: {
       params: {
+        access_type: "offline",
+        prompt: "consent",
         scope: 'openid profile email https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/gmail.readonly', // your scopes here
       },
     },
