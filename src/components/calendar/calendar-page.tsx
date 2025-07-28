@@ -1,13 +1,16 @@
 "use client"
 
 import {useCalendar} from "@/hooks/use-calendar"
-import {HeadedButton, HeadedCalendar, HeadedDialog, VariantEnum} from "headed-ui"
+import {HeadedButton, HeadedDialog, VariantEnum} from "headed-ui"
 import {AlertCircle, Calendar, RefreshCw} from "lucide-react"
 import {useState} from "react";
 import CreateCalendarEvent from "@/components/calendar/create-calendar-event";
+import {HeadedCalendar} from "@/components/calendar/headed-calendar";
 
 export default function CalendarPage() {
-  const { events, loading, error, refetch } = useCalendar()
+    const calendarId = "primary";
+  const { events, loading, error, refetch } = useCalendar(calendarId)
+    // console.log(events);
 
     const [dialogOpen, setDialog] = useState(false)
   if (error) {
@@ -50,7 +53,9 @@ export default function CalendarPage() {
           </div>
         </div>
       ) : (
-        <HeadedCalendar variant={VariantEnum.Primary} events={events} />
+
+
+        <HeadedCalendar changeCallback={refetch} variant={VariantEnum.Primary} calendarId={calendarId} events={events} />
       )}
     </div>
   )

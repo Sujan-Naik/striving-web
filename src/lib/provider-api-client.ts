@@ -217,7 +217,22 @@ export const googleApi = {
         body: JSON.stringify(apiParams)
       });
     },
+    deleteEvent: (params?: {
+      eventId: string,
+      calendarId: string
+    })=> {
 
+      if (!params?.calendarId) {
+        throw new Error("calendarId is required");
+      }
+
+      if (!params?.eventId) {
+        throw new Error("eventId is required");
+      }
+      return callProviderApi("google", `https://www.googleapis.com/calendar/v3/calendars/${params.calendarId}/events/${params.eventId}`, {
+        method: "DELETE",
+      });
+    },
 
     getCalendars: () => callProviderApi("google", "https://www.googleapis.com/calendar/v3/users/me/calendarList"),
 
