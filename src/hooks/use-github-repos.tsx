@@ -12,7 +12,7 @@ export interface Repo {
   updated_at: string
 }
 
-export function useGithub() {
+export function useGithubRepos() {
   const [repos, setRepos] = useState<Repo[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)

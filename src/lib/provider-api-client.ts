@@ -95,6 +95,22 @@ export async function callProviderApi<T = any>(
   }
 }
 
+// GraphQL helper for GitHub
+export async function callGitHubGraphQL(query: string, variables?: Record<string, any>) {
+  console.log("Making GraphQL request:", { query, variables })
+
+  const result = await callProviderApi("github", "https://api.github.com/graphql", {
+    method: "POST",
+    body: {
+      query,
+      variables,
+    },
+  })
+
+  console.log("GraphQL response:", result)
+  return result
+}
+
 // Enhanced Google API functions
 export const googleApi = {
   gmail: {
@@ -192,6 +208,111 @@ export const githubApi = {
     if (params?.per_page) apiParams.per_page = params.per_page
 
     return callProviderApi("github", "https://api.github.com/user/repos", { params: apiParams })
+  },
+
+  // Simplified GitHub Projects V2 query without items field
+  getProjectsV2: async (first = 20) => {
+    const query = `
+      query GetUserProjects($first: Int!) {
+        viewer {
+          id
+          projectsV2(first: $first) {
+            nodes {
+              id
+              title
+              shortDescription
+              url
+              public
+              closed
+              createdAt
+              updatedAt
+              owner {
+                ... on User {
+                  login
+                  avatarUrl
+                }
+                ... on Organization {
+                  login
+                  avatarUrl
+                }
+              }
+            }
+          }
+        }
+      }
+    `
+
+    return callGitHubGraphQL(query, { first })
+  },
+
+  // Let's also try a simple test query to see if GraphQL works at all
+  testGraphQL: async () => {
+    const query = `
+      query {
+        viewer {
+          id
+          login
+          name
+        }
+      }
+    `
+
+    return callGitHubGraphQL(query)
+  },
+
+  createProjectV2: async (title: string) => {
+    // First get the user's ID
+    const userQuery = `
+      query {
+        viewer {
+          id
+        }
+      }
+    `
+
+    const userResult = await callGitHubGraphQL(userQuery)
+
+    if (!userResult.success || userResult.data.errors) {
+      return {
+        success: false,
+        error: "Failed to get user ID",
+        code: "USER_ID_ERROR",
+      }
+    }
+
+    const ownerId = userResult.data.data?.viewer?.id
+
+    if (!ownerId) {
+      return {
+        success: false,
+        error: "Could not retrieve user ID",
+        code: "USER_ID_ERROR",
+      }
+    }
+
+    const mutation = `
+      mutation CreateProjectV2($input: CreateProjectV2Input!) {
+        createProjectV2(input: $input) {
+          projectV2 {
+            id
+            title
+            shortDescription
+            url
+            public
+            closed
+            createdAt
+            updatedAt
+          }
+        }
+      }
+    `
+
+    const input = {
+      title,
+      ownerId,
+    }
+
+    return callGitHubGraphQL(mutation, { input })
   },
 
   getUser: () => callProviderApi("github", "https://api.github.com/user"),
