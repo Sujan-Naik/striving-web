@@ -1,13 +1,13 @@
 "use client"
 
-import {useGithub} from "@/hooks/use-github"
+import {useGithubRepos} from "@/hooks/use-github-repos"
 
 import {AlertCircle, Badge, ExternalLink, Github, RefreshCw, Star} from "lucide-react"
 import {HeadedButton, HeadedCard, HeadedDialog, VariantEnum} from "headed-ui";
 import {useState} from "react";
 
 export function GithubRepos() {
-  const { repos, loading, error, refetch } = useGithub()
+  const { repos, loading, error, refetch } = useGithubRepos()
 
     const [showDialog, setShowDialog] = useState(false);
 
