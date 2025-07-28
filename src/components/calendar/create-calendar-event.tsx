@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 
 import { googleApi } from "@/lib/provider-api-client";
 
-export default function CreateCalendarEvent() {
+export default function CreateCalendarEvent({ onCreate }: { onCreate: () => void }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -27,6 +27,8 @@ export default function CreateCalendarEvent() {
   const [startDateTime, setStartDateTime] = useState(getTodayForInput());
   const [endDateTime, setEndDateTime] = useState(getTodayForInput());
 
+
+
   const handleCreateEvent = async () => {
     setLoading(true);
     setError(null);
@@ -46,6 +48,7 @@ export default function CreateCalendarEvent() {
       });
       console.log(response.success);
       setSuccess('Event created successfully!');
+      onCreate();
     } catch (err) {
       setError('Failed to create event.');
     } finally {

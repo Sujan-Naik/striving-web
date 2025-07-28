@@ -3,7 +3,6 @@ import CreateCalendarEvent from "@/components/calendar/create-calendar-event";
 
 export default function Page() {
   return<>
-    <CreateCalendarEvent/>
      <CalendarPage />
   </>
 }

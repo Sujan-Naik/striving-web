@@ -4,9 +4,11 @@ import {useCalendar} from "@/hooks/use-calendar"
 import {HeadedButton, HeadedCalendar, HeadedDialog, VariantEnum} from "headed-ui"
 import {AlertCircle, Calendar, RefreshCw} from "lucide-react"
 import {useState} from "react";
+import CreateCalendarEvent from "@/components/calendar/create-calendar-event";
 
 export default function CalendarPage() {
   const { events, loading, error, refetch } = useCalendar()
+
     const [dialogOpen, setDialog] = useState(false)
   if (error) {
     return (
@@ -25,6 +27,7 @@ export default function CalendarPage() {
 
   return (
     <div className="container mx-auto p-6">
+            <CreateCalendarEvent onCreate={refetch}/>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-bold flex items-center gap-2">
           <Calendar className="h-8 w-8" />
