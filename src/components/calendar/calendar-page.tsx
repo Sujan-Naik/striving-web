@@ -30,8 +30,7 @@ export default function CalendarPage() {
 
   return (
     <div className="container mx-auto p-6">
-            <CreateCalendarEvent onCreate={refetch}/>
-      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-bold flex items-center gap-2">
           <Calendar className="h-8 w-8" />
           Google Calendar

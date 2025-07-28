@@ -1,7 +1,8 @@
-import React from "react";
-import {HeadedButton, HeadedCard, VariantEnum} from "headed-ui"; // import the month view
+import React, {useState} from "react";
+import {HeadedButton, HeadedCard, HeadedModal, VariantEnum} from "headed-ui"; // import the month view
 import {EventProps} from "@/components/calendar/event-props";
 import {googleApi} from "@/lib/provider-api-client";
+import CreateCalendarEvent from "@/components/calendar/create-calendar-event";
 
 
 interface CalendarProps {
@@ -64,7 +65,20 @@ export const HeadedCalendarMonth: React.FC<CalendarProps> = ({variant, year, mon
         }).then(r => changeCallback())
     }
 
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedDate, setSelectedDate] = useState<Date>();
+
+    function createEventPopupCallback(date: Date){
+        setIsModalOpen(true)
+        setSelectedDate(date)
+    }
+
     return (
+        <>
+            {isModalOpen &&  <HeadedModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={"Create Event"} variant={VariantEnum.Primary}>
+                <CreateCalendarEvent onCreate={changeCallback} defaultDate={selectedDate}></CreateCalendarEvent>
+            </HeadedModal> }
+
         <div style={{display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '8px'}}>
 
             {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((dayName) => (
@@ -75,32 +89,41 @@ export const HeadedCalendarMonth: React.FC<CalendarProps> = ({variant, year, mon
 
             {days.map((dayObj, index) => {
                 if (dayObj.day === null || !dayObj.date) {
-                    return <div key={index}/>;
-                }
-                const dateStr = dayObj.date.toDateString();
-                const dayEvents = eventsMap[dateStr] || [];
+                    return <>
+                        <div key={index}/>
+                    </>
+                } else {
 
-                return (
-                    <div key={index} style={{border: '1px solid #ccc', padding: '4px'}}>
-                        <div style={{fontWeight: 'bold'}}>{dayObj.day}</div>
-                        {dayEvents.map((event, idx) => {
-                            const startStr = event.date.toLocaleDateString(undefined, options);
-                            const endStr = event.endDate
-                                ? event.endDate.toLocaleDateString(undefined, options)
-                                : null;
-                            const dateRange = endStr ? `${startStr} - ${endStr}` : startStr;
-                            return (
-                                <HeadedCard key={idx} variant={variant}>
-                                    <h2 style={{fontSize: '0.9em', margin: 0}}>{event.name}</h2>
-                                    <p style={{fontSize: '0.8em', margin: 0}}>{event.description}</p>
-                                    <p style={{fontSize: '0.7em', margin: 0}}>{dateRange}</p>
-                                    <HeadedButton variant={VariantEnum.Outline} onClick={() => deleteEventCallback(event.eventId)}>Delete</HeadedButton>
-                                </HeadedCard>
-                            );
-                        })}
-                    </div>
-                );
+
+                    const dateStr = dayObj.date.toDateString();
+                    const dayEvents = eventsMap[dateStr] || [];
+
+                    return (
+                        <div key={index} style={{border: '1px solid #ccc', padding: '4px'}}>
+                            <div style={{fontWeight: 'bold'}}>{dayObj.day}</div>
+                            <HeadedButton variant={VariantEnum.Outline} onClick={() => createEventPopupCallback(dayObj.date)}>Create
+                        Event</HeadedButton>
+                            {dayEvents.map((event, idx) => {
+                                const startStr = event.date.toLocaleDateString(undefined, options);
+                                const endStr = event.endDate
+                                    ? event.endDate.toLocaleDateString(undefined, options)
+                                    : null;
+                                const dateRange = endStr ? `${startStr} - ${endStr}` : startStr;
+                                return (
+                                    <HeadedCard key={idx} variant={variant}>
+                                        <h2 style={{fontSize: '0.9em', margin: 0}}>{event.name}</h2>
+                                        <p style={{fontSize: '0.8em', margin: 0}}>{event.description}</p>
+                                        <p style={{fontSize: '0.7em', margin: 0}}>{dateRange}</p>
+                                        <HeadedButton variant={VariantEnum.Outline}
+                                                      onClick={() => deleteEventCallback(event.eventId)}>Delete</HeadedButton>
+                                    </HeadedCard>
+                                );
+                            })}
+                        </div>
+                    );
+                }
             })}
         </div>
+            </>
     );
 };

@@ -1,100 +1,78 @@
 "use client"
-import React, { useState } from 'react';
 
-import { googleApi } from "@/lib/provider-api-client";
+import { EventProps } from "@/components/calendar/event-props";
+import { handleCreateEvent } from "@/lib/handle-create-event";
 
-export default function CreateCalendarEvent({ onCreate }: { onCreate: () => void }) {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
+import React, { useState, useEffect } from 'react';
 
-  const [summary, setSummary] = useState('');
-  const [timeZone, setTimeZone] = useState('Europe/London');
+export default function CreateCalendarEvent({
+  onCreate,
+  defaultDate,
+}: { onCreate: () => void; defaultDate?: Date }) {
+  const initialDate = defaultDate || new Date();
 
-  const getTodayForInput = () => {
-    const now = new Date();
+  const [formData, setFormData] = useState<EventProps>({
+    name: '',
+    description: '',
+    date: initialDate,
+    endDate: new Date(initialDate.getTime() + 3600 * 1000), // +1 hour
+    eventId: '',
+  });
+
+  const getInputValue = (date: Date) => {
     const pad = (n: number) => n.toString().padStart(2, '0');
-
-    const year = now.getFullYear();
-    const month = pad(now.getMonth() + 1);
-    const day = pad(now.getDate());
-    const hours = pad(now.getHours());
-    const minutes = pad(now.getMinutes());
-
+    const year = date.getFullYear();
+    const month = pad(date.getMonth() + 1);
+    const day = pad(date.getDate());
+    const hours = pad(date.getHours());
+    const minutes = pad(date.getMinutes());
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   };
 
-  const [startDateTime, setStartDateTime] = useState(getTodayForInput());
-  const [endDateTime, setEndDateTime] = useState(getTodayForInput());
-
-
-
-  const handleCreateEvent = async () => {
-    setLoading(true);
-    setError(null);
-    setSuccess(null);
-    try {
-      const response = await googleApi.calendar.createEvent({
-        calendarId: 'primary',
-        summary,
-        start: {
-          dateTime: new Date(startDateTime),
-          timeZone,
-        },
-        end: {
-          dateTime: new Date(endDateTime),
-          timeZone,
-        },
-      });
-      console.log(response.success);
-      setSuccess('Event created successfully!');
-      onCreate();
-    } catch (err) {
-      setError('Failed to create event.');
-    } finally {
-      setLoading(false);
+  // If defaultDate prop changes, update the formData accordingly
+  useEffect(() => {
+    if (defaultDate) {
+      setFormData((prev) => ({
+        ...prev,
+        date: defaultDate,
+        endDate: new Date(defaultDate.getTime() + 3600 * 1000),
+      }));
     }
+  }, [defaultDate]);
+
+  const handleCreate = async () => {
+    // ... your create logic
+    await handleCreateEvent(formData);
+    onCreate();
   };
 
   return (
     <div>
-      <div>
-        <label>Summary:</label>
-        <input
-          type="text"
-          value={summary}
-          onChange={(e) => setSummary(e.target.value)}
-        />
-      </div>
-      <div>
-        <label>Start Date & Time:</label>
-        <input
-          type="datetime-local"
-          value={startDateTime}
-          onChange={(e) => setStartDateTime(e.target.value)}
-        />
-      </div>
-      <div>
-        <label>End Date & Time:</label>
-        <input
-          type="datetime-local"
-          value={endDateTime}
-          onChange={(e) => setEndDateTime(e.target.value)}
-        />
-      </div>
-      <div>
-        <label>Time Zone:</label>
-        <input
-          type="text"
-          value={timeZone}
-          onChange={(e) => setTimeZone(e.target.value)}
-        />
-      </div>
-      <button onClick={handleCreateEvent} disabled={loading}>
-        {loading ? 'Creating...' : 'Create Calendar Event'}
+      <input
+        type="text"
+        placeholder="Name"
+        value={formData.name}
+        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+      />
+      <input
+        type="text"
+        placeholder="Description"
+        value={formData.description}
+        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+      />
+      <input
+        type="datetime-local"
+        value={getInputValue(formData.date)}
+        onChange={(e) => setFormData({ ...formData, date: new Date(e.target.value) })}
+      />
+      <input
+        type="datetime-local"
+        value={getInputValue(formData.endDate!)}
+        onChange={(e) => setFormData({ ...formData, endDate: new Date(e.target.value) })}
+      />
+      <button onClick={handleCreate} disabled={false /* your loading check */}>
+        Create Event
       </button>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {success && <p style={{ color: 'green' }}>{success}</p>}
     </div>
   );
 }
