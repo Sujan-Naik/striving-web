@@ -1,8 +1,10 @@
 import { githubApi } from "@/lib/provider-api-client"
-import { HeadedCard, VariantEnum } from "headed-ui"
+import { HeadedCard, VariantEnum } from "headed-ui" // Reverted to HeadedCard
 import { ExternalLink, Github, User, Calendar, Lock, Unlock, Archive, List, FileText, AlertCircle } from "lucide-react"
 import Link from "next/link"
 import { KanbanBoard } from "@/components/github/kanban-board"
+import { CreateProjectItem } from "@/components/github/create-project-item" // Fixed import syntax
+import { revalidatePath } from "next/cache"
 import type { ProjectV2Item, ProjectV2 } from "@/hooks/use-github-projects"
 
 interface ProjectPageProps {
@@ -12,7 +14,7 @@ interface ProjectPageProps {
 }
 
 export default async function ProjectPage({ params }: ProjectPageProps) {
-  const { projectId } = params
+  const { projectId } = await params
 
   const result = await githubApi.getProjectV2ById(projectId)
 
@@ -57,12 +59,19 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     )
   }
 
+  // Find the status field and its options
+  const statusField = project.fields?.nodes?.find(
+    (field) => (field.name.toLowerCase() === "status" || field.name.toLowerCase() === "state") && field.options, // Ensure it's a single-select field with options
+  )
+
+  const statusOptions = statusField?.options || []
+  const statusFieldId = statusField?.id || null
+
   // Process items for Kanban board
   const itemsByStatus: Record<string, ProjectV2Item[]> = {}
   const defaultStatus = "No Status" // Default column if status field isn't found or is empty
 
   project.items?.nodes?.forEach((item) => {
-    const statusFound = false
     // Look for a field named "Status" or "State" that is a single-select value
     const statusField = item.fieldValues?.nodes?.find(
       (field) =>
@@ -78,6 +87,12 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     itemsByStatus[status].push(item)
   })
 
+  // Server Action to revalidate the path after an item is created
+  async function revalidateProjectPage() {
+    "use server"
+      revalidatePath(`/github/projects/[project-id]`)
+  }
+
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex items-center justify-between">
@@ -85,13 +100,21 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           <Github className="h-8 w-8" />
           {project.title}
         </h1>
-        <Link href="/github/projects" className="text-blue-500 hover:underline flex items-center gap-1">
-          <List className="h-4 w-4" />
-          Back to Projects
-        </Link>
+        <div className="flex items-center gap-2">
+          <CreateProjectItem
+            projectId={projectId}
+            onItemCreated={revalidateProjectPage}
+          />
+          <Link href="/github/projects" className="text-blue-500 hover:underline flex items-center gap-1">
+            <List className="h-4 w-4" />
+            Back to Projects
+          </Link>
+        </div>
       </div>
 
       <HeadedCard variant={VariantEnum.Primary} className="p-6 space-y-4">
+        {" "}
+        {/* Reverted to HeadedCard */}
         <div className="flex items-center gap-4 text-sm text-muted-foreground">
           <div className="flex items-center gap-1">
             <User className="h-4 w-4" />
@@ -123,14 +146,12 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             <ExternalLink className="h-4 w-4" />
           </a>
         </div>
-
         {project.shortDescription && (
           <div>
             <h2 className="text-xl font-semibold mb-2">Description</h2>
             <p className="text-muted-foreground">{project.shortDescription}</p>
           </div>
         )}
-
         {project.readme && (
           <div>
             <h2 className="text-xl font-semibold mb-2 flex items-center gap-2">
@@ -138,11 +159,12 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               README
             </h2>
             <HeadedCard variant={VariantEnum.Secondary} className="p-4 bg-gray-50 border rounded-md">
+              {" "}
+              {/* Reverted to HeadedCard */}
               <pre className="whitespace-pre-wrap font-mono text-sm">{project.readme}</pre>
             </HeadedCard>
           </div>
         )}
-
         {/* Kanban Board Section */}
         <div>
           <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
@@ -154,7 +176,13 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               <p>No items found for this project.</p>
             </div>
           ) : (
-            <KanbanBoard itemsByStatus={itemsByStatus} />
+            <KanbanBoard
+              projectId={projectId}
+              itemsByStatus={itemsByStatus}
+              statusFieldId={statusFieldId}
+              statusOptions={statusOptions}
+              onItemUpdated={revalidateProjectPage}
+            />
           )}
         </div>
       </HeadedCard>

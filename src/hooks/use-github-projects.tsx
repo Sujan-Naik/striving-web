@@ -4,6 +4,18 @@ import { useState, useEffect } from "react"
 import { githubApi } from "@/lib/provider-api-client"
 
 // Define more detailed types for ProjectV2 and its items
+export interface ProjectV2SingleSelectFieldOption {
+  id: string
+  name: string
+}
+
+export interface ProjectV2Field {
+  id: string
+  name: string
+  options?: ProjectV2SingleSelectFieldOption[] // Only for single-select fields
+  // Add other field-specific properties if needed
+}
+
 export interface ProjectV2ItemField {
   field: {
     name: string
@@ -47,6 +59,9 @@ export interface ProjectV2 {
     login: string
     avatarUrl: string
   }
+  fields: {
+    nodes: ProjectV2Field[]
+  } | null // Add fields here
   items: {
     nodes: ProjectV2Item[]
   } | null
@@ -97,6 +112,7 @@ export function useGithubProjects() {
           login: project.owner?.login || "Unknown",
           avatarUrl: project.owner?.avatarUrl || "",
         },
+        fields: null,
         items: null, // Items are not fetched in this query
       }))
 

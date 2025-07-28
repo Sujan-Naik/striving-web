@@ -42,6 +42,7 @@ export async function callProviderApi<T = any>(
     if (options.params) {
       Object.entries(options.params).forEach(([key, value]) => {
         if (value !== undefined) {
+          // Corrected line: removed the backtick
           apiUrl.searchParams.append(key, String(value))
         }
       })
@@ -246,126 +247,146 @@ export const githubApi = {
 
   getProjectV2ById: async (projectId: string) => {
     const query = `
-      query GetProjectById($id: ID!) {
-        node(id: $id) {
-          ... on ProjectV2 {
+query GetProjectById($id: ID!) {
+  node(id: $id) {
+    ... on ProjectV2 {
+      id
+      title
+      shortDescription
+      readme
+      url
+      public
+      closed
+      createdAt
+      updatedAt
+      owner {
+        ... on User {
+          login
+          avatarUrl
+        }
+        ... on Organization {
+          login
+          avatarUrl
+        }
+      }
+      fields(first: 20) { # Fetch project fields
+        nodes {
+          ... on ProjectV2Field {
             id
-            title
-            shortDescription
-            readme
-            url
-            public
-            closed
-            createdAt
-            updatedAt
-            owner {
-              ... on User {
-                login
-                avatarUrl
-              }
-              ... on Organization {
-                login
-                avatarUrl
-              }
-            }
-            items(first: 50) { # Fetch more items for the kanban board
-              nodes {
-                id
-                fieldValues(first: 100) { # Fetch all field values
-                  nodes {
-                    ... on ProjectV2ItemFieldTextValue {
-                      field {
-                        ... on ProjectV2Field {
-                          name
-                        }
-                        ... on ProjectV2IterationField {
-                          name # Corrected: use 'name' directly
-                        }
-                        ... on ProjectV2SingleSelectField {
-                          name
-                        }
-                      }
-                      text
-                    }
-                    ... on ProjectV2ItemFieldSingleSelectValue {
-                      field {
-                        ... on ProjectV2Field {
-                          name
-                        }
-                        ... on ProjectV2IterationField {
-                          name # Corrected: use 'name' directly
-                        }
-                        ... on ProjectV2SingleSelectField {
-                          name
-                        }
-                      }
-                      name # The selected option's name
-                    }
-                    ... on ProjectV2ItemFieldDateValue {
-                      field {
-                        ... on ProjectV2Field {
-                          name
-                        }
-                        ... on ProjectV2IterationField {
-                          name # Corrected: use 'name' directly
-                        }
-                        ... on ProjectV2SingleSelectField {
-                          name
-                        }
-                      }
-                      date
-                    }
-                    ... on ProjectV2ItemFieldIterationValue {
-                      field {
-                        ... on ProjectV2Field {
-                          name
-                        }
-                        ... on ProjectV2IterationField {
-                          name # Corrected: use 'name' directly
-                        }
-                        ... on ProjectV2SingleSelectField {
-                          name
-                        }
-                      }
-                      title
-                    }
-                    # Add other field types as needed
-                  }
-                }
-                content {
-                  ... on Issue {
-                    title
-                    url
-                    state
-                    number
-                    labels(first: 5) {
-                      nodes {
-                        name
-                      }
-                    }
-                  }
-                  ... on PullRequest {
-                    title
-                    url
-                    state
-                    number
-                    labels(first: 5) {
-                      nodes {
-                        name
-                      }
-                    }
-                  }
-                  ... on DraftIssue {
-                    title
-                    body
-                  }
-                }
-              }
+            name
+          }
+          ... on ProjectV2IterationField {
+            id
+            name
+          }
+          ... on ProjectV2SingleSelectField {
+            id
+            name
+            options {
+              id
+              name
             }
           }
         }
       }
-    `
+      items(first: 50) { # Fetch more items for the kanban board
+        nodes {
+          id
+          fieldValues(first: 100) { # Fetch all field values
+            nodes {
+              ... on ProjectV2ItemFieldTextValue {
+                field {
+                  ... on ProjectV2Field {
+                    name
+                  }
+                  ... on ProjectV2IterationField {
+                    name
+                  }
+                  ... on ProjectV2SingleSelectField {
+                    name
+                  }
+                }
+                text
+              }
+              ... on ProjectV2ItemFieldSingleSelectValue {
+                field {
+                  ... on ProjectV2Field {
+                    name
+                  }
+                  ... on ProjectV2IterationField {
+                    name
+                  }
+                  ... on ProjectV2SingleSelectField {
+                    name
+                  }
+                }
+                name # The selected option's name
+              }
+              ... on ProjectV2ItemFieldDateValue {
+                field {
+                  ... on ProjectV2Field {
+                    name
+                  }
+                  ... on ProjectV2IterationField {
+                    name
+                  }
+                  ... on ProjectV2SingleSelectField {
+                    name
+                  }
+                }
+                date
+              }
+              ... on ProjectV2ItemFieldIterationValue {
+                field {
+                  ... on ProjectV2Field {
+                    name
+                  }
+                  ... on ProjectV2IterationField {
+                    name
+                  }
+                  ... on ProjectV2SingleSelectField {
+                    name
+                  }
+                }
+                title
+              }
+              # Add other field types as needed
+            }
+          }
+          content {
+            ... on Issue {
+              title
+              url
+              state
+              number
+              labels(first: 5) {
+                nodes {
+                  name
+                }
+              }
+            }
+            ... on PullRequest {
+              title
+              url
+              state
+              number
+              labels(first: 5) {
+                nodes {
+                  name
+                }
+              }
+            }
+            ... on DraftIssue {
+              title
+              body
+            }
+          }
+        }
+      }
+    }
+  }
+}
+`
     return callGitHubGraphQL(query, { id: projectId })
   },
 
@@ -438,5 +459,80 @@ export const githubApi = {
     return callGitHubGraphQL(mutation, { input })
   },
 
+  createDraftIssue: async (projectId: string, title: string, body?: string) => {
+    const mutation = `
+      mutation AddProjectV2DraftIssue($input: AddProjectV2DraftIssueInput!) {
+        addProjectV2DraftIssue(input: $input) {
+          clientMutationId # Request only clientMutationId
+        }
+      }
+    `
+    const input = {
+      projectId,
+      title,
+      body,
+    }
+    const result = await callGitHubGraphQL(mutation, { input })
+    console.log("Raw GraphQL response for createDraftIssue:", JSON.stringify(result, null, 2)) // Added logging
+
+    if (!result.success) {
+      console.error("API call failed for createDraftIssue:", result.error) // Added logging
+      return { success: false, error: result.error, code: result.code }
+    }
+
+    if (result.data.errors) {
+      console.error("GraphQL errors for createDraftIssue:", JSON.stringify(result.data.errors, null, 2)) // Added logging
+      return {
+        success: false,
+        error: result.data.errors[0]?.message || "Failed to create item due to GraphQL error",
+        code: "GRAPHQL_ERROR",
+      }
+    }
+
+    // If no errors, assume success. The revalidatePath will handle UI update.
+    return { success: true, data: result.data, status: result.status }
+  },
+
   getUser: () => callProviderApi("github", "https://api.github.com/user"),
+
+  updateProjectV2ItemFieldValue: async (
+    projectId: string,
+    itemId: string,
+    fieldId: string,
+    value: { text?: string; singleSelectOptionId?: string; date?: string; iterationId?: string },
+  ) => {
+    const mutation = `
+    mutation UpdateProjectV2ItemFieldValue($input: UpdateProjectV2ItemFieldValueInput!) {
+      updateProjectV2ItemFieldValue(input: $input) {
+        clientMutationId
+      }
+    }
+  `
+    const input = {
+      projectId,
+      itemId,
+      fieldId,
+      value: {
+        ...value,
+      },
+    }
+    const result = await callGitHubGraphQL(mutation, { input })
+    console.log("Raw GraphQL response for updateProjectV2ItemFieldValue:", JSON.stringify(result, null, 2))
+
+    if (!result.success) {
+      console.error("API call failed for updateProjectV2ItemFieldValue:", result.error)
+      return { success: false, error: result.error, code: result.code }
+    }
+
+    if (result.data.errors) {
+      console.error("GraphQL errors for updateProjectV2ItemFieldValue:", JSON.stringify(result.data.errors, null, 2))
+      return {
+        success: false,
+        error: result.data.errors[0]?.message || "Failed to update item field due to GraphQL error",
+        code: "GRAPHQL_ERROR",
+      }
+    }
+
+    return { success: true, data: result.data, status: result.status }
+  },
 }
