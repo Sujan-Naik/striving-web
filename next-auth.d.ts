@@ -20,23 +20,11 @@ declare module "next-auth" {
    */
   interface Session {
     user: {
-      // existing fields
-      name?: string | null;
-      email?: string | null;
-      image?: string | null;
-
-      // Add your custom Google token fields here
-      googleAccessToken?: string | null;
-      googleRefreshToken?: string | null;
-      googleExpiresAt?: number | null;
-      
-        spotifyAccessToken?: string | null;
-      spotifyRefreshToken?: string | null;
-      spotifyExpiresAt?: number | null;
-      
-      githubAccessToken?: string | null;
-      githubRefreshToken?: string | null;
-      githubExpiresAt?: number | null;
+      providers?: Record<string, {
+        accessToken: string;
+        // refreshToken: string;
+        // expiresAt: number;
+      }>;
     } & DefaultSession["user"];
   }
 }
@@ -47,20 +35,10 @@ import { JWT } from "next-auth/jwt"
 declare module "next-auth/jwt" {
   /** Returned by the `jwt` callback and `auth`, when using JWT sessions */
   interface JWT {
-    // existing fields
-    idToken?: string;
-
-    // Your custom Google token fields
-    googleAccessToken?: string;
-    googleRefreshToken?: string;
-    googleExpiresAt?: number;
-    
-      spotifyAccessToken?: string;
-    spotifyRefreshToken?: string;
-    spotifyExpiresAt?: number;
-    
-    githubAccessToken?: string;
-    githubRefreshToken?: string;
-    githubExpiresAt?: number;
+    providers?: Record<string, {
+      accessToken: string;
+      // refreshToken: string;
+      // expiresAt: number;
+    }>;
   }
 }

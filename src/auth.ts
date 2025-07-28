@@ -4,33 +4,39 @@ import Credentials from "next-auth/providers/credentials"
 import type { Provider } from "next-auth/providers"
 import Google from "@auth/core/providers/google";
 import Spotify from "@auth/core/providers/spotify";
+import {DrizzleAdapter} from "@auth/drizzle-adapter";
+import {db} from "@/lib/db";
 
 const providers: Provider[] = [
-  Credentials({
-    credentials: { password: { label: "Password", type: "password" } },
-    authorize(c) {
-      if (c.password !== "password") return null
-      return {
-        id: "test",
-        name: "Test User",
-        email: "test@example.com",
-      }
-    },
-  }),
+  // Credentials({
+  //   credentials: { password: { label: "Password", type: "password" } },
+  //   authorize(c) {
+  //     if (c.password !== "password") return null
+  //     return {
+  //       id: "test",
+  //       name: "Test User",
+  //       email: "test@example.com",
+  //     }
+  //   },
+  // }),
   GitHub({
     clientId: process.env.AUTH_GITHUB_ID,
     clientSecret: process.env.AUTH_GITHUB_SECRET,
+    allowDangerousEmailAccountLinking: true,
     authorization: {
       params: {
-        scope: '',
+        scope: 'repo',
       },
     },
   }),
   Google({
     clientId: process.env.AUTH_GOOGLE_ID,
     clientSecret: process.env.AUTH_GOOGLE_SECRET,
+    allowDangerousEmailAccountLinking: true,
     authorization: {
       params: {
+        access_type: "offline",
+        prompt: "consent",
         scope: 'openid profile email https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/gmail.readonly', // your scopes here
       },
     },
@@ -38,6 +44,7 @@ const providers: Provider[] = [
   Spotify({
     clientId: process.env.AUTH_SPOTIFY_ID,
     clientSecret: process.env.AUTH_SPOTIFY_SECRET,
+    allowDangerousEmailAccountLinking: true,
     authorization:
       "https://accounts.spotify.com/authorize?scope=user-read-email,user-read-playback-state,user-modify-playback-state,user-read-currently-playing",
   }),
@@ -56,70 +63,63 @@ export const providerMap = providers
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers,
+  adapter: DrizzleAdapter(db),
   pages: {
     signIn: "/login",
     signOut: "sign-out",
     error: "/error",
-  },
-  callbacks: {
-    authorized: async ({ auth }) => {
-      // Logged in users are authenticated, otherwise redirect to login page
-      return !!auth
-    },
-    jwt: async ({ token, account }) => {
-      if (account) {
-                if (account.provider === "google") {
+  }
 
-                  token.googleAccessToken = account.access_token;
-                  token.googleRefreshToken = account.refresh_token;
-                  token.googleExpiresAt = account.expires_at;
-                }
 
-        else if (account.provider === "spotify")
-        {
-          token.spotifyAccessToken = account.access_token;
-          token.spotifyRefreshToken = account.refresh_token;
-          token.spotifyExpiresAt = account.expires_at;
-        }
-        
-        else if (account.provider === "github")
-        {
-          token.githubAccessToken = account.access_token;
-          token.githubRefreshToken = account.refresh_token;
-          token.githubExpiresAt = account.expires_at;
-        }
-      }
-      return token;
-    },
-    session: async ({ session, token }) => {
-      // Assign the token values to session.user
-      if (token?.googleAccessToken) {
-        session.user = {
-          ...session.user,
-          googleAccessToken: token.googleAccessToken,
-          googleRefreshToken: token.googleRefreshToken,
-          googleExpiresAt: token.googleExpiresAt,
+//   callbacks: {
+//     authorized: async ({ auth }) => {
+//       // Logged in users are authenticated, otherwise redirect to login page
+//       return !!auth
+//     },
+//      jwt: async ({ token, account }) => {
+//   if (account) {
+//     // Initialize providers object if it doesn't exist
+//     if (!token.providers) {
+//       token.providers = {};
+//     }
+//
+//     // Only add tokens if they exist
+//     // if (account.access_token && account.refresh_token && account.expires_at) {
+//     //   console.log('token stored');
+//     //   token.providers[account.provider] = {
+//     //     accessToken: account.access_token,
+//     //     refreshToken: account.refresh_token,
+//     //     expiresAt: account.expires_at,
+//     //   };
+//     // }
+//
+//      if (account.access_token) {
+//       console.log('token stored');
+//       token.providers[account.provider] = {
+//         accessToken: account.access_token,
+//       };
+//     }
+//   }
+//   return token;
+// },
+//     session: async ({ session, token }) => {
+//   if (token?.providers) {
+//     session.user = {
+//       ...session.user,
+//       providers: token.providers,
+//     };
+//   }
+//
+//   console.log(session)
+//   return session;
+// },
+//
+//     signIn: async ({ user, account, profile }) => {
+//     // This is REQUIRED for account linking to work
+//       return true
+//   },
 
-        };
-      } else if (token?.spotifyAccessToken){
-        session.user = {
-          ...session.user,
-        spotifyAccessToken: token.spotifyAccessToken,
-          spotifyRefreshToken: token.spotifyRefreshToken,
-          spotifyExpiresAt: token.spotifyExpiresAt,
-                  };
-      } else if (token?.githubAccessToken){
-        session.user = {
-          ...session.user,
-        githubAccessToken: token.githubAccessToken,
-          githubRefreshToken: token.githubRefreshToken,
-          githubExpiresAt: token.githubExpiresAt,
-                  };
-      }
-      return session;
-    },
-
-  },
+  // }
 
 
 })

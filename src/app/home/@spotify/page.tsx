@@ -1,4 +1,4 @@
-import SpotifyPlayer from "@/components/spotify-player";
+import {SpotifyPlayer} from "@/components/spotify-player";
 
 export default function Page() {
   return (

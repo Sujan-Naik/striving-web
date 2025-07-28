@@ -7,6 +7,10 @@ mkcert -key-file certificates/localhost-key.pem -cert-file certificates/localhos
 spotify redirect uri https://192.168.1.225:3000/api/auth/callback/spotify
 "dev": "next dev --turbopack --experimental-https --experimental-https-key ./certificates/localhost-key.pem --experimental-https-cert ./certificates/localhost.pem -H 192.168.1.225",
 
+
+
+ngrok http --url=liberal-chicken-funky.ngrok-free.app https://192.168.1.225:3000
+
 NEXTAUTH_URL=https://192.168.1.225:3000/
 
 ## Getting Started
