@@ -37,7 +37,7 @@ const providers: Provider[] = [
       params: {
         access_type: "offline",
         prompt: "consent",
-        scope: 'openid profile email https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/gmail.readonly', // your scopes here
+        scope: 'openid profile email https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/gmail.readonly', // your scopes here
       },
     },
   }),

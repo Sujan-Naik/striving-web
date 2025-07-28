@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from "react"
 import { googleApi } from "@/lib/provider-api-client"
-import { type EventProps, VariantEnum } from "headed-ui"
+import {VariantEnum } from "headed-ui"
+import {EventProps} from "@/components/calendar/event-props";
 
-export function useCalendar() {
+
+export function useCalendar(calendarId: string) {
   const [events, setEvents] = useState<EventProps[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -14,13 +16,15 @@ export function useCalendar() {
     setError(null)
 
     try {
-      const result = await googleApi.calendar.getEvents()
+      const result = await googleApi.calendar.getEvents({
+        calendarId: calendarId
+      })
 
       if (!result.success) {
         setError(result.error)
         return
       }
-
+      console.log(result.data.items)
       // Map Google Calendar events to HeadedCalendar EventProps format
       const fetchedEvents: EventProps[] = (result.data.items || []).map((item: any) => ({
         variant: VariantEnum.Primary,
@@ -28,6 +32,7 @@ export function useCalendar() {
         description: item.description || "",
         date: new Date(item.start.dateTime || item.start.date),
         endDate: new Date(item.end.dateTime || item.end.date),
+        eventId: item.id
       }))
 
       setEvents(fetchedEvents)

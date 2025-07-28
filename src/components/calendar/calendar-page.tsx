@@ -1,12 +1,17 @@
 "use client"
 
 import {useCalendar} from "@/hooks/use-calendar"
-import {HeadedButton, HeadedCalendar, HeadedDialog, VariantEnum} from "headed-ui"
+import {HeadedButton, HeadedDialog, VariantEnum} from "headed-ui"
 import {AlertCircle, Calendar, RefreshCw} from "lucide-react"
 import {useState} from "react";
+import CreateCalendarEvent from "@/components/calendar/create-calendar-event";
+import {HeadedCalendar} from "@/components/calendar/headed-calendar";
 
 export default function CalendarPage() {
-  const { events, loading, error, refetch } = useCalendar()
+    const calendarId = "primary";
+  const { events, loading, error, refetch } = useCalendar(calendarId)
+    // console.log(events);
+
     const [dialogOpen, setDialog] = useState(false)
   if (error) {
     return (
@@ -25,7 +30,7 @@ export default function CalendarPage() {
 
   return (
     <div className="container mx-auto p-6">
-      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-bold flex items-center gap-2">
           <Calendar className="h-8 w-8" />
           Google Calendar
@@ -47,7 +52,9 @@ export default function CalendarPage() {
           </div>
         </div>
       ) : (
-        <HeadedCalendar variant={VariantEnum.Primary} events={events} />
+
+
+        <HeadedCalendar changeCallback={refetch} variant={VariantEnum.Primary} calendarId={calendarId} events={events} />
       )}
     </div>
   )

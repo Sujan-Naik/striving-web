@@ -37,10 +37,10 @@ export function CreateGithubProject({ onProjectCreated }: { onProjectCreated?: (
         return
       }
 
-      if (result.data.errors) {
-        setError(result.data.errors[0]?.message || "Failed to create project")
-        return
-      }
+      // if (result.data.errors) {
+      //   setError(result.data.errors[0]?.message || "Failed to create project")
+      //   return
+      // }
 
       setSuccess(true)
       setForm({ title: "" })
