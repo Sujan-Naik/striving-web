@@ -1,5 +1,6 @@
 import { getProviderTokenSafe } from "./get-provider-token"
 import type { ProviderName } from "./provider-token-types"
+import {DateTime} from "@auth/core/providers/kakao";
 
 export interface ApiClientOptions {
   method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH"
@@ -161,7 +162,65 @@ export const googleApi = {
       )
     },
 
+    createEvent: (params? : {
+      calendarId?: string,
+      summary?: string,
+      start?: {
+        date?: Date,
+        dateTime?: Date,
+        timeZone?: string
+      },
+      end?: {
+        date?: Date,
+        dateTime?: Date,
+        timeZone?: string
+      }
+    }) => {
+      if (!params?.calendarId) {
+        throw new Error("calendarId is required");
+      }
+
+      // Construct the API parameters
+      const apiParams: Record<string, any> = {
+        summary: params?.summary,
+        start: {},
+        end: {},
+      };
+
+      // Handle start
+      if (params?.start) {
+        if (params.start.date) {
+          apiParams.start.date = params.start.date.toISOString().split('T')[0]; // 'YYYY-MM-DD'
+        } else if (params.start.dateTime) {
+          apiParams.start.dateTime = params.start.dateTime.toISOString(); // ISO string
+        }
+        if (params.start.timeZone) {
+          apiParams.start.timeZone = params.start.timeZone;
+        }
+      }
+
+      // Handle end
+      if (params?.end) {
+        if (params.end.date) {
+          apiParams.end.date = params.end.date.toISOString().split('T')[0]; // 'YYYY-MM-DD'
+        } else if (params.end.dateTime) {
+          apiParams.end.dateTime = params.end.dateTime.toISOString(); // ISO string
+        }
+        if (params.end.timeZone) {
+          apiParams.end.timeZone = params.end.timeZone;
+        }
+      }
+
+      // Call the API with the constructed parameters
+      return callProviderApi("google", `https://www.googleapis.com/calendar/v3/calendars/${params.calendarId}/events`, {
+        method: "POST",
+        body: JSON.stringify(apiParams)
+      });
+    },
+
+
     getCalendars: () => callProviderApi("google", "https://www.googleapis.com/calendar/v3/users/me/calendarList"),
+
   },
 }
 
