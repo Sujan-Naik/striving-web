@@ -5,18 +5,11 @@ import { AlertCircle, ExternalLink, Github, RefreshCw, User, Calendar, Lock, Unl
 import { HeadedButton, HeadedCard, HeadedDialog, VariantEnum } from "headed-ui"
 import { useState } from "react"
 import { CreateGithubProject } from "./create-github-project"
-import { githubApi } from "@/lib/provider-api-client"
+import Link from "next/link" // Import Link component
 
 export function GithubProjects() {
   const { projects, loading, error, refetch } = useGithubProjects()
   const [showDialog, setShowDialog] = useState(false)
-
-  // Add a test button to debug GraphQL
-  const testGraphQL = async () => {
-    console.log("Testing GraphQL...")
-    const result = await githubApi.testGraphQL()
-    console.log("Test result:", result)
-  }
 
   if (error) {
     return (
@@ -42,9 +35,6 @@ export function GithubProjects() {
           <HeadedButton variant={VariantEnum.Outline} onClick={refetch}>
             <RefreshCw className="h-4 w-4 mr-2" />
             Try Again
-          </HeadedButton>
-          <HeadedButton variant={VariantEnum.Secondary} onClick={testGraphQL}>
-            Test GraphQL
           </HeadedButton>
         </div>
       </div>
@@ -89,15 +79,11 @@ export function GithubProjects() {
               <HeadedCard variant={VariantEnum.Secondary} className="pb-3">
                 <div className="flex items-start justify-between">
                   <h1 className="text-lg">
-                    <a
-                      href={project.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:underline flex items-center gap-2"
-                    >
+                    {/* Use Link component for navigation */}
+                    <Link href={`/github/projects/${project.id}`} className="hover:underline flex items-center gap-2">
                       {project.title}
                       <ExternalLink className="h-4 w-4" />
-                    </a>
+                    </Link>
                   </h1>
                   <div className="flex items-center gap-2">
                     {project.closed ? (

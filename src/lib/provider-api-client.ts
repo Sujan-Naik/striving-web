@@ -210,13 +210,12 @@ export const githubApi = {
     return callProviderApi("github", "https://api.github.com/user/repos", { params: apiParams })
   },
 
-  // Simplified GitHub Projects V2 query without items field
   getProjectsV2: async (first = 20) => {
     const query = `
       query GetUserProjects($first: Int!) {
         viewer {
           id
-          projectsV2(first: $first) {
+          projectsV2(first: $first, orderBy: {field: UPDATED_AT, direction: DESC}) {
             nodes {
               id
               title
@@ -245,7 +244,75 @@ export const githubApi = {
     return callGitHubGraphQL(query, { first })
   },
 
-  // Let's also try a simple test query to see if GraphQL works at all
+  getProjectV2ById: async (projectId: string) => {
+    const query = `
+      query GetProjectById($id: ID!) {
+        node(id: $id) {
+          ... on ProjectV2 {
+            id
+            title
+            shortDescription
+            readme
+            url
+            public
+            closed
+            createdAt
+            updatedAt
+            owner {
+              ... on User {
+                login
+                avatarUrl
+              }
+              ... on Organization {
+                login
+                avatarUrl
+              }
+            }
+            items(first: 10) { # Fetch some items for the project page
+              nodes {
+                id
+                fieldValues(first: 5) {
+                  nodes {
+                    ... on ProjectV2ItemFieldTextValue {
+                      text
+                    }
+                    ... on ProjectV2ItemFieldSingleSelectValue {
+                      name
+                    }
+                    ... on ProjectV2ItemFieldDateValue {
+                      date
+                    }
+                    ... on ProjectV2ItemFieldIterationValue {
+                      title
+                    }
+                  }
+                }
+                content {
+                  ... on Issue {
+                    title
+                    url
+                    state
+                    number
+                  }
+                  ... on PullRequest {
+                    title
+                    url
+                    state
+                    number
+                  }
+                  ... on DraftIssue {
+                    title
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    `
+    return callGitHubGraphQL(query, { id: projectId })
+  },
+
   testGraphQL: async () => {
     const query = `
       query {
