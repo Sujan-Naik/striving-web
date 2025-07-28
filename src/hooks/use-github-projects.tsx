@@ -3,10 +3,41 @@
 import { useState, useEffect } from "react"
 import { githubApi } from "@/lib/provider-api-client"
 
+// Define more detailed types for ProjectV2 and its items
+export interface ProjectV2ItemField {
+  field: {
+    name: string
+  }
+  text?: string
+  name?: string // For single select
+  date?: string
+  title?: string // For iteration
+}
+
+export interface ProjectV2ItemContent {
+  title?: string
+  url?: string
+  state?: string // For Issue/PullRequest
+  number?: number // For Issue/PullRequest
+  body?: string // For DraftIssue
+  labels?: {
+    nodes: { name: string }[]
+  }
+}
+
+export interface ProjectV2Item {
+  id: string
+  fieldValues: {
+    nodes: ProjectV2ItemField[]
+  }
+  content: ProjectV2ItemContent | null
+}
+
 export interface ProjectV2 {
   id: string
   title: string
   shortDescription: string | null
+  readme: string | null
   url: string
   public: boolean
   closed: boolean
@@ -16,7 +47,9 @@ export interface ProjectV2 {
     login: string
     avatarUrl: string
   }
-  itemsCount: number
+  items: {
+    nodes: ProjectV2Item[]
+  } | null
 }
 
 export function useGithubProjects() {
@@ -64,7 +97,7 @@ export function useGithubProjects() {
           login: project.owner?.login || "Unknown",
           avatarUrl: project.owner?.avatarUrl || "",
         },
-        itemsCount: 0, // Set to 0 since we're not fetching items for now
+        items: null, // Items are not fetched in this query
       }))
 
       console.log("Mapped projects:", projects)

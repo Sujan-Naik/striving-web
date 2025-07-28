@@ -2,6 +2,8 @@ import { githubApi } from "@/lib/provider-api-client"
 import { HeadedCard, VariantEnum } from "headed-ui"
 import { ExternalLink, Github, User, Calendar, Lock, Unlock, Archive, List, FileText, AlertCircle } from "lucide-react"
 import Link from "next/link"
+import { KanbanBoard } from "@/components/github/kanban-board"
+import type { ProjectV2Item, ProjectV2 } from "@/hooks/use-github-projects"
 
 interface ProjectPageProps {
   params: {
@@ -40,7 +42,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     )
   }
 
-  const project = result.data.data?.node
+  const project: ProjectV2 | null = result.data.data?.node
 
   if (!project) {
     return (
@@ -54,6 +56,27 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
       </div>
     )
   }
+
+  // Process items for Kanban board
+  const itemsByStatus: Record<string, ProjectV2Item[]> = {}
+  const defaultStatus = "No Status" // Default column if status field isn't found or is empty
+
+  project.items?.nodes?.forEach((item) => {
+    const statusFound = false
+    // Look for a field named "Status" or "State" that is a single-select value
+    const statusField = item.fieldValues?.nodes?.find(
+      (field) =>
+        (field.field?.name?.toLowerCase() === "status" || field.field?.name?.toLowerCase() === "state") &&
+        typeof field.name === "string", // Check if it's a single-select value
+    )
+
+    const status = statusField?.name || defaultStatus
+
+    if (!itemsByStatus[status]) {
+      itemsByStatus[status] = []
+    }
+    itemsByStatus[status].push(item)
+  })
 
   return (
     <div className="container mx-auto p-6 space-y-6">
@@ -120,57 +143,20 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           </div>
         )}
 
-        {project.items?.nodes && project.items.nodes.length > 0 && (
-          <div>
-            <h2 className="text-xl font-semibold mb-2 flex items-center gap-2">
-              <List className="h-5 w-5" />
-              Project Items ({project.items.nodes.length})
-            </h2>
-            <div className="grid gap-3">
-              {project.items.nodes.map((item: any) => (
-                <HeadedCard variant={VariantEnum.Secondary} key={item.id} className="p-4">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-medium">{item.content?.title || item.content?.body || "Untitled Item"}</h3>
-                    {item.content?.url && (
-                      <a
-                        href={item.content.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-500 hover:underline text-sm flex items-center gap-1"
-                      >
-                        View
-                        <ExternalLink className="h-3 w-3" />
-                      </a>
-                    )}
-                  </div>
-                  {item.content?.state && (
-                    <span
-                      className={`px-2 py-1 text-xs rounded mt-1 inline-block ${
-                        item.content.state === "OPEN" || item.content.state === "OPENED"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-gray-100 text-gray-800"
-                      }`}
-                    >
-                      {item.content.state}
-                    </span>
-                  )}
-                  {item.fieldValues?.nodes && item.fieldValues.nodes.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {item.fieldValues.nodes.map((field: any, idx: number) => {
-                        const value = field.text || field.name || field.date || field.title
-                        return value ? (
-                          <span key={idx} className="px-2 py-1 text-xs bg-purple-100 text-purple-800 rounded">
-                            {value}
-                          </span>
-                        ) : null
-                      })}
-                    </div>
-                  )}
-                </HeadedCard>
-              ))}
+        {/* Kanban Board Section */}
+        <div>
+          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+            <List className="h-5 w-5" />
+            Kanban Board
+          </h2>
+          {Object.keys(itemsByStatus).length === 0 && project.items?.nodes?.length === 0 ? (
+            <div className="text-center p-8 text-muted-foreground">
+              <p>No items found for this project.</p>
             </div>
-          </div>
-        )}
+          ) : (
+            <KanbanBoard itemsByStatus={itemsByStatus} />
+          )}
+        </div>
       </HeadedCard>
     </div>
   )

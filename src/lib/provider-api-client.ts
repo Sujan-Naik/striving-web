@@ -268,23 +268,68 @@ export const githubApi = {
                 avatarUrl
               }
             }
-            items(first: 10) { # Fetch some items for the project page
+            items(first: 50) { # Fetch more items for the kanban board
               nodes {
                 id
-                fieldValues(first: 5) {
+                fieldValues(first: 100) { # Fetch all field values
                   nodes {
                     ... on ProjectV2ItemFieldTextValue {
+                      field {
+                        ... on ProjectV2Field {
+                          name
+                        }
+                        ... on ProjectV2IterationField {
+                          name # Corrected: use 'name' directly
+                        }
+                        ... on ProjectV2SingleSelectField {
+                          name
+                        }
+                      }
                       text
                     }
                     ... on ProjectV2ItemFieldSingleSelectValue {
-                      name
+                      field {
+                        ... on ProjectV2Field {
+                          name
+                        }
+                        ... on ProjectV2IterationField {
+                          name # Corrected: use 'name' directly
+                        }
+                        ... on ProjectV2SingleSelectField {
+                          name
+                        }
+                      }
+                      name # The selected option's name
                     }
                     ... on ProjectV2ItemFieldDateValue {
+                      field {
+                        ... on ProjectV2Field {
+                          name
+                        }
+                        ... on ProjectV2IterationField {
+                          name # Corrected: use 'name' directly
+                        }
+                        ... on ProjectV2SingleSelectField {
+                          name
+                        }
+                      }
                       date
                     }
                     ... on ProjectV2ItemFieldIterationValue {
+                      field {
+                        ... on ProjectV2Field {
+                          name
+                        }
+                        ... on ProjectV2IterationField {
+                          name # Corrected: use 'name' directly
+                        }
+                        ... on ProjectV2SingleSelectField {
+                          name
+                        }
+                      }
                       title
                     }
+                    # Add other field types as needed
                   }
                 }
                 content {
@@ -293,15 +338,26 @@ export const githubApi = {
                     url
                     state
                     number
+                    labels(first: 5) {
+                      nodes {
+                        name
+                      }
+                    }
                   }
                   ... on PullRequest {
                     title
                     url
                     state
                     number
+                    labels(first: 5) {
+                      nodes {
+                        name
+                      }
+                    }
                   }
                   ... on DraftIssue {
                     title
+                    body
                   }
                 }
               }
