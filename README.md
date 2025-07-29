@@ -13,6 +13,8 @@ ngrok http --url=liberal-chicken-funky.ngrok-free.app https://192.168.1.225:3000
 
 NEXTAUTH_URL=https://192.168.1.225:3000/
 
+anthropic.claude-3-7-sonnet-20250219-v1:0
+
 ## Getting Started
 
 First, run the development server:

@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.10.0",
+    "@aws-sdk/client-bedrock": "^3.855.0",
+    "@aws-sdk/client-bedrock-runtime": "^3.855.0",
     "@neondatabase/serverless": "^1.0.1",
     "drizzle-orm": "^0.44.3",
     "headed-ui": "^0.1.0",
