@@ -68,7 +68,13 @@ export default function Page() {
     setCurrentResponse('');
 
     try {
-      const response = await fetch(`/api/bedrock/converse-stream?query=${encodeURIComponent(currentQuery)}`);
+      const response = await fetch('/api/bedrock/converse-stream', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ query: currentQuery })
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

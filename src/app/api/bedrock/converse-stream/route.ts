@@ -5,9 +5,8 @@ import {
   Message,
 } from "@aws-sdk/client-bedrock-runtime";
 
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const userQuery = searchParams.get('query') || 'Hello';
+export async function POST(request: Request) {
+  const { query: userQuery = 'Hello' } = await request.json();
 
   const client = new BedrockRuntimeClient({
     region: "us-east-1",
@@ -23,16 +22,16 @@ export async function GET(request: Request) {
   // const modelId = "us.deepseek.r1-v1:0";
 
   const conversation: Message[] = [
-  {
-    role: "assistant",
-    content: [{
-      text: "Be concise. For code: Don't provide a lot of styling unless requested."
-    }],
-  },
-  {
-    role: "user",
-    content: [{ text: userQuery }],
-  },
+    {
+      role: "assistant",
+      content: [{
+        text: "Be concise. For code: Don't provide a lot of styling unless requested."
+      }],
+    },
+    {
+      role: "user",
+      content: [{ text: userQuery }],
+    },
   ];
 
   const response = await client.send(
