@@ -97,6 +97,10 @@ export async function callProviderApi<T = any>(
   }
 }
 
+export const bedrockApi = {
+
+}
+
 // GraphQL helper for GitHub
 export async function callGitHubGraphQL(query: string, variables?: Record<string, any>) {
   console.log("Making GraphQL request:", { query, variables })
