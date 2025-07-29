@@ -23,10 +23,16 @@ export async function GET(request: Request) {
   // const modelId = "us.deepseek.r1-v1:0";
 
   const conversation: Message[] = [
-    {
-      role: "user",
-      content: [{ text: userQuery }],
-    },
+  {
+    role: "assistant",
+    content: [{
+      text: "Be concise. For code: Don't provide a lot of styling unless requested."
+    }],
+  },
+  {
+    role: "user",
+    content: [{ text: userQuery }],
+  },
   ];
 
   const response = await client.send(
