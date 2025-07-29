@@ -5,21 +5,27 @@ import {
   Message,
 } from "@aws-sdk/client-bedrock-runtime";
 
-export async function GET() {
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const userQuery = searchParams.get('query') || 'Hello';
+
   const client = new BedrockRuntimeClient({
-    region: "eu-west-2",
-    credentials: {
-      accessKeyId: process.env.BEDROCK_ACCESS_KEY_ID!,
-      secretAccessKey: process.env.BEDROCK_SECRET_ACCESS_KEY!,
-    }
+    region: "us-east-1",
+    // region: "eu-west-2",
+    // credentials: {
+    //   accessKeyId: process.env.BEDROCK_ACCESS_KEY_ID!,
+    //   secretAccessKey: process.env.BEDROCK_SECRET_ACCESS_KEY!,
+    // }
   });
 
-  const modelId = "anthropic.claude-3-7-sonnet-20250219-v1:0";
-  const userMessage = "Describe the purpose of a 'hello world' program in one line.";
+  const modelId = "us.anthropic.claude-sonnet-4-20250514-v1:0";
+  // const modelId = "anthropic.claude-3-7-sonnet-20250219-v1:0";
+  // const modelId = "us.deepseek.r1-v1:0";
+
   const conversation: Message[] = [
     {
       role: "user",
-      content: [{ text: userMessage }],
+      content: [{ text: userQuery }],
     },
   ];
 
@@ -27,11 +33,10 @@ export async function GET() {
     new ConverseStreamCommand({
       modelId,
       messages: conversation,
-      inferenceConfig: { maxTokens: 512, temperature: 0.5, topP: 0.9 },
+      inferenceConfig: { maxTokens: 8096, temperature: 0.5, topP: 0.9 },
     })
   );
 
-  // Return the stream as a readable stream
   const stream = new ReadableStream({
     async start(controller) {
       for await (const item of response.stream!) {
