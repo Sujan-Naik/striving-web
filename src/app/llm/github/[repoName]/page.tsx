@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { Repository } from '@/types/github';
 import RepoDetails from '@/components/github/RepoDetails/RepoDetails';
 import {githubApi} from "@/lib/provider-api-client";
+import CodeEditor from '@/components/github/CodeEditor/CodeEditor';
+
 
 export default function RepoPage() {
   const params = useParams();
@@ -22,25 +24,29 @@ export default function RepoPage() {
     setIsLoading(true);
     setError(null);
 
-    try {
-      const response = await githubApi.getRepos();
-      if (!response.success) {
-        throw new Error('Getting Repos Failed')
-      }
+    const userResult = await githubApi.getAuthOwner()
+    if (userResult.success) {
+      const owner = userResult.data.login
+      try {
+        const response = await githubApi.getRepos(owner);
+        if (!response.success) {
+          throw new Error('Getting Repos Failed')
+        }
 
-      const repos = response.data || [];
-      const repo = repos.find((r: Repository) => r.name === repoName);
+        const repos = response.data || [];
+        const repo = repos.find((r: Repository) => r.name === repoName);
 
-      if (repo) {
-        setRepository(repo);
-      } else {
-        setError('Repository not found');
+        if (repo) {
+          setRepository(repo);
+        } else {
+          setError('Repository not found');
+        }
+      } catch (error) {
+        setError('Failed to load repository');
+        console.error('Failed to load repository:', error);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      setError('Failed to load repository');
-      console.error('Failed to load repository:', error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -67,9 +73,13 @@ export default function RepoPage() {
   }
 
   return (
-    <div>
-      <Link href="/llm/github">← Back to repositories</Link>
-      <RepoDetails repository={repository} />
-    </div>
-  );
+  <div>
+    <Link href="/llm/github">← Back to repositories</Link>
+    <RepoDetails repository={repository} />
+    <CodeEditor
+      owner={repository.owner.login}
+      repo={repository.name}
+    />
+  </div>
+);
 }

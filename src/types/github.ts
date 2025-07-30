@@ -10,6 +10,11 @@ export interface Repository {
   language: string | null;
   stargazers_count: number;
   forks_count: number;
+  owner: {
+    login: string;
+    id: number;
+    avatar_url: string;
+  };
 }
 
 export interface CreateRepoData {
