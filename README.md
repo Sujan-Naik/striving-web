@@ -15,6 +15,8 @@ NEXTAUTH_URL=https://192.168.1.225:3000/
 
 anthropic.claude-3-7-sonnet-20250219-v1:0 eu-west-2
 anthropic.claude-sonnet-4-20250514-v1:0 us-east-1
+
+Give me a 2D Side Scroller Game in a Website I can upload to vercel easily.
 ## Getting Started
 
 First, run the development server:
