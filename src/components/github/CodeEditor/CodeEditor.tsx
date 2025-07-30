@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { githubApi } from '@/lib/provider-api-client';
-import {CodeAction} from "@/types/codeActions";
+import { CodeAction } from "@/types/codeActions";
 
 interface CodeActionsProps {
   actions: CodeAction[];
@@ -44,22 +44,39 @@ export default function CodeEditor({ owner, repo, initialPath = '' }: CodeEditor
   // Add to CodeEditor component
   const [pendingActions, setPendingActions] = useState<CodeAction[]>([]);
   const [showActions, setShowActions] = useState(false);
+// Add new state for file selection
+const [selectedFiles, setSelectedFiles] = useState<Set<string>>(new Set());
+const [showFileSelector, setShowFileSelector] = useState(false);
+const [allRepoFiles, setAllRepoFiles] = useState<Array<{path: string, content: string, type: string}>>([]);
+const [pendingPrompt, setPendingPrompt] = useState<string>('');
 
- const requestLLMChanges = async (prompt: string) => {
+// Update the requestLLMChanges function
+const requestLLMChanges = async (prompt: string) => {
+  setPendingPrompt(prompt);
+
+  // Get all files and show selector
+  const codebaseFiles = await getAllRepositoryFiles();
+  setAllRepoFiles(codebaseFiles);
+  setShowFileSelector(true);
+};
+
+const sendToLLM = async () => {
+  const selectedFileData = allRepoFiles.filter(file => selectedFiles.has(file.path));
+
   const response = await fetch('/api/bedrock/code-actions', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      query: prompt,
+      query: pendingPrompt,
       owner,
       repo,
-      branch: currentBranch
+      branch: currentBranch,
+      codebase: selectedFileData
     })
   });
 
   const result = await response.json();
 
-  // Add null check
   if (!result.actions || !Array.isArray(result.actions)) {
     console.error('Invalid response:', result);
     alert('Failed to get code actions from LLM');
@@ -74,7 +91,92 @@ export default function CodeEditor({ owner, repo, initialPath = '' }: CodeEditor
 
   setPendingActions(actions);
   setShowActions(true);
+  setShowFileSelector(false);
+  setSelectedFiles(new Set());
 };
+
+// Add FileSelector component before CodeActions
+function FileSelector({
+  files,
+  selectedFiles,
+  onToggleFile,
+  onSelectAll,
+  onDeselectAll,
+  onSend,
+  onCancel
+}: {
+  files: Array<{path: string, content: string, type: string}>;
+  selectedFiles: Set<string>;
+  onToggleFile: (path: string) => void;
+  onSelectAll: () => void;
+  onDeselectAll: () => void;
+  onSend: () => void;
+  onCancel: () => void;
+}) {
+  return (
+    <div style={{ padding: '10px', borderBottom: '1px solid #ccc', backgroundColor: '#f9f9f9' }}>
+      <h4>Select files to send to LLM</h4>
+      <div style={{ marginBottom: '10px' }}>
+        <button onClick={onSelectAll}>Select All</button>
+        <button onClick={onDeselectAll} style={{ marginLeft: '5px' }}>Deselect All</button>
+        <span style={{ marginLeft: '10px' }}>{selectedFiles.size} files selected</span>
+      </div>
+      <div style={{ maxHeight: '200px', overflowY: 'auto', marginBottom: '10px' }}>
+        {files.map(file => (
+          <div key={file.path} style={{ marginBottom: '5px' }}>
+            <label>
+              <input
+                type="checkbox"
+                checked={selectedFiles.has(file.path)}
+                onChange={() => onToggleFile(file.path)}
+              />
+              <span style={{ marginLeft: '5px' }}>{file.path}</span>
+            </label>
+          </div>
+        ))}
+      </div>
+      <button onClick={onSend} disabled={selectedFiles.size === 0}>
+        Send to LLM
+      </button>
+      <button onClick={onCancel} style={{ marginLeft: '10px' }}>
+        Cancel
+      </button>
+    </div>
+  );
+}
+  // New function to recursively get all files
+  const getAllRepositoryFiles = async (path: string = ''): Promise<Array<{path: string, content: string, type: string}>> => {
+    const files: Array<{path: string, content: string, type: string}> = [];
+
+    try {
+      const response = await githubApi.getContents(owner, repo, path, currentBranch);
+      if (!response.success) return files;
+
+      const items = Array.isArray(response.data) ? response.data : [response.data];
+
+      for (const item of items) {
+        if (item.type === 'file') {
+          // Get file content
+          const fileResponse = await githubApi.getFile(owner, repo, item.path, currentBranch);
+          if (fileResponse.success && fileResponse.data.decodedContent) {
+            files.push({
+              path: item.path,
+              content: fileResponse.data.decodedContent,
+              type: item.type
+            });
+          }
+        } else if (item.type === 'dir') {
+          // Recursively get files from subdirectories
+          const subFiles = await getAllRepositoryFiles(item.path);
+          files.push(...subFiles);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching repository files:', error);
+    }
+
+    return files;
+  };
 
   const executeActions = async (approvedActions: CodeAction[]) => {
     for (const action of approvedActions) {
@@ -215,6 +317,30 @@ export default function CodeEditor({ owner, repo, initialPath = '' }: CodeEditor
             }}
             style={{ width: '100%', padding: '5px' }}
           />
+            {/* Add after the LLM prompt input */}
+{showFileSelector && (
+  <FileSelector
+    files={allRepoFiles}
+    selectedFiles={selectedFiles}
+    onToggleFile={(path) => {
+      const newSelected = new Set(selectedFiles);
+      if (newSelected.has(path)) {
+        newSelected.delete(path);
+      } else {
+        newSelected.add(path);
+      }
+      setSelectedFiles(newSelected);
+    }}
+    onSelectAll={() => setSelectedFiles(new Set(allRepoFiles.map(f => f.path)))}
+    onDeselectAll={() => setSelectedFiles(new Set())}
+    onSend={sendToLLM}
+    onCancel={() => {
+      setShowFileSelector(false);
+      setSelectedFiles(new Set());
+      setPendingPrompt('');
+    }}
+  />
+)}
         </div>
 
         {/* Add to JSX before the existing editor */}
