@@ -289,6 +289,20 @@ export const githubApi = {
     return callProviderApi("github", "https://api.github.com/user/repos", { params: apiParams })
   },
 
+  createRepo: (data: {
+    name: string;
+    description?: string;
+    private?: boolean;
+    auto_init?: boolean;
+    gitignore_template?: string;
+    license_template?: string;
+  }) => {
+    return callProviderApi("github", "https://api.github.com/user/repos", {
+      method: "POST",
+      body: data
+    })
+  },
+
   getProjectsV2: async (first = 20) => {
     const query = `
       query GetUserProjects($first: Int!) {
