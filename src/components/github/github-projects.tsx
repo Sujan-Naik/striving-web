@@ -1,11 +1,10 @@
 "use client"
 
-import { useGithubProjects } from "@/hooks/use-github-projects"
-import { AlertCircle, ExternalLink, Github, RefreshCw, User, Calendar, Lock, Unlock, Archive } from "lucide-react"
-import { HeadedButton, HeadedCard, HeadedDialog, VariantEnum } from "headed-ui"
-import { useState } from "react"
-import { CreateGithubProject } from "./create-github-project"
-import Link from "next/link" // Import Link component
+import {useGithubProjects} from "@/hooks/use-github-projects"
+import {AlertCircle, Archive, Calendar, ExternalLink, Github, Lock, RefreshCw, Unlock, User} from "lucide-react"
+import {HeadedButton, HeadedCard, HeadedDialog, HeadedLink, VariantEnum} from "headed-ui"
+import {useState} from "react"
+import {CreateGithubProject} from "./create-github-project"
 
 export function GithubProjects() {
   const { projects, loading, error, refetch } = useGithubProjects()
@@ -80,10 +79,10 @@ export function GithubProjects() {
                 <div className="flex items-start justify-between">
                   <h1 className="text-lg">
                     {/* Use Link component for navigation */}
-                    <Link href={`/github/projects/${project.id}`} className="hover:underline flex items-center gap-2">
+                    <HeadedLink variant={VariantEnum.Secondary} href={`/github/projects/${project.id}`} className="hover:underline flex items-center gap-2">
                       {project.title}
                       <ExternalLink className="h-4 w-4" />
-                    </Link>
+                    </HeadedLink>
                   </h1>
                   <div className="flex items-center gap-2">
                     {project.closed ? (

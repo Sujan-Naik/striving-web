@@ -1,0 +1,149 @@
+.kanbanBoard {
+  display: flex;
+  overflow-x: auto;
+  gap: var(--padding-thickness);
+  padding: var(--padding-thickness);
+}
+
+.column {
+  flex-shrink: 0;
+  width: 320px;
+}
+
+.columnHeader {
+  padding: var(--padding-thickness);
+  border-bottom: var(--border-thickness) solid var(--border-color);
+}
+
+.columnTitle {
+  font-weight: 600;
+  font-size: 1.125rem;
+  color: var(--foreground-primary);
+}
+
+.columnContent {
+  padding: var(--padding-thickness);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 100px;
+}
+
+.item {
+  padding: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.itemTitle {
+  font-weight: 500;
+  font-size: 0.875rem;
+  margin-bottom: 4px;
+  color: var(--foreground-primary);
+}
+
+.itemLink {
+  color: var(--link-color);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.itemLink:hover {
+  text-decoration: underline;
+}
+
+.linkIcon {
+  height: 12px;
+  width: 12px;
+}
+
+.state {
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  border-radius: var(--border-radius);
+  margin-top: 4px;
+  display: inline-block;
+}
+
+.stateOpen {
+  background-color: var(--background-tertiary);
+  color: var(--highlight);
+}
+
+.stateClosed {
+  background-color: var(--background-secondary);
+  color: var(--foreground-secondary);
+}
+
+.labelsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.label {
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  background-color: var(--background-tertiary);
+  color: var(--highlight);
+  border-radius: var(--border-radius);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tagIcon {
+  height: 12px;
+  width: 12px;
+}
+
+.statusSelector {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.statusSelect {
+  background-color: var(--background-secondary);
+  color: var(--foreground-secondary);
+  border: var(--border-thickness) solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 4px 8px;
+  font-size: 0.75rem;
+}
+
+.statusSelect:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.spinner {
+  height: 12px;
+  width: 12px;
+  animation: spin 1s linear infinite;
+}
+
+.otherFields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+  font-size: 0.75rem;
+  color: var(--foreground-secondary);
+}
+
+.emptyColumn {
+  color: var(--foreground-secondary);
+  font-size: 0.875rem;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

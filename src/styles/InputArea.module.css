@@ -1,8 +1,8 @@
 .container {
-  padding: 20px 24px;
   border-top: 1px solid var(--border-color);
-  background-color: var(--background-white);
+  background-color: var(--background-secondary);
   box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+  width: 100%;
 }
 
 .inputWrapper {
@@ -28,7 +28,7 @@
 }
 
 .textarea:focus {
-  border-color: var(--primary-color);
+  border-color: var(--highlight);
 }
 
 .textarea:disabled {
@@ -37,7 +37,7 @@
 
 .sendButton {
   padding: 15px 30px;
-  background-color: var(--primary-color);
+  background-color: var(--highlight);
   color: white;
   border: none;
   border-radius: 25px;
@@ -50,17 +50,17 @@
 }
 
 .sendButton:hover:not(:disabled) {
-  background-color: var(--primary-hover);
+  background-color: var(--hover);
 }
 
 .sendButton:disabled {
-  background-color: var(--secondary-color);
+  background-color: var(--disabled);
   cursor: not-allowed;
 }
 
 .hint {
   font-size: 13px;
-  color: var(--text-secondary);
+  color: var(--link-color);
   margin-top: 12px;
   text-align: center;
 }

@@ -1,39 +1,8 @@
 .header {
   padding: 20px 24px;
   border-bottom: 1px solid var(--border-color);
-  background-color: var(--background-white);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: var(--shadow-light);
-  z-index: 10;
 }
 
-.title {
-  margin: 0;
-  color: var(--text-primary);
-  font-size: 24px;
-  font-weight: 600;
-}
-
-.subtitle {
-  margin: 4px 0 0 0;
-  color: var(--text-secondary);
-  font-size: 14px;
-}
-
-.clearButton {
-  padding: 8px 16px;
-  background-color: var(--secondary-color);
-  color: white;
-  border: none;
-  border-radius: var(--border-radius);
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  transition: background-color 0.2s;
-}
-
-.clearButton:hover {
-  background-color: var(--secondary-hover);
-}

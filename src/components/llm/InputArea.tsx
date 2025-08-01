@@ -1,5 +1,6 @@
-import { useEffect } from 'react'
+import {useEffect} from 'react'
 import styles from '@/styles/InputArea.module.css'
+import {HeadedButton, VariantEnum} from "headed-ui";
 
 interface InputAreaProps {
   query: string
@@ -44,13 +45,14 @@ export default function InputArea({ query, setQuery, onSend, loading, textareaRe
           disabled={loading}
           className={styles.textarea}
         />
-        <button
+        <HeadedButton
+            variant={VariantEnum.Secondary}
           onClick={onSend}
           disabled={loading || !query.trim()}
           className={styles.sendButton}
         >
           {loading ? '●●●' : 'Send'}
-        </button>
+        </HeadedButton>
       </div>
       <div className={styles.hint}>
         Press <kbd>Enter</kbd> to send • <kbd>Shift+Enter</kbd> for new line

@@ -1,6 +1,7 @@
 :root {
 
   background-color: #1e1e1e;
+  color: #cccccc;
   --highlight: #007acc;
   --base-background: #252526;
   --base-foreground: #cccccc;
@@ -28,21 +29,9 @@
   --link-color: #4fc3f7;
   --link-icon-size: 4px;
 
-  --primary-color: #007bff;
-  --primary-hover: #0056b3;
-  --success-color: #28a745;
-  --secondary-color: #6c757d;
-  --secondary-hover: #5a6268;
-  --background-light: #fafafa;
-  --background-white: #ffffff;
-  --text-primary: #2c3e50;
-  --text-secondary: #6c757d;
-  --shadow-light: 0 2px 4px rgba(0,0,0,0.1);
-  --shadow-medium: 0 2px 8px rgba(0,0,0,0.1);
-  --border-radius-large: 16px;
-  --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
 
-  color: var(--base-foreground);
+  --disabled: #6c757d;
+  --border-radius-large: 16px;
 }
 
 
@@ -59,8 +48,9 @@ html, body {
 
 .chat-container {
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
   height: 100vh;
+  width: 100%;
   /*background-color: var(--background-white);*/
   /*font-family: var(--font-family);*/
 }

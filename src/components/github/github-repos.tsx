@@ -3,7 +3,7 @@
 import {useGithubRepos} from "@/hooks/use-github-repos"
 
 import {AlertCircle, Badge, ExternalLink, Github, RefreshCw, Star} from "lucide-react"
-import {HeadedButton, HeadedCard, HeadedDialog, VariantEnum} from "headed-ui";
+import {HeadedButton, HeadedCard, HeadedDialog, HeadedLink, VariantEnum} from "headed-ui";
 import {useState} from "react";
 
 export function GithubRepos() {
@@ -31,7 +31,7 @@ export function GithubRepos() {
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold flex items-center gap-2">
           <Github className="h-6 w-6" />
-          Public Repositories
+           Repositories
         </h2>
           {!loading &&
         <HeadedButton variant={VariantEnum.Outline} onClick={refetch} >
@@ -49,7 +49,7 @@ export function GithubRepos() {
       ) : repos.length === 0 ? (
         <div className="text-center p-8 text-muted-foreground">
           <Github className="h-12 w-12 mx-auto mb-4" />
-          <p>No public repositories found</p>
+          <p>No repositories found</p>
         </div>
       ) : (
         <div className="grid gap-4">
@@ -58,15 +58,14 @@ export function GithubRepos() {
               <HeadedCard variant={VariantEnum.Secondary}className="pb-3">
                 <div className="flex items-start justify-between">
                   <h1 className="text-lg">
-                    <a
+                    <HeadedLink
+                        variant={VariantEnum.Primary}
                       href={repo.html_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
                       className="hover:underline flex items-center gap-2"
                     >
                       {repo.name}
                       <ExternalLink className="h-4 w-4" />
-                    </a>
+                    </HeadedLink>
                   </h1>
                   <div className="flex items-center gap-2">
                     {repo.stargazers_count > 0 && (

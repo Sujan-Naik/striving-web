@@ -1,4 +1,5 @@
 import { signOut } from "@/auth"
+import {HeadedButton, VariantEnum} from "headed-ui";
 
 export default function SignOutPage() {
   return (
@@ -10,7 +11,7 @@ export default function SignOutPage() {
           await signOut()
         }}
       >
-        <button type="submit">Sign out</button>
+          <HeadedButton variant={VariantEnum.Primary} type="submit">Sign out</HeadedButton>
       </form>
     </div>
   )
