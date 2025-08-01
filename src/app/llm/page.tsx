@@ -1,9 +1,9 @@
 "use client"
 import { useState, useRef, useEffect } from 'react'
 import { Message } from '@/types/messages'
-import Header from '@/components/Header'
-import MessageList from '@/components/MessageList'
-import InputArea from '@/components/InputArea'
+import Header from '@/components/llm/Header'
+import MessageList from '@/components/llm/MessageList'
+import InputArea from '@/components/llm/InputArea'
 import { autoIndentCode } from '@/lib/utils/codeUtils'
 import '@/styles/globals.css'
 

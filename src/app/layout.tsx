@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Pixelify_Sans } from "next/font/google";
 import "@/styles/globals.css";
 import {SessionProvider} from "next-auth/react";
+import Header from "@/components/Header";
 
 const pixelifySans = Pixelify_Sans({ subsets: ["latin"] });
 
@@ -18,6 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${pixelifySans.className} antialiased`}>
+      <Header/>
         <SessionProvider>
           {children}
         </SessionProvider>
