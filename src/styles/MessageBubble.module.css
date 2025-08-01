@@ -28,11 +28,11 @@
 }
 
 .userAvatar {
-  background-color: var(--primary-color);
+  background-color: var(--highlight);
 }
 
 .assistantAvatar {
-  background-color: var(--success-color);
+  background-color: green;
 }
 
 .bubble {
@@ -44,15 +44,14 @@
 }
 
 .userBubble {
-  background-color: var(--primary-color);
+  background-color: var(--highlight);
   color: white;
 }
 
 .assistantBubble {
-  background-color: var(--background-white);
-  color: var(--text-primary);
+  background-color: var(--background-secondary);
+  color: var(--foreground-secondary);
   border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-medium);
 }
 
 .userContent {
@@ -79,7 +78,7 @@
   display: inline-block;
   width: 8px;
   height: 8px;
-  background-color: var(--success-color);
+  background-color: green;
   border-radius: 50%;
   margin-left: 4px;
 }

@@ -1,11 +1,11 @@
 "use client"
 
-import { LinkIcon, Tag, Loader2 } from "lucide-react"
-import type { ProjectV2Item, ProjectV2SingleSelectFieldOption } from "@/hooks/use-github-projects"
-import Link from "next/link"
-import { githubApi } from "@/lib/provider-api-client"
-import { useState } from "react"
-import { HeadedCard, VariantEnum } from "headed-ui" // Reverted to HeadedCard
+import {LinkIcon, Loader2, Tag} from "lucide-react"
+import type {ProjectV2Item, ProjectV2SingleSelectFieldOption} from "@/hooks/use-github-projects"
+import {githubApi} from "@/lib/provider-api-client"
+import {useState} from "react"
+import {HeadedCard, HeadedLink, VariantEnum} from "headed-ui"
+import styles from "@/styles/KanbanBoard.module.css"
 
 interface KanbanBoardProps {
   projectId: string
@@ -40,12 +40,9 @@ export function KanbanBoard({
 
       if (!result.success) {
         console.error("Failed to update item status:", result.error)
-        // Optionally show a toast or error message to the user
       } else {
         console.log("Item status updated successfully.")
-        if (onItemUpdated) {
-          onItemUpdated() // Trigger revalidation of the page
-        }
+        onItemUpdated?.()
       }
     } catch (error) {
       console.error("Error updating item status:", error)
@@ -54,114 +51,118 @@ export function KanbanBoard({
     }
   }
 
+  const getStateClassName = (state: string) => {
+    return state === "OPEN" || state === "OPENED" ? styles.stateOpen : styles.stateClosed
+  }
+
+  const renderItemTitle = (item: ProjectV2Item) => {
+    const title = item.content?.title || item.content?.body || "Untitled Item"
+
+    if (item.content?.url) {
+      return (
+        <HeadedLink variant={VariantEnum.Secondary} href={item.content.url} className={styles.itemLink}>
+          {title}
+          <LinkIcon className={styles.linkIcon} />
+        </HeadedLink>
+      )
+    }
+    return title
+  }
+
+  const renderLabels = (item: ProjectV2Item) => {
+    if (!item.content?.labels?.nodes?.length) return null
+
+    return (
+      <div className={styles.labelsContainer}>
+        {item.content.labels.nodes.map((label) => (
+          <span key={label.name} className={styles.label}>
+            <Tag className={styles.tagIcon} />
+            {label.name}
+          </span>
+        ))}
+      </div>
+    )
+  }
+
+  const renderStatusSelector = (item: ProjectV2Item) => {
+    if (!statusFieldId || !statusOptions.length) return null
+
+    const currentStatusField = item.fieldValues?.nodes?.find(
+      (field) =>
+        (field.field?.name?.toLowerCase() === "status" || field.field?.name?.toLowerCase() === "state") &&
+        typeof field.name === "string",
+    )
+    const currentStatusOptionId = statusOptions.find((opt) => opt.name === currentStatusField?.name)?.id || ""
+
+    return (
+      <div className={styles.statusSelector}>
+        <select
+          value={currentStatusOptionId}
+          onChange={(e) => handleStatusChange(item.id, e.target.value)}
+          disabled={updatingItemId === item.id}
+          className={styles.statusSelect}
+        >
+          <option value="" disabled>Select status</option>
+          {statusOptions.map((option) => (
+            <option key={option.id} value={option.id}>
+              {option.name}
+            </option>
+          ))}
+        </select>
+        {updatingItemId === item.id && <Loader2 className={styles.spinner} />}
+      </div>
+    )
+  }
+
+  const renderOtherFields = (item: ProjectV2Item) => {
+    const otherFields = item.fieldValues?.nodes.filter(
+      (field) => !["status", "state"].includes(field.field?.name?.toLowerCase() || "")
+    )
+
+    if (!otherFields?.length) return null
+
+    return (
+      <div className={styles.otherFields}>
+        {otherFields.map((field, idx) => {
+          const value = field.text || field.name || field.date || field.title
+          return value ? (
+            <span key={idx}>
+              {field.field?.name}: {value}
+            </span>
+          ) : null
+        })}
+      </div>
+    )
+  }
+
   return (
-    <div className="flex overflow-x-auto gap-4 p-4">
+    <div className={styles.kanbanBoard}>
       {allColumns.map((status) => (
-        <HeadedCard key={status} variant={VariantEnum.Secondary} className="flex-shrink-0 w-80">
-          {" "}
-          {/* Reverted to HeadedCard */}
-          <div className="p-4 border-b">
-            <h3 className="font-semibold text-lg">
+        <HeadedCard key={status} variant={VariantEnum.Secondary} className={styles.column}>
+          <div className={styles.columnHeader}>
+            <h3 className={styles.columnTitle}>
               {status} ({itemsByStatus[status]?.length || 0})
             </h3>
           </div>
-          <div className="p-4 space-y-3 min-h-[100px]">
+          <div className={styles.columnContent}>
             {itemsByStatus[status]?.length > 0 ? (
-              itemsByStatus[status].map((item) => {
-                const currentStatusField = item.fieldValues?.nodes?.find(
-                  (field) =>
-                    (field.field?.name?.toLowerCase() === "status" || field.field?.name?.toLowerCase() === "state") &&
-                    typeof field.name === "string",
-                )
-                const currentStatusOptionId =
-                  statusOptions.find((opt) => opt.name === currentStatusField?.name)?.id || ""
-
-                return (
-                  <HeadedCard key={item.id} variant={VariantEnum.Primary} className="p-3 shadow-sm">
-                    {" "}
-                    {/* Reverted to HeadedCard */}
-                    <h4 className="font-medium text-sm mb-1">
-                      {item.content?.url ? (
-                        <Link
-                          href={item.content.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="hover:underline flex items-center gap-1"
-                        >
-                          {item.content?.title || item.content?.body || "Untitled Item"}
-                          <LinkIcon className="h-3 w-3" />
-                        </Link>
-                      ) : (
-                        item.content?.title || item.content?.body || "Untitled Item"
-                      )}
-                    </h4>
-                    {item.content?.state && (
-                      <span
-                        className={`px-2 py-1 text-xs rounded mt-1 inline-block ${
-                          item.content.state === "OPEN" || item.content.state === "OPENED"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-gray-100 text-gray-800"
-                        }`}
-                      >
-                        {item.content.state}
-                      </span>
-                    )}
-                    {item.content?.labels?.nodes && item.content.labels.nodes.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mt-2">
-                        {item.content.labels.nodes.map((label) => (
-                          <span
-                            key={label.name}
-                            className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded flex items-center gap-1"
-                          >
-                            <Tag className="h-3 w-3" />
-                            {label.name}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                    {/* Status Selector */}
-                    {statusFieldId && statusOptions.length > 0 && (
-                      <div className="mt-2">
-                        <select
-                          value={currentStatusOptionId}
-                          onChange={(e) => handleStatusChange(item.id, e.target.value)}
-                          disabled={updatingItemId === item.id}
-                        >
-                          <option value="" disabled>
-                            Select status
-                          </option>
-                          {statusOptions.map((option) => (
-                            <option key={option.id} value={option.id}>
-                              {option.name}
-                            </option>
-                          ))}
-                        </select>
-                        {updatingItemId === item.id && <Loader2 className="h-3 w-3 animate-spin inline-block ml-1" />}
-                      </div>
-                    )}
-                    {/* Display other relevant fields if available */}
-                    <div className="flex flex-wrap gap-2 mt-2 text-xs text-muted-foreground">
-                      {item.fieldValues?.nodes.map((field, idx) => {
-                        // Only display fields that are not the status field
-                        if (
-                          field.field?.name?.toLowerCase() === "status" ||
-                          field.field?.name?.toLowerCase() === "state"
-                        ) {
-                          return null
-                        }
-                        const value = field.text || field.name || field.date || field.title
-                        return value ? (
-                          <span key={idx} className="flex items-center gap-1">
-                            {field.field?.name}: {value}
-                          </span>
-                        ) : null
-                      })}
-                    </div>
-                  </HeadedCard>
-                )
-              })
+              itemsByStatus[status].map((item) => (
+                <HeadedCard key={item.id} variant={VariantEnum.Primary} className={styles.item}>
+                  <h4 className={styles.itemTitle}>
+                    {renderItemTitle(item)}
+                  </h4>
+                  {item.content?.state && (
+                    <span className={`${styles.state} ${getStateClassName(item.content.state)}`}>
+                      {item.content.state}
+                    </span>
+                  )}
+                  {renderLabels(item)}
+                  {renderStatusSelector(item)}
+                  {renderOtherFields(item)}
+                </HeadedCard>
+              ))
             ) : (
-              <p className="text-muted-foreground text-sm">No items in this column.</p>
+              <p className={styles.emptyColumn}>No items in this column.</p>
             )}
           </div>
         </HeadedCard>

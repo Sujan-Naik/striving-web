@@ -1,9 +1,9 @@
-import { redirect } from "next/navigation"
-import { auth, providerMap, signIn } from "@/auth"
-import { AuthError } from "next-auth"
-import { getUserAccounts } from "@/lib/accounts"
-import { HeadedLink, VariantEnum } from "headed-ui"
-import { isTokenExpired } from "@/lib/utils/token" // Import the utility function
+import {redirect} from "next/navigation"
+import {auth, providerMap, signIn} from "@/auth"
+import {AuthError} from "next-auth"
+import {getUserAccounts} from "@/lib/accounts"
+import {HeadedButton, HeadedLink, VariantEnum} from "headed-ui"
+import {isTokenExpired} from "@/lib/utils/token" // Import the utility function
 
 const SIGNIN_ERROR_URL = "/error"
 
@@ -60,9 +60,9 @@ export default async function SignInPage(props: {
               }
             }}
           >
-            <button type="submit">
+            <HeadedButton variant={VariantEnum.Primary} type="submit">
               <span>{isTrulyConnected ? `✓ ${provider.name} Connected` : `Connect ${provider.name}`}</span>
-            </button>
+            </HeadedButton>
           </form>
         )
       })}

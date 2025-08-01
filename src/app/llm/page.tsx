@@ -1,9 +1,9 @@
 "use client"
 import { useState, useRef, useEffect } from 'react'
 import { Message } from '@/types/messages'
-import Header from '@/components/Header'
-import MessageList from '@/components/MessageList'
-import InputArea from '@/components/InputArea'
+import SideBar from '@/components/llm/SideBar'
+import MessageList from '@/components/llm/MessageList'
+import InputArea from '@/components/llm/InputArea'
 import { autoIndentCode } from '@/lib/utils/codeUtils'
 import '@/styles/globals.css'
 
@@ -86,16 +86,20 @@ export default function Page() {
   }
 
   return (
-    <div className="chat-container">
-      <Header messageCount={messages.length} onClearChat={clearChat} />
-      <MessageList messages={messages} currentResponse={currentResponse} />
-      <InputArea
-        query={query}
-        setQuery={setQuery}
-        onSend={handleSend}
-        loading={loading}
-        textareaRef={textareaRef}
-      />
-    </div>
+      <div style={{display: "flex", flexDirection: "row"}}>
+              <SideBar messageCount={messages.length} onClearChat={clearChat} />
+        <div className="chat-container">
+          <InputArea
+                query={query}
+                setQuery={setQuery}
+                onSend={handleSend}
+                loading={loading}
+                textareaRef={textareaRef}
+              />
+              <MessageList messages={messages} currentResponse={currentResponse} />
+
+            </div>
+      </div>
+
   )
 }

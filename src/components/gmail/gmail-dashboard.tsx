@@ -4,7 +4,7 @@ import { useState } from "react"
 import { MailList } from "./mail-list"
 import { Settings } from "lucide-react"
 import type { MailItem } from "@/hooks/use-gmail"
-import {HeadedButton, HeadedCard, VariantEnum} from "headed-ui";
+import {HeadedButton, HeadedCard, HeadedInput, VariantEnum} from "headed-ui";
 
 export function GmailDashboard() {
   const [selectedMail, setSelectedMail] = useState<MailItem | null>(null)
@@ -20,11 +20,13 @@ export function GmailDashboard() {
         {/* Mail List */}
         <div className="lg:col-span-2">
           <div className="mb-4 flex items-center gap-4">
-            <input
+            <HeadedInput
+                variant={VariantEnum.Secondary}
+                style={{backgroundColor: "var(--background-primary)", color: "var(--foreground-primary)"}}
               type="number"
               placeholder="Max results"
               value={maxResults}
-              onChange={(e) => setMaxResults(Number(e.target.value))}
+              onChange={(e) => setMaxResults(Number(e))}
               className="w-32"
               min={1}
               max={100}

@@ -285,7 +285,6 @@ export const githubApi = {
     if (params?.sort) apiParams.sort = params.sort
     if (params?.direction) apiParams.direction = params.direction
     if (params?.per_page) apiParams.per_page = params.per_page
-
     return callProviderApi("github", `https://api.github.com/users/${owner}/repos`, { params: apiParams })
   },
 
