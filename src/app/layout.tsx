@@ -1,17 +1,9 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-// import "./globals.css";
+import { Pixelify_Sans } from "next/font/google";
+import "@/styles/globals.css";
 import {SessionProvider} from "next-auth/react";
-import 'headed-ui/styles/variables.css'
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const pixelifySans = Pixelify_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -25,12 +17,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-      <SessionProvider>
+      <body className={`${pixelifySans.className} antialiased`}>
+        <SessionProvider>
           {children}
-      </SessionProvider>
+        </SessionProvider>
       </body>
     </html>
   );

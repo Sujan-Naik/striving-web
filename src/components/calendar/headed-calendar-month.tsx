@@ -89,9 +89,9 @@ export const HeadedCalendarMonth: React.FC<CalendarProps> = ({variant, year, mon
 
             {days.map((dayObj, index) => {
                 if (dayObj.day === null || !dayObj.date) {
-                    return <>
+                    return
                         <div key={index}/>
-                    </>
+
                 } else {
 
 
