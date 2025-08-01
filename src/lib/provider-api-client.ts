@@ -279,14 +279,109 @@ export const spotifyApi = {
 }
 
 export const githubApi = {
-  getRepos: (params?: { sort?: string; direction?: string; per_page?: number }) => {
+    getRepos: (owner: string, params?: { sort?: string; direction?: string; per_page?: number }) => {
     const apiParams: Record<string, string | number | boolean> = {}
 
     if (params?.sort) apiParams.sort = params.sort
     if (params?.direction) apiParams.direction = params.direction
     if (params?.per_page) apiParams.per_page = params.per_page
 
-    return callProviderApi("github", "https://api.github.com/user/repos", { params: apiParams })
+    return callProviderApi("github", `https://api.github.com/users/${owner}/repos`, { params: apiParams })
+  },
+
+  getAuthOwner: () => {
+    return callProviderApi("github", "https://api.github.com/user")
+  },
+
+  createRepo: (data: {
+    name: string;
+    description?: string;
+    private?: boolean;
+    auto_init?: boolean;
+    gitignore_template?: string;
+    license_template?: string;
+  }) => {
+    return callProviderApi("github", "https://api.github.com/user/repos", {
+      method: "POST",
+      body: data
+    })
+  },
+
+   // Get repository contents
+  getContents: (owner: string, repo: string, path: string = '', ref?: string) => {
+    const params: Record<string, string> = {};
+    if (ref) params.ref = ref;
+
+    return callProviderApi("github", `https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+      params
+    });
+  },
+
+  // Get file content (decoded)
+  getFile: async (owner: string, repo: string, path: string, ref?: string) => {
+    const response = await githubApi.getContents(owner, repo, path, ref);
+    if (response.success && response.data.content) {
+      return {
+        ...response,
+        data: {
+          ...response.data,
+          decodedContent: atob(response.data.content.replace(/\n/g, ''))
+        }
+      };
+    }
+    return response;
+  },
+
+  // Create or update file
+  updateFile: (owner: string, repo: string, path: string, data: {
+    message: string;
+    content: string; // base64 encoded
+    sha?: string; // required for updates
+    branch?: string;
+  }) => {
+    return callProviderApi("github", `https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+      method: "PUT",
+      body: data
+    });
+  },
+
+  // Delete file
+  deleteFile: (owner: string, repo: string, path: string, data: {
+    message: string;
+    sha: string;
+    branch?: string;
+  }) => {
+    return callProviderApi("github", `https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+      method: "DELETE",
+      body: data
+    });
+  },
+
+  // Get branches
+  getBranches: (owner: string, repo: string) => {
+    return callProviderApi("github", `https://api.github.com/repos/${owner}/${repo}/branches`);
+  },
+
+  // Create branch
+  createBranch: (owner: string, repo: string, data: {
+    ref: string; // refs/heads/branch-name
+    sha: string; // commit SHA to branch from
+  }) => {
+    return callProviderApi("github", `https://api.github.com/repos/${owner}/${repo}/git/refs`, {
+      method: "POST",
+      body: data
+    });
+  },
+
+  // Get commits
+  getCommits: (owner: string, repo: string, params?: {
+    sha?: string; // branch/commit
+    path?: string;
+    per_page?: number;
+  }) => {
+    return callProviderApi("github", `https://api.github.com/repos/${owner}/${repo}/commits`, {
+      params
+    });
   },
 
   getProjectsV2: async (first = 20) => {
