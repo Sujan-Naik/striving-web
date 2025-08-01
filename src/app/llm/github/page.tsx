@@ -17,17 +17,21 @@ export default function GitHubPage() {
 
   const loadRepositories = async () => {
     setIsLoading(true);
-    try {
-      const response = await githubApi.getRepos({ per_page: 50 });
-      if (!response.success) {
-        throw new Error('Getting Repos Failed')
-      }
+    const userResult = await githubApi.getAuthOwner()
+    if (userResult.success) {
+      const owner = userResult.data.login
+      try {
+        const response = await githubApi.getRepos(owner, {per_page: 50});
+        if (!response.success) {
+          throw new Error('Getting Repos Failed')
+        }
 
-      setRepositories(response.data || []);
-    } catch (error) {
-      console.error('Failed to load repositories:', error);
-    } finally {
-      setIsLoading(false);
+        setRepositories(response.data || []);
+      } catch (error) {
+        console.error('Failed to load repositories:', error);
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 

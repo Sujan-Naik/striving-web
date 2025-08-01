@@ -21,33 +21,38 @@ export function useGithubRepos() {
     setLoading(true)
     setError(null)
 
-    try {
-      const result = await githubApi.getRepos({
-        sort: "updated",
-        direction: "desc",
-        per_page: 50,
-      })
+    const userResult = await githubApi.getAuthOwner()
+    if (userResult.success) {
+      const owner = userResult.data.login
 
-      if (!result.success) {
-        setError(result.error)
-        return
+      try {
+        const result = await githubApi.getRepos(owner, {
+          sort: "updated",
+          direction: "desc",
+          per_page: 50,
+        })
+
+        if (!result.success) {
+          setError(result.error)
+          return
+        }
+
+        const publicRepos: Repo[] = result.data
+            .map((repo: any) => ({
+              name: repo.name,
+              description: repo.description || "No description available",
+              html_url: repo.html_url,
+              language: repo.language || "Unknown",
+              stargazers_count: repo.stargazers_count,
+              updated_at: repo.updated_at,
+            }))
+
+        setRepos(publicRepos)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Unknown error occurred")
+      } finally {
+        setLoading(false)
       }
-
-      const publicRepos: Repo[] = result.data
-        .map((repo: any) => ({
-          name: repo.name,
-          description: repo.description || "No description available",
-          html_url: repo.html_url,
-          language: repo.language || "Unknown",
-          stargazers_count: repo.stargazers_count,
-          updated_at: repo.updated_at,
-        }))
-
-      setRepos(publicRepos)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Unknown error occurred")
-    } finally {
-      setLoading(false)
     }
   }
 
