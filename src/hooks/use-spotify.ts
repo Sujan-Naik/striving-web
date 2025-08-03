@@ -15,10 +15,29 @@ export interface PlaybackState {
   }
 }
 
+export interface Album {
+  id: string
+  name: string
+  artists: Array<{ name: string }>
+  images: Array<{ url: string }>
+  uri: string
+}
+
+export interface Playlist {
+  id: string
+  name: string
+  images: Array<{ url: string }>
+  uri: string
+  tracks: { total: number }
+}
+
 export function useSpotify() {
   const [playbackState, setPlaybackState] = useState<PlaybackState | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+   const [playlists, setPlaylists] = useState<Playlist[]>([])
+  const [albums, setAlbums] = useState<Album[]>([])
 
   const fetchPlaybackState = async () => {
     try {
@@ -105,6 +124,61 @@ export function useSpotify() {
     fetchPlaybackState()
   }, [])
 
+
+  const fetchPlaylists = async () => {
+    try {
+      const result = await spotifyApi.getPlaylists({ limit: 50 })
+      if (result.success) {
+        setPlaylists(result.data.items)
+      }
+    } catch (err) {
+      console.error("Error fetching playlists:", err)
+    }
+  }
+
+  const fetchAlbums = async () => {
+    try {
+      const result = await spotifyApi.getSavedAlbums({ limit: 50 })
+      if (result.success) {
+        setAlbums(result.data.items.map((item: any) => item.album))
+      }
+    } catch (err) {
+      console.error("Error fetching albums:", err)
+    }
+  }
+
+  const playPlaylist = async (uri: string) => {
+    setLoading(true)
+    try {
+      const result = await spotifyApi.playContext(uri)
+      if (result.success) {
+        setTimeout(fetchPlaybackState, 500)
+      } else {
+        setError(result.error)
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unknown error occurred")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const playAlbum = async (uri: string) => {
+    setLoading(true)
+    try {
+      const result = await spotifyApi.playContext(uri)
+      if (result.success) {
+        setTimeout(fetchPlaybackState, 500)
+      } else {
+        setError(result.error)
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unknown error occurred")
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return {
     playbackState,
     loading,
@@ -113,5 +187,11 @@ export function useSpotify() {
     nextTrack,
     previousTrack,
     refetch: fetchPlaybackState,
+     playlists,
+    albums,
+    fetchPlaylists,
+    fetchAlbums,
+    playPlaylist,
+    playAlbum,
   }
 }
