@@ -1,0 +1,66 @@
+-- Create user table
+CREATE TABLE "user" (
+  "id" text PRIMARY KEY,
+  "name" text,
+  "email" text UNIQUE,
+  "emailVerified" timestamp,
+  "image" text
+);
+
+-- Create account table
+CREATE TABLE "account" (
+  "userId" text NOT NULL REFERENCES "user"("id") ON DELETE CASCADE,
+  "type" text NOT NULL,
+  "provider" text NOT NULL,
+  "providerAccountId" text NOT NULL,
+  "refresh_token" text,
+  "access_token" text,
+  "expires_at" integer,
+  "token_type" text,
+  "scope" text,
+  "id_token" text,
+  "session_state" text,
+  PRIMARY KEY ("provider", "providerAccountId")
+);
+
+-- Create session table
+CREATE TABLE "session" (
+  "sessionToken" text PRIMARY KEY,
+  "userId" text NOT NULL REFERENCES "user"("id") ON DELETE CASCADE,
+  "expires" timestamp NOT NULL
+);
+
+-- Create verification_token table
+CREATE TABLE "verification_token" (
+  "identifier" text NOT NULL,
+  "token" text NOT NULL,
+  "expires" timestamp NOT NULL,
+  PRIMARY KEY ("identifier", "token")
+);
+
+-- Create friendship table
+CREATE TABLE "friendship" (
+  "id" text PRIMARY KEY,
+  "requesterId" text NOT NULL REFERENCES "user"("id") ON DELETE CASCADE,
+  "addresseeId" text NOT NULL REFERENCES "user"("id") ON DELETE CASCADE,
+  "status" text NOT NULL DEFAULT 'pending',
+  "createdAt" timestamp DEFAULT NOW()
+);
+
+-- Create conversation table
+CREATE TABLE "conversation" (
+  "id" text PRIMARY KEY,
+  "user1Id" text NOT NULL REFERENCES "user"("id") ON DELETE CASCADE,
+  "user2Id" text NOT NULL REFERENCES "user"("id") ON DELETE CASCADE,
+  "createdAt" timestamp DEFAULT NOW()
+);
+
+-- Create message table
+CREATE TABLE "message" (
+  "id" text PRIMARY KEY,
+  "conversationId" text NOT NULL REFERENCES "conversation"("id") ON DELETE CASCADE,
+  "senderId" text NOT NULL REFERENCES "user"("id") ON DELETE CASCADE,
+  "content" text NOT NULL,
+  "createdAt" timestamp DEFAULT NOW(),
+  "isRead" boolean DEFAULT false
+);

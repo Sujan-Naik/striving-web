@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, integer, primaryKey } from "drizzle-orm/pg-core"
+import { pgTable, text, timestamp, integer, primaryKey, boolean } from "drizzle-orm/pg-core"
 
 export const user = pgTable("user", {
   id: text("id")
@@ -13,9 +13,6 @@ export const user = pgTable("user", {
 export const account = pgTable(
   "account",
   {
-    id: text("id")
-      .primaryKey()
-      .$defaultFn(() => crypto.randomUUID()),
     userId: text("userId")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
@@ -38,10 +35,7 @@ export const account = pgTable(
 )
 
 export const session = pgTable("session", {
-  id: text("id")
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  sessionToken: text("sessionToken").unique().notNull(),
+  sessionToken: text("sessionToken").primaryKey().notNull(),
   userId: text("userId")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
@@ -59,3 +53,29 @@ export const verification_token = pgTable(
     compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
   }),
 )
+
+
+
+export const friendship = pgTable("friendship", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  requesterId: text("requesterId").notNull().references(() => user.id, { onDelete: "cascade" }),
+  addresseeId: text("addresseeId").notNull().references(() => user.id, { onDelete: "cascade" }),
+  status: text("status").notNull().default("pending"), // pending, accepted, rejected
+  createdAt: timestamp("createdAt", { mode: "date" }).defaultNow(),
+})
+
+export const conversation = pgTable("conversation", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  user1Id: text("user1Id").notNull().references(() => user.id, { onDelete: "cascade" }),
+  user2Id: text("user2Id").notNull().references(() => user.id, { onDelete: "cascade" }),
+  createdAt: timestamp("createdAt", { mode: "date" }).defaultNow(),
+})
+
+export const message = pgTable("message", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  conversationId: text("conversationId").notNull().references(() => conversation.id, { onDelete: "cascade" }),
+  senderId: text("senderId").notNull().references(() => user.id, { onDelete: "cascade" }),
+  content: text("content").notNull(),
+  createdAt: timestamp("createdAt", { mode: "date" }).defaultNow(),
+  isRead: boolean("isRead").default(false),
+})

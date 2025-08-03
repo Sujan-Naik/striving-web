@@ -5,6 +5,7 @@ declare module "next-auth" {
    */
   interface User {
     // You can add custom user fields here if needed
+    userId?: string
   }
 
   /**
@@ -20,6 +21,7 @@ declare module "next-auth" {
    */
   interface Session {
     user: {
+      userId: string // Add userId to session user
       providers?: Record<string, {
         accessToken: string;
         // refreshToken: string;
