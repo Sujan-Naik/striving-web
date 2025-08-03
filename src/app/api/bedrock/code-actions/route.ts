@@ -57,7 +57,7 @@ Do not include any text before or after the JSON. Do not wrap in markdown code b
   const command = new ConverseCommand({
     modelId,
     messages: conversation,
-    inferenceConfig: {maxTokens: 10000, temperature: 0.5, topP: 0.9},
+    inferenceConfig: {maxTokens: 30000, temperature: 0.5, topP: 0.9},
   });
 
   try {
