@@ -1,5 +1,5 @@
 import {EventProps} from "@/components/calendar/event-props";
-import {googleApi} from "@/lib/provider-api-client";
+import {googleApi} from "@/lib/api-client";
 
 export async function handleCreateEvent(event: EventProps, options: {
   calendarId?: string;

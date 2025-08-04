@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { googleApi } from "@/lib/provider-api-client"
+import { googleApi } from "@/lib/api-client"
 
 export interface MailItem {
   id: string

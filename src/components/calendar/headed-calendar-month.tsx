@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {HeadedButton, HeadedCard, HeadedModal, VariantEnum} from "headed-ui"; // import the month view
 import {EventProps} from "@/components/calendar/event-props";
-import {googleApi} from "@/lib/provider-api-client";
+import {googleApi} from "@/lib/api-client";
 import CreateCalendarEvent from "@/components/calendar/create-calendar-event";
 
 

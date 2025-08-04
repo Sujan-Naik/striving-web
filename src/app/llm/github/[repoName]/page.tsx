@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { Repository } from '@/types/github';
 import RepoDetails from '@/components/github/RepoDetails/RepoDetails';
-import {githubApi} from "@/lib/provider-api-client";
+import {githubApi} from "@/lib/api-client";
 import CodeEditor from '@/components/github/CodeEditor/CodeEditor';
 
 

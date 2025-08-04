@@ -1,6 +1,6 @@
 
 
-import { githubApi } from "@/lib/provider-api-client"
+import { githubApi } from "@/lib/api-client"
 import { Github, List } from "lucide-react"
 import Link from "next/link"
 import { CreateProjectItem } from "@/components/github/create-project-item"

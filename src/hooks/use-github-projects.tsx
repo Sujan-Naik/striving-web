@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { githubApi } from "@/lib/provider-api-client"
+import { githubApi } from "@/lib/api-client"
 
 // Define more detailed types for ProjectV2 and its items
 export interface ProjectV2SingleSelectFieldOption {

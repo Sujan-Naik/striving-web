@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { githubApi } from "@/lib/provider-api-client"
+import { githubApi } from "@/lib/api-client"
 
 export interface Repo {
   name: string

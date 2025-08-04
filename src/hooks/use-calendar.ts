@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { googleApi } from "@/lib/provider-api-client"
+import { googleApi } from "@/lib/api-client"
 import {VariantEnum } from "headed-ui"
 import {EventProps} from "@/components/calendar/event-props";
 

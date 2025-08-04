@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { githubApi } from '@/lib/provider-api-client';
+import { githubApi } from '@/lib/api-client';
 import { Repository, CreateRepoData } from '@/types/github';
 import RepoForm from '@/components/github/RepoForm/RepoForm';
 import RepoList from '@/components/github/RepoList/RepoList';
