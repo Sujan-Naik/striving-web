@@ -17,17 +17,17 @@ export async function POST(request: Request) {
     // }
   });
 
-  const modelId = "us.anthropic.claude-sonnet-4-20250514-v1:0";
+  // const modelId = "us.anthropic.claude-sonnet-4-20250514-v1:0";
   // const modelId = "anthropic.claude-3-7-sonnet-20250219-v1:0";
-  // const modelId = "us.deepseek.r1-v1:0";
+  const modelId = "us.deepseek.r1-v1:0";
 
   const conversation: Message[] = [
-    {
-      role: "assistant",
-      content: [{
-        text: "Be concise. For code: Don't provide a lot of styling unless requested."
-      }],
-    },
+    // {
+    //   role: "assistant",
+    //   content: [{
+    //     text: "Be concise. For code: Don't provide a lot of styling unless requested."
+    //   }],
+    // },
     {
       role: "user",
       content: [{ text: userQuery }],
