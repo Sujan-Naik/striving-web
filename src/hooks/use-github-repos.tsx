@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { githubApi } from "@/lib/api-client"
 
 export interface Repo {
   name: string
@@ -21,38 +20,37 @@ export function useGithubRepos() {
     setLoading(true)
     setError(null)
 
-    const userResult = await githubApi.getAuthOwner()
-    if (userResult.success) {
-      const owner = userResult.data.login
-
-      try {
-        const result = await githubApi.getRepos(owner, {
-          sort: "updated",
-          direction: "desc",
-          per_page: 50,
-        })
-
-        if (!result.success) {
-          setError(result.error)
-          return
-        }
-
-        const publicRepos: Repo[] = result.data
-            .map((repo: any) => ({
-              name: repo.name,
-              description: repo.description || "No description available",
-              html_url: repo.html_url,
-              language: repo.language || "Unknown",
-              stargazers_count: repo.stargazers_count,
-              updated_at: repo.updated_at,
-            }))
-
-        setRepos(publicRepos)
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Unknown error occurred")
-      } finally {
-        setLoading(false)
+    try {
+      // Get user info first
+      const userResponse = await fetch('/api/github/user')
+      if (!userResponse.ok) {
+        throw new Error(`Failed to get user: ${userResponse.status}`)
       }
+      const user = await userResponse.json()
+
+      // Get repos
+      const reposResponse = await fetch(`/api/github/repos?owner=${user.login}&sort=updated&direction=desc&per_page=50`)
+      if (!reposResponse.ok) {
+        throw new Error(`Failed to fetch repos: ${reposResponse.status}`)
+      }
+
+      const reposData = await reposResponse.json()
+
+      const publicRepos: Repo[] = reposData
+        .map((repo: any) => ({
+          name: repo.name,
+          description: repo.description || "No description available",
+          html_url: repo.html_url,
+          language: repo.language || "Unknown",
+          stargazers_count: repo.stargazers_count,
+          updated_at: repo.updated_at,
+        }))
+
+      setRepos(publicRepos)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unknown error occurred")
+    } finally {
+      setLoading(false)
     }
   }
 
