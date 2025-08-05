@@ -301,6 +301,10 @@ export const githubApi = {
     return callProviderApi("github", `https://api.github.com/users/${owner}/repos`, { params: apiParams })
   },
 
+  getRepo: (owner: string, repo: string) => {
+  return callProviderApi("github", `https://api.github.com/repos/${owner}/${repo}`)
+  },
+
   getAuthOwner: () => {
     return callProviderApi("github", "https://api.github.com/user")
   },

@@ -1,18 +1,11 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { Repository } from '@/types/github';
 
-export interface Repo {
-  name: string
-  description: string
-  html_url: string
-  language: string
-  stargazers_count: number
-  updated_at: string
-}
 
 export function useGithubRepos() {
-  const [repos, setRepos] = useState<Repo[]>([])
+  const [repos, setRepos] = useState<Repository[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -36,7 +29,7 @@ export function useGithubRepos() {
 
       const reposData = await reposResponse.json()
 
-      const publicRepos: Repo[] = reposData
+      const publicRepos: Repository[] = reposData
         .map((repo: any) => ({
           name: repo.name,
           description: repo.description || "No description available",
