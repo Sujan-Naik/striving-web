@@ -5,7 +5,7 @@ import type React from "react"
 import { useState } from "react"
 import { HeadedButton, HeadedCard, HeadedDialog, VariantEnum } from "headed-ui"
 import { Plus, AlertCircle, CheckCircle } from "lucide-react"
-import { githubApi } from "@/lib/provider-api-client"
+import { githubApi } from "@/lib/api-client"
 
 interface CreateProjectForm {
   title: string

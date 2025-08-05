@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { spotifyApi } from "@/lib/provider-api-client"
+import { spotifyApi } from "@/lib/api-client"
 
 export interface PlaybackState {
   is_playing: boolean

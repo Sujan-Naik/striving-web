@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { githubApi } from "@/lib/provider-api-client"
 
 // Define more detailed types for ProjectV2 and its items
 export interface ProjectV2SingleSelectFieldOption {
@@ -78,31 +77,31 @@ export function useGithubProjects() {
 
     try {
       console.log("Fetching GitHub projects...")
-      const result = await githubApi.getProjectsV2(50)
 
-      console.log("GitHub API result:", result)
+      const response = await fetch('/api/github/projects')
 
-      if (!result.success) {
-        console.error("API call failed:", result.error)
-        setError(`API Error: ${result.error}`)
+      if (!response.ok) {
+        setError(`HTTP Error: ${response.status} ${response.statusText}`)
         return
       }
 
-      console.log("Raw GraphQL response:", JSON.stringify(result.data, null, 2))
+      const data = await response.json()
+      console.log("GitHub API response:", data)
 
-      if (result.data.errors) {
-        console.error("GraphQL errors:", result.data.errors)
-        setError(`GraphQL Error: ${result.data.errors[0]?.message || "Unknown GraphQL error"}`)
+      if (data.errors) {
+        console.error("GraphQL errors:", data.errors)
+        setError(`GraphQL Error: ${data.errors[0]?.message || "Unknown GraphQL error"}`)
         return
       }
 
-      const projectsData = result.data.data?.viewer?.projectsV2?.nodes || []
+      const projectsData = data.data?.viewer?.projectsV2?.nodes || []
       console.log("Projects data:", projectsData)
 
       const projects: ProjectV2[] = projectsData.map((project: any) => ({
         id: project.id,
         title: project.title,
         shortDescription: project.shortDescription,
+        readme: project.readme,
         url: project.url,
         public: project.public,
         closed: project.closed,
@@ -112,8 +111,8 @@ export function useGithubProjects() {
           login: project.owner?.login || "Unknown",
           avatarUrl: project.owner?.avatarUrl || "",
         },
-        fields: null,
-        items: null, // Items are not fetched in this query
+        fields: project.fields || null,
+        items: project.items || null,
       }))
 
       console.log("Mapped projects:", projects)

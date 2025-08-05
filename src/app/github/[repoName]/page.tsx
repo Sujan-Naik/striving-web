@@ -5,7 +5,6 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { Repository } from '@/types/github';
 import RepoDetails from '@/components/github/RepoDetails/RepoDetails';
-import {githubApi} from "@/lib/provider-api-client";
 import CodeEditor from '@/components/github/CodeEditor/CodeEditor';
 
 
@@ -24,29 +23,23 @@ export default function RepoPage() {
     setIsLoading(true);
     setError(null);
 
-    const userResult = await githubApi.getAuthOwner()
-    if (userResult.success) {
-      const owner = userResult.data.login
-      try {
-        const response = await githubApi.getRepos(owner);
-        if (!response.success) {
-          throw new Error('Getting Repos Failed')
-        }
-
-        const repos = response.data || [];
-        const repo = repos.find((r: Repository) => r.name === repoName);
-
-        if (repo) {
-          setRepository(repo);
-        } else {
-          setError('Repository not found');
-        }
-      } catch (error) {
-        setError('Failed to load repository');
-        console.error('Failed to load repository:', error);
-      } finally {
-        setIsLoading(false);
+    try {
+      const userResponse = await fetch('/api/github/user');
+      if (!userResponse.ok) {
+        throw new Error(`Failed to get user: ${userResponse.status}`);
       }
+      const user = await userResponse.json();
+
+      const reposResponse = await fetch(`/api/github/repos/${repoName}?owner=${user.login}`);
+      if (!reposResponse.ok) {
+        throw new Error(`Failed to fetch repos: ${reposResponse.status}`);
+      }
+
+      setRepository(await reposResponse.json());
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -58,7 +51,7 @@ export default function RepoPage() {
     return (
       <div>
         <p>Error: {error}</p>
-        <Link href="/llm/github">← Back to repositories</Link>
+        <Link href="/github">← Back to repositories</Link>
       </div>
     );
   }
@@ -67,14 +60,14 @@ export default function RepoPage() {
     return (
       <div>
         <p>Repository not found</p>
-        <Link href="/llm/github">← Back to repositories</Link>
+        <Link href="/githtub">← Back to repositories</Link>
       </div>
     );
   }
 
   return (
   <div>
-    <Link href="/llm/github">← Back to repositories</Link>
+    <Link href="/github">← Back to repositories</Link>
     <RepoDetails repository={repository} />
     <CodeEditor
       owner={repository.owner.login}

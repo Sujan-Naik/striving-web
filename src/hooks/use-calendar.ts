@@ -1,10 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { googleApi } from "@/lib/provider-api-client"
-import {VariantEnum } from "headed-ui"
-import {EventProps} from "@/components/calendar/event-props";
-
+import { VariantEnum } from "headed-ui"
+import { EventProps } from "@/components/calendar/event-props"
 
 export function useCalendar(calendarId: string) {
   const [events, setEvents] = useState<EventProps[]>([])
@@ -16,17 +14,18 @@ export function useCalendar(calendarId: string) {
     setError(null)
 
     try {
-      const result = await googleApi.calendar.getEvents({
-        calendarId: calendarId
-      })
+      const response = await fetch(`/api/google/calendar/events?calendarId=${calendarId}`)
 
-      if (!result.success) {
-        setError(result.error)
+      if (!response.ok) {
+        const errorData = await response.json()
+        setError(errorData.error || "Failed to fetch events")
         return
       }
-      console.log(result.data.items)
-      // Map Google Calendar events to HeadedCalendar EventProps format
-      const fetchedEvents: EventProps[] = (result.data.items || []).map((item: any) => ({
+
+      const data = await response.json()
+      console.log(data.items)
+
+      const fetchedEvents: EventProps[] = (data.items || []).map((item: any) => ({
         variant: VariantEnum.Primary,
         name: item.summary || "(No Title)",
         description: item.description || "",

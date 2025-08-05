@@ -3,7 +3,7 @@
 import type React from "react"
 import { useState } from "react"
 import { Plus, AlertCircle, CheckCircle } from "lucide-react"
-import { githubApi } from "@/lib/provider-api-client"
+import { githubApi } from "@/lib/api-client"
 import type { ProjectV2SingleSelectFieldOption } from "@/hooks/use-github-projects"
 import { HeadedButton, HeadedCard, HeadedDialog, VariantEnum } from "headed-ui" // Reverted to Headed components
 

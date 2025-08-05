@@ -1,58 +1,40 @@
-
-
-import { githubApi } from "@/lib/provider-api-client"
+'use client'
 import { Github, List } from "lucide-react"
 import Link from "next/link"
 import { CreateProjectItem } from "@/components/github/create-project-item"
-import { revalidatePath } from "next/cache"
 import { ErrorDisplay } from "@/components/project/ErrorDisplay"
 import { ProjectContent } from "@/components/project/ProjectContent"
 import styles from "@/styles/project.module.css"
-import type { ProjectV2, ProjectV2Item } from "@/hooks/use-github-projects"
+import type { ProjectV2Item } from "@/hooks/use-github-projects"
+import { useProject } from "@/hooks/use-github-project"
+import { useEffect, useState } from "react"
 
 interface ProjectPageProps {
   params: { projectId: string }
 }
 
-export default async function ProjectPage({ params }: ProjectPageProps) {
-  const { projectId } = await params
-  const result = await githubApi.getProjectV2ById(projectId)
+export default function ProjectPage({ params }: ProjectPageProps) {
+  const [projectId, setProjectId] = useState<string | null>(null)
+  const { project, loading, error, refetchProject } = useProject(projectId)
 
-  async function revalidateProjectPage() {
-    "use server"
-    revalidatePath(`/github/projects/[project-id]`)
-  }
+  useEffect(() => {
+    async function resolveParams() {
+      const resolvedParams = await params
+      setProjectId(resolvedParams.projectId)
+    }
+    resolveParams()
+  }, [params])
 
-  if (!result.success) {
-    return <ErrorDisplay title="Error Loading Project" message={result.error} iconColor="text-red-500" />
-  }
+  if (loading) return <div>Loading...</div>
+  if (error) return <ErrorDisplay title="Error" message={error} iconColor="text-red-500" />
+  if (!project || !projectId) return <ErrorDisplay title="Project Not Found" message="Project not found" iconColor="text-orange-500" />
 
-  if (result.data.errors) {
-    return <ErrorDisplay 
-      title="GraphQL Error" 
-      message={result.data.errors[0]?.message || "Unknown GraphQL error"} 
-      iconColor="text-red-500" 
-    />
-  }
-
-  const project: ProjectV2 | null = result.data.data?.node
-
-  if (!project) {
-    return <ErrorDisplay 
-      title="Project Not Found" 
-      message={`The project with ID "${projectId}" could not be found.`} 
-      iconColor="text-orange-500" 
-    />
-  }
-
-  // Status field logic
   const statusField = project.fields?.nodes?.find(
     (field) => (field.name.toLowerCase() === "status" || field.name.toLowerCase() === "state") && field.options
   )
   const statusOptions = statusField?.options || []
   const statusFieldId = statusField?.id || null
 
-  // Process items by status
   const itemsByStatus: Record<string, ProjectV2Item[]> = {}
   const defaultStatus = "No Status"
 
@@ -75,7 +57,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           {project.title}
         </h1>
         <div className={styles.headerActions}>
-          <CreateProjectItem projectId={projectId} onItemCreated={revalidateProjectPage} />
+          <CreateProjectItem projectId={projectId} onItemCreated={refetchProject} />
           <Link href="/github/projects" className={styles.backLink}>
             <List className="h-4 w-4" />
             Back to Projects
@@ -89,7 +71,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         itemsByStatus={itemsByStatus}
         statusFieldId={statusFieldId}
         statusOptions={statusOptions}
-        revalidateProjectPage={revalidateProjectPage}
+        revalidateProjectPage={refetchProject}
       />
     </div>
   )

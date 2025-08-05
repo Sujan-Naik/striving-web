@@ -292,13 +292,28 @@ export const spotifyApi = {
 }
 
 export const githubApi = {
-    getRepos: (owner: string, params?: { sort?: string; direction?: string; per_page?: number }) => {
+    getRepos: (owner: string, params?: { sort?: string; direction?: string; per_page?: number, type?: string }) => {
     const apiParams: Record<string, string | number | boolean> = {}
 
     if (params?.sort) apiParams.sort = params.sort
     if (params?.direction) apiParams.direction = params.direction
     if (params?.per_page) apiParams.per_page = params.per_page
+    if (params?.type) apiParams.type = params.type
     return callProviderApi("github", `https://api.github.com/users/${owner}/repos`, { params: apiParams })
+  },
+
+  getAuthUserRepos: (params?: { sort?: string; direction?: string; per_page?: number, type?: string }) => {
+    const apiParams: Record<string, string | number | boolean> = {}
+
+    if (params?.sort) apiParams.sort = params.sort
+    if (params?.direction) apiParams.direction = params.direction
+    if (params?.per_page) apiParams.per_page = params.per_page
+    if (params?.type) apiParams.type = params.type
+    return callProviderApi("github", `https://api.github.com/user/repos`, { params: apiParams })
+  },
+
+  getRepo: (owner: string, repo: string) => {
+  return callProviderApi("github", `https://api.github.com/repos/${owner}/${repo}`)
   },
 
   getAuthOwner: () => {

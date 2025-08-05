@@ -2,7 +2,7 @@
 
 import {LinkIcon, Loader2, Tag} from "lucide-react"
 import type {ProjectV2Item, ProjectV2SingleSelectFieldOption} from "@/hooks/use-github-projects"
-import {githubApi} from "@/lib/provider-api-client"
+import {githubApi} from "@/lib/api-client"
 import {useState} from "react"
 import {HeadedCard, HeadedLink, VariantEnum} from "headed-ui"
 import styles from "@/styles/KanbanBoard.module.css"

@@ -68,7 +68,6 @@ export default function Header() {
           <HeadedLink variant={VariantEnum.Primary} href="/github/projects">Projects</HeadedLink>
           <HeadedLink variant={VariantEnum.Primary} href="/gmail">Gmail</HeadedLink>
           <HeadedLink variant={VariantEnum.Primary} href="/llm">LLM</HeadedLink>
-          <HeadedLink variant={VariantEnum.Primary} href="/llm/github">LLM GitHub</HeadedLink>
           <HeadedLink variant={VariantEnum.Primary} href="/spotify">Spotify</HeadedLink>
           <HeadedLink variant={VariantEnum.Primary} href="/login">Login</HeadedLink>
           <HeadedLink variant={VariantEnum.Primary} href="/sign-out">Sign Out</HeadedLink>

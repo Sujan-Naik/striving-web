@@ -10,13 +10,12 @@ export default function RepoList({ repositories }: RepoListProps) {
   if (repositories.length === 0) {
     return <p>No repositories found.</p>;
   }
-
   return (
     <div className={styles.list}>
-      {repositories.map((repo) => (
-        <div key={repo.id} className={styles.item}>
+      {repositories.map((repo, index) => (
+        <div key={index} className={styles.item}>
           <h3>
-            <Link href={`/llm/github/${repo.name}`}>
+            <Link href={`/github/${repo.name}`}>
               {repo.name}
             </Link>
           </h3>
