@@ -22,3 +22,25 @@ export async function GET(request: NextRequest) {
 
   return NextResponse.json(result.data)
 }
+
+export async function DELETE(request: NextRequest) {
+  const { searchParams } = new URL(request.url)
+
+  const eventId = searchParams.get('eventId')
+  const calendarId = searchParams.get('calendarId')
+
+  if (!eventId || !calendarId) {
+    return NextResponse.json({ error: 'eventId and calendarId required' }, { status: 400 })
+  }
+
+  const result = await googleApi.calendar.deleteEvent({
+    eventId,
+    calendarId
+  })
+
+  if (!result.success) {
+    return NextResponse.json(result, { status: result.status || 500 })
+  }
+
+  return NextResponse.json({ success: true })
+}

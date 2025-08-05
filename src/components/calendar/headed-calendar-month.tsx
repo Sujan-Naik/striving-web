@@ -1,7 +1,6 @@
 import React, {useState} from "react";
 import {HeadedButton, HeadedCard, HeadedModal, VariantEnum} from "headed-ui"; // import the month view
 import {EventProps} from "@/components/calendar/event-props";
-import {googleApi} from "@/lib/api-client";
 import CreateCalendarEvent from "@/components/calendar/create-calendar-event";
 
 
@@ -58,11 +57,14 @@ export const HeadedCalendarMonth: React.FC<CalendarProps> = ({variant, year, mon
 
     const options = {year: 'numeric', month: 'short', day: 'numeric'} as const;
 
-    function deleteEventCallback( eventId: string){
-        googleApi.calendar.deleteEvent({
-            eventId: eventId,
-            calendarId: calendarId
-        }).then(r => changeCallback())
+    async function deleteEventCallback(eventId: string) {
+      const response = await fetch(`/api/google/calendar/events?eventId=${eventId}&calendarId=${calendarId}`, {
+        method: 'DELETE'
+      })
+
+      if (response.ok) {
+        changeCallback()
+      }
     }
 
     const [isModalOpen, setIsModalOpen] = useState(false);
