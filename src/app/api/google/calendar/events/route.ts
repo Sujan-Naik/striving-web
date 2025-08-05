@@ -15,6 +15,7 @@ export async function GET(request: NextRequest) {
 
   const result = await googleApi.calendar.getEvents(params)
 
+  console.log(result)
   if (!result.success) {
     return NextResponse.json(result, { status: result.status || 500 })
   }

@@ -18,7 +18,6 @@ export async function refreshProviderToken(
   provider: ProviderName,
 ): Promise<{ success: true; accessToken: string } | { success: false; error: string }> {
   try {
-    // Get the account record
     const accounts = await db
       .select()
       .from(account)
@@ -27,30 +26,20 @@ export async function refreshProviderToken(
 
     const providerAccount = accounts[0]
     if (!providerAccount) {
-      // This case should ideally be caught earlier by getProviderToken
       return { success: false, error: "Provider account not found for user" }
     }
+
     if (!providerAccount.refresh_token) {
-      // If no refresh token, invalidate and return error
-      await db
-        .update(account)
-        .set({ access_token: null, refresh_token: null, expires_at: null })
-        .where(and(eq(account.userId, userId), eq(account.provider, provider)))
+      await invalidateTokens(userId, provider)
       return { success: false, error: "No refresh token available for this provider" }
     }
 
-    // Get provider-specific refresh configuration
     const refreshConfig = getRefreshConfig(provider)
     if (!refreshConfig) {
-      // If refresh is not supported for this provider, invalidate and return error
-      await db
-        .update(account)
-        .set({ access_token: null, refresh_token: null, expires_at: null })
-        .where(and(eq(account.userId, userId), eq(account.provider, provider)))
+      await invalidateTokens(userId, provider)
       return { success: false, error: `Token refresh not supported for ${provider}` }
     }
 
-    // Make refresh request
     const response = await fetch(refreshConfig.tokenUrl, {
       method: "POST",
       headers: {
@@ -65,27 +54,19 @@ export async function refreshProviderToken(
     })
 
     if (!response.ok) {
-      const errorText = await response.text()
-      console.error(`Token refresh failed for ${provider}:`, errorText)
-      // Invalidate tokens in DB on refresh failure
-      await db
-        .update(account)
-        .set({ access_token: null, refresh_token: null, expires_at: null })
-        .where(and(eq(account.userId, userId), eq(account.provider, provider)))
+      console.error(`Token refresh failed for ${provider}:`, await response.text())
+      await invalidateTokens(userId, provider)
       return { success: false, error: `Token refresh failed: ${response.statusText}` }
     }
 
     const tokenData: RefreshTokenResponse = await response.json()
-
-    // Calculate new expiration time
     const expiresAt = Math.floor(Date.now() / 1000) + tokenData.expires_in
 
-    // Update the database
     await db
       .update(account)
       .set({
         access_token: tokenData.access_token,
-        refresh_token: tokenData.refresh_token || providerAccount.refresh_token, // Keep old refresh token if new one not provided
+        refresh_token: tokenData.refresh_token || providerAccount.refresh_token,
         expires_at: expiresAt,
         scope: tokenData.scope || providerAccount.scope,
       })
@@ -94,13 +75,16 @@ export async function refreshProviderToken(
     return { success: true, accessToken: tokenData.access_token }
   } catch (error) {
     console.error(`Error refreshing ${provider} token:`, error)
-    // Invalidate tokens in DB on unexpected errors during refresh
-    await db
-      .update(account)
-      .set({ access_token: null, refresh_token: null, expires_at: null })
-      .where(and(eq(account.userId, userId), eq(account.provider, provider)))
+    await invalidateTokens(userId, provider)
     return { success: false, error: error instanceof Error ? error.message : "Unknown error" }
   }
+}
+
+async function invalidateTokens(userId: string, provider: ProviderName) {
+  await db
+    .update(account)
+    .set({ access_token: null, refresh_token: null, expires_at: null })
+    .where(and(eq(account.userId, userId), eq(account.provider, provider)))
 }
 
 function getRefreshConfig(provider: ProviderName) {
@@ -120,11 +104,7 @@ function getRefreshConfig(provider: ProviderName) {
         extraParams: {},
       }
     case "github":
-      // GitHub tokens don't expire, but we'll include it for completeness
-      // Note: GitHub's token refresh flow is different (no standard refresh token)
-      // For GitHub, if the access token is invalid, the user must re-authenticate.
-      // We'll treat it as "not supported" for automatic refresh via refresh_token flow.
-      return null // Explicitly return null for GitHub as it doesn't use refresh tokens this way
+      return null
     default:
       return null
   }
