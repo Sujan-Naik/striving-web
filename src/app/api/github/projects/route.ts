@@ -5,7 +5,6 @@ import {githubApi} from "@/lib/api-client";
 export async function GET() {
   try {
     const result = await githubApi.getProjectsV2()
-
     if (!result.success) {
       return Response.json({ error: result.error }, { status: result.status || 500 })
     }
