@@ -16,8 +16,16 @@ export default function GitHubPage() {
 
   const handleCreateRepo = async (data: CreateRepoData) => {
     setIsCreating(true);
+
     try {
-      await fetch('/api/github/repos', {
+       const userResponse = await fetch('/api/github/user');
+
+      if (!userResponse.ok) {
+        throw new Error(`Failed to get user: ${userResponse.status}`);
+      }
+      const user = await userResponse.json();
+
+      await fetch(`/api/github/repos?owner=${user.login}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -32,6 +40,7 @@ export default function GitHubPage() {
     }
   };
 
+  console.log(repos)
   return (
     <div>
       <h1>GitHub Repository Manager</h1>

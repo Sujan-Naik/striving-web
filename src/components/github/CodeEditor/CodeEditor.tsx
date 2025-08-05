@@ -2,7 +2,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { githubApi } from '@/lib/api-client';
 import { CodeAction } from "@/types/codeActions";
 
 interface CodeActionsProps {
@@ -135,7 +134,7 @@ function FileSelector({
           </div>
         ))}
       </div>
-      <button onClick={onSend} disabled={selectedFiles.size === 0}>
+      <button onClick={onSend}>
         Send to LLM
       </button>
       <button onClick={onCancel} style={{ marginLeft: '10px' }}>
@@ -149,19 +148,32 @@ function FileSelector({
     const files: Array<{path: string, content: string, type: string}> = [];
 
     try {
-      const response = await githubApi.getContents(owner, repo, path, currentBranch);
-      if (!response.success) return files;
 
-      const items = Array.isArray(response.data) ? response.data : [response.data];
+      const response = await fetch(`/api/github/contents?owner=${owner}&repo=${repo}&path=${path}&currentBranch=${currentBranch}`)
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch contents: ${response.status} ${response.statusText}`)
+      }
+
+      const {data} = await response.json()
+
+      const items = Array.isArray(data) ? data : [data];
 
       for (const item of items) {
         if (item.type === 'file') {
           // Get file content
-          const fileResponse = await githubApi.getFile(owner, repo, item.path, currentBranch);
-          if (fileResponse.success && fileResponse.data.decodedContent) {
+
+
+          const response = await fetch(`/api/github/file?owner=${owner}&repo=${repo}&path=${item.path}&currentBranch=${currentBranch}`)
+
+            if (!response.ok) {
+              throw new Error(`Failed to fetch contents: ${response.status} ${response.statusText}`)
+            }
+          const {data} = await response.json()
+          if (data.decodedContent) {
             files.push({
               path: item.path,
-              content: fileResponse.data.decodedContent,
+              content: data.decodedContent,
               type: item.type
             });
           }
@@ -184,11 +196,20 @@ function FileSelector({
         const encodedContent = btoa(action.content || '');
         const existingFile = contents.find(c => c.path === action.path);
 
-        await githubApi.updateFile(owner, repo, action.path, {
-          message: action.message,
-          content: encodedContent,
-          sha: existingFile?.sha,
-          branch: currentBranch
+        await fetch('/api/github/file', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            owner,
+            repo,
+            path: action.path,
+            message: action.message,
+            content: action.content || '',
+            sha: existingFile?.sha,
+            branch: currentBranch
+          })
         });
       }
       // Handle delete actions similarly
@@ -206,47 +227,71 @@ function FileSelector({
   }, [currentBranch]);
 
   const loadBranches = async () => {
-    const response = await githubApi.getBranches(owner, repo);
-    if (response.success) {
-      setBranches(response.data || []);
+    const response = await fetch(`/api/github/branches?owner=${owner}&repo=${repo}`);
+    if (response.ok) {
+      const {data} = await response.json();
+      setBranches(data || []);
     }
   };
 
   const loadContents = async () => {
     setIsLoading(true);
-    const response = await githubApi.getContents(owner, repo, currentPath, currentBranch);
-    if (response.success) {
-      setContents(Array.isArray(response.data) ? response.data : [response.data]);
-    }
+    const response = await fetch(`/api/github/contents?owner=${owner}&repo=${repo}&path=${currentPath}&currentBranch=${currentBranch}`)
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch contents: ${response.status} ${response.statusText}`)
+      }
+
+      const {data} = await response.json()
+      setContents(Array.isArray(data) ? data : [data]);
+
     setIsLoading(false);
   };
 
   const openFile = async (path: string) => {
-    const response = await githubApi.getFile(owner, repo, path, currentBranch);
-    if (response.success && response.data.decodedContent) {
+    const response = await fetch(`/api/github/file?owner=${owner}&repo=${repo}&path=${path}&currentBranch=${currentBranch}`)
+
+            if (!response.ok) {
+              throw new Error(`Failed to fetch contents: ${response.status} ${response.statusText}`)
+            }
+          const {data} = await response.json()
+
+    if (response.ok && data.decodedContent) {
       setCurrentFile(path);
-      setFileContent(response.data.decodedContent);
+      setFileContent(data.decodedContent);
     }
   };
 
   const saveFile = async () => {
-    if (!currentFile) return;
+  if (!currentFile) return;
 
-    const encodedContent = btoa(fileContent);
-    const currentFileData = contents.find(c => c.path === currentFile);
+  const currentFileData = contents.find(c => c.path === currentFile);
 
-    const response = await githubApi.updateFile(owner, repo, currentFile, {
-      message: `Update ${currentFile}`,
-      content: encodedContent,
-      sha: currentFileData?.sha,
-      branch: currentBranch
-    });
+  const response = await fetch(`/api/github/file`, {
+  method: 'PUT',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    owner,
+    repo,
+    path: currentFile,
+    branch: currentBranch,
+    message: `Update ${currentFile}`,
+    content: fileContent,
+    sha: currentFileData?.sha,
+  }),
+});
 
-    if (response.success) {
-      alert('File saved successfully!');
-      loadContents();
-    }
-  };
+  const result = await response.json();
+
+  if (result.success) {
+    alert('File saved successfully!');
+    loadContents();
+  } else {
+    alert(`Error: ${result.error}`);
+  }
+};
 
   const navigateToPath = (path: string, isDir: boolean) => {
     if (isDir) {
@@ -285,9 +330,9 @@ function FileSelector({
           <div>Loading...</div>
         ) : (
           <div>
-            {contents.map(item => (
+            {contents.map((item, index) => (
               <div
-                key={item.path}
+                key={item.path + index}
                 onClick={() => navigateToPath(item.path, item.type === 'dir')}
                 style={{
                   cursor: 'pointer',

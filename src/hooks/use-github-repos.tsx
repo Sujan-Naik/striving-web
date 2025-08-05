@@ -22,14 +22,14 @@ export function useGithubRepos() {
       const user = await userResponse.json()
 
       // Get repos
-      const reposResponse = await fetch(`/api/github/repos?owner=${user.login}&sort=updated&direction=desc&per_page=50`)
+    const reposResponse = await fetch(`/api/github/repos?type=all&sort=updated&direction=desc&per_page=50`)
       if (!reposResponse.ok) {
         throw new Error(`Failed to fetch repos: ${reposResponse.status}`)
       }
 
       const reposData = await reposResponse.json()
 
-      const publicRepos: Repository[] = reposData
+      const repos: Repository[] = reposData
         .map((repo: any) => ({
           name: repo.name,
           description: repo.description || "No description available",
@@ -39,7 +39,7 @@ export function useGithubRepos() {
           updated_at: repo.updated_at,
         }))
 
-      setRepos(publicRepos)
+      setRepos(repos)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unknown error occurred")
     } finally {

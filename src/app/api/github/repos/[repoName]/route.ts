@@ -13,7 +13,9 @@ export async function GET(
       return Response.json({ error: "Owner parameter is required" }, { status: 400 })
     }
 
-    const result = await githubApi.getRepo(owner, await params.repoName)
+    const {repoName} = await params
+
+    const result = await githubApi.getRepo(owner, repoName)
 
     if (!result.success) {
       return Response.json({ error: result.error }, { status: result.status || 500 })

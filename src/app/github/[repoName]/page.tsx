@@ -60,7 +60,7 @@ export default function RepoPage() {
     return (
       <div>
         <p>Repository not found</p>
-        <Link href="/github">← Back to repositories</Link>
+        <Link href="/githtub">← Back to repositories</Link>
       </div>
     );
   }

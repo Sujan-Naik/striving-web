@@ -17,16 +17,10 @@ export async function POST(request: Request) {
   const client = new BedrockRuntimeClient({region: "us-east-1"});
   const modelId = "us.anthropic.claude-sonnet-4-20250514-v1:0";
 
-  // Build codebase context
-  const codebaseContext = codebase.map((file: any) =>
-    `File: ${file.path}\n${file.content}`
-  ).join('\n\n---\n\n');
 
-  const systemPrompt = `You are a code assistant analyzing the ${owner}/${repo} repository (branch: ${branch}).
 
-Current codebase:
-${codebaseContext}
 
+  let systemPrompt = `You are a code assistant analyzing the ${owner}/${repo} repository (branch: ${branch}).
 
 You MUST respond with ONLY valid JSON in this exact form:
 {
@@ -42,6 +36,17 @@ You MUST respond with ONLY valid JSON in this exact form:
   "commitMessage": "Overall commit message"
 }
 Do not include any text before or after the JSON. Do not wrap in markdown code blocks`;
+
+
+  if (codebase){
+
+    // Build codebase context
+    const codebaseContext = codebase.map((file: any) =>
+      `File: ${file.path}\n${file.content}`
+    ).join('\n\n---\n\n');
+
+    systemPrompt = systemPrompt + `\nCurrent codebase:\n${codebaseContext}`
+  }
 
   const conversation: Message[] = [
     {
