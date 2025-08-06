@@ -96,13 +96,6 @@ function getRefreshConfig(provider: ProviderName) {
         clientSecret: process.env.AUTH_GOOGLE_SECRET!,
         extraParams: {},
       }
-    case "spotify":
-      return {
-        tokenUrl: "https://accounts.spotify.com/api/token",
-        clientId: process.env.AUTH_SPOTIFY_ID!,
-        clientSecret: process.env.AUTH_SPOTIFY_SECRET!,
-        extraParams: {},
-      }
     case "github":
       return null
     default:

@@ -41,13 +41,6 @@ const providers: Provider[] = [
       },
     },
   }),
-  Spotify({
-    clientId: process.env.AUTH_SPOTIFY_ID,
-    clientSecret: process.env.AUTH_SPOTIFY_SECRET,
-    allowDangerousEmailAccountLinking: true,
-    authorization:
-    "https://accounts.spotify.com/authorize?scope=user-read-email,user-read-playback-state,user-modify-playback-state,user-read-currently-playing,playlist-read-private,user-library-read",
-  }),
 ]
 
 export const providerMap = providers

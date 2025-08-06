@@ -243,54 +243,6 @@ export const googleApi = {
   },
 }
 
-export const spotifyApi = {
-  getCurrentPlayback: () => callProviderApi("spotify", "https://api.spotify.com/v1/me/player"),
-
-  play: () =>
-    callProviderApi("spotify", "https://api.spotify.com/v1/me/player/play", {
-      method: "PUT",
-    }),
-
-  pause: () =>
-    callProviderApi("spotify", "https://api.spotify.com/v1/me/player/pause", {
-      method: "PUT",
-    }),
-
-  next: () =>
-    callProviderApi("spotify", "https://api.spotify.com/v1/me/player/next", {
-      method: "POST",
-    }),
-
-  previous: () =>
-    callProviderApi("spotify", "https://api.spotify.com/v1/me/player/previous", {
-      method: "POST",
-    }),
-
-  getCurrentTrack: () => callProviderApi("spotify", "https://api.spotify.com/v1/me/player/currently-playing"),
-
-  getPlaylists: (params?: { limit?: number; offset?: number }) => {
-    const apiParams: Record<string, string | number | boolean> = {}
-
-    if (params?.limit) apiParams.limit = params.limit
-    if (params?.offset) apiParams.offset = params.offset
-
-    return callProviderApi("spotify", "https://api.spotify.com/v1/me/playlists", { params: apiParams })
-  },
-
-  getSavedAlbums: (params?: { limit?: number; offset?: number }) => {
-    const apiParams: Record<string, string | number | boolean> = {}
-    if (params?.limit) apiParams.limit = params.limit
-    if (params?.offset) apiParams.offset = params.offset
-    return callProviderApi("spotify", "https://api.spotify.com/v1/me/albums", { params: apiParams })
-  },
-
-  playContext: (contextUri: string) =>
-    callProviderApi("spotify", "https://api.spotify.com/v1/me/player/play", {
-      method: "PUT",
-      body: JSON.stringify({ context_uri: contextUri }),
-    }),
-}
-
 export const githubApi = {
     getRepos: (owner: string, params?: { sort?: string; direction?: string; per_page?: number, type?: string }) => {
     const apiParams: Record<string, string | number | boolean> = {}

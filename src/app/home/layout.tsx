@@ -7,23 +7,20 @@ export default function Layout({
   calendar,
   github,
     gmail,
-    spotify
 }: {
 
   children: React.ReactNode
   calendar: React.ReactNode
   github: React.ReactNode
   gmail: React.ReactNode
-  spotify: React.ReactNode
 }){
 
 
   // State for widths of each pane (percentage)
   const [sizes, setSizes] = useState({
-    calendar: 25,
-    github: 25,
-    gmail: 25,
-    spotify: 25,
+    calendar: 33,
+    github: 33,
+    gmail: 33,
   });
 
   // Refs to handle drag events
@@ -54,7 +51,6 @@ export default function Layout({
   calendar: number;
   github: number;
   gmail: number;
-  spotify: number;
 };
 
     setSizes((prev: Sizes): Sizes => {
@@ -84,7 +80,7 @@ export default function Layout({
 
   // Helper to get the next section
   const getNextSection = (current: string) => {
-    const order = ['calendar', 'github', 'gmail', 'spotify'];
+    const order = ['calendar', 'github', 'gmail'];
     const index = order.indexOf(current);
     if (index === -1 || index === order.length - 1) return null;
     return order[index + 1];
@@ -145,11 +141,6 @@ export default function Layout({
         onMouseDown={(e) => handleMouseDown('gmail', e.clientX)}
       />
 
-      {/* Spotify Pane */}
-      <div style={{ flexBasis: `${sizes.spotify}%`, minWidth: '10%' }}>
-        {/* Replace with your route/component */}
-        <div style={{ padding: 10, height: '100%' }}>{spotify}</div>
-      </div>
     </div>
   );
 }
