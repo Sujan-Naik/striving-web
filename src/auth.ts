@@ -6,6 +6,10 @@ import Google from "@auth/core/providers/google";
 import Spotify from "@auth/core/providers/spotify";
 import {DrizzleAdapter} from "@auth/drizzle-adapter";
 import {db} from "@/lib/db";
+import {getUserAccounts} from "@/lib/accounts";
+import userService from "@/services/userService";
+import {githubApi} from "@/lib/api-client";
+import dbConnect from "@/lib/mongodb";
 
 const providers: Provider[] = [
   // Credentials({
@@ -25,7 +29,7 @@ const providers: Provider[] = [
     allowDangerousEmailAccountLinking: true,
     authorization: {
       params: {
-        scope: 'repo project',
+        scope: 'repo project user:email',
       },
     },
   }),
@@ -62,17 +66,48 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     signOut: "sign-out",
     error: "/error",
   },
-  // events: {
-  //   createUser: async ({ user }) => {
-  //     // Create user in MongoDB
-  //     await createUserInMongoDB({
-  //       authId: user.id,
-  //       email: user.email,
-  //       name: user.name,
-  //       image: user.image,
-  //     });
-  //   },
-  // },
+  callbacks: {
+    signIn: async ({ user, account}) => {
+
+      if (!account?.provider){
+        return false;
+      }
+
+      if (!account?.access_token) {
+            return false;
+      }
+
+      switch(account.provider) {
+        case("github"):
+        {
+
+          const username = await fetch('https://api.github.com/user', {
+            headers: { 'Authorization': `Bearer ${account.access_token}` }
+          }).then(res => res.json()).then(data => data.login);
+
+          if (!username){
+            return false;
+          }
+
+          await dbConnect()
+          try {
+              await userService.createUser({
+              githubId: username,
+              email: user.email!,
+              username: user.name!,
+              avatarUrl: user.image!,
+            });
+              return true;
+          }
+          catch (e){
+            return false;
+          }
+
+        }
+      }
+      return true;
+    },
+  },
 
 //   callbacks: {
 //     authorized: async ({ auth }) => {
