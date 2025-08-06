@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { FeatureService } from '@/services/featureService';
+import dbConnect from "@/lib/mongodb";
 
 const featureService = new FeatureService();
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
+      await dbConnect()
     const feature = await featureService.getFeatureById(params.id);
     if (!feature) {
       return NextResponse.json({ error: 'Feature not found' }, { status: 404 });
@@ -17,6 +19,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   try {
+      await dbConnect()
     const updateData = await request.json();
     const feature = await featureService.updateFeature(params.id, updateData);
     if (!feature) {
@@ -30,6 +33,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 
 export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   try {
+      await dbConnect()
     const deleted = await featureService.deleteFeature(params.id);
     if (!deleted) {
       return NextResponse.json({ error: 'Feature not found' }, { status: 404 });

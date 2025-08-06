@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { FeatureService } from '@/services/featureService';
+import dbConnect from "@/lib/mongodb";
 
 const featureService = new FeatureService();
 
 export async function POST(request: NextRequest) {
   try {
+      await dbConnect()
     const featureData = await request.json();
     const feature = await featureService.createFeature(featureData);
     return NextResponse.json(feature, { status: 201 });
@@ -15,6 +17,7 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
+      await dbConnect()
     const { searchParams } = new URL(request.url);
     const projectId = searchParams.get('projectId');
 

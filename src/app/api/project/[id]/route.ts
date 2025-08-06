@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ProjectService } from '@/services/projectService';
+import dbConnect from "@/lib/mongodb";
 
 const projectService = new ProjectService();
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
+      await dbConnect()
     const project = await projectService.getProjectById(params.id);
     if (!project) {
       return NextResponse.json({ error: 'Project not found' }, { status: 404 });
@@ -17,6 +19,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   try {
+      await dbConnect()
     const updates = await request.json();
     const project = await projectService.updateProject(params.id, updates);
     if (!project) {
@@ -30,6 +33,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 
 export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   try {
+      await dbConnect()
     const deleted = await projectService.deleteProject(params.id);
     if (!deleted) {
       return NextResponse.json({ error: 'Project not found' }, { status: 404 });

@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { FeatureService } from '@/services/featureService';
+import dbConnect from "@/lib/mongodb";
 
 const featureService = new FeatureService();
 
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   try {
+      await dbConnect()
     const { prNumber } = await request.json();
     const feature = await featureService.addPullRequest(params.id, prNumber);
     if (!feature) {

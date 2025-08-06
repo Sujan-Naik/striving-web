@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import DocsService from '@/services/docsService';
+import dbConnect from "@/lib/mongodb";
 
 export async function PUT(request: NextRequest, { params }: { params: { id: string; sectionId: string } }) {
   try {
+      await dbConnect()
     const updates = await request.json();
     const doc = await DocsService.updateSection(params.id, params.sectionId, updates);
     if (!doc) return NextResponse.json({ error: 'Doc or section not found' }, { status: 404 });
@@ -14,6 +16,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 
 export async function DELETE(request: NextRequest, { params }: { params: { id: string; sectionId: string } }) {
   try {
+      await dbConnect()
     const doc = await DocsService.removeSection(params.id, params.sectionId);
     if (!doc) return NextResponse.json({ error: 'Doc not found' }, { status: 404 });
     return NextResponse.json(doc);

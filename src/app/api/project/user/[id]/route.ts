@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import userService from '@/services/userService';
+import dbConnect from "@/lib/mongodb";
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
+      await dbConnect()
     const user = await userService.findById(params.id);
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
@@ -15,6 +17,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   try {
+      await dbConnect()
     const updates = await request.json();
     const user = await userService.updateUser(params.id, updates);
     if (!user) {
@@ -28,6 +31,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 
 export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   try {
+      await dbConnect()
     const user = await userService.deleteUser(params.id);
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });

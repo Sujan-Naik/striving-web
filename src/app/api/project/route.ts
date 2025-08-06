@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ProjectService } from '@/services/projectService';
+import dbConnect from "@/lib/mongodb";
 
 const projectService = new ProjectService();
 
 export async function POST(request: NextRequest) {
   try {
+      await dbConnect()
     const projectData = await request.json();
     const project = await projectService.createProject(projectData);
     return NextResponse.json(project, { status: 201 });
@@ -15,6 +17,7 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
+      await dbConnect()
     const { searchParams } = new URL(request.url);
     const ownerId = searchParams.get('ownerId');
 
