@@ -112,50 +112,6 @@ export default function Home() {
                     </HeadedCarousel>
                 </section>
 
-                {/* Spotify Section */}
-                <section>
-                    <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
-                        <FaSpotify /> Spotify
-                    </h2>
-                    <HeadedCarousel variant={VariantEnum.Primary}>
-                        <HeadedCard variant={VariantEnum.Primary}>
-                            <div className="flex items-center gap-3 p-4">
-                                <FaMusic className="text-2xl" />
-                                <div>
-                                    <h3 className="font-semibold">Music</h3>
-                                    <p className="text-sm opacity-75">Stream songs</p>
-                                </div>
-                            </div>
-                        </HeadedCard>
-                        <HeadedCard variant={VariantEnum.Primary}>
-                            <div className="flex items-center gap-3 p-4">
-                                <FaPodcast className="text-2xl" />
-                                <div>
-                                    <h3 className="font-semibold">Podcasts</h3>
-                                    <p className="text-sm opacity-75">Audio shows</p>
-                                </div>
-                            </div>
-                        </HeadedCard>
-                        <HeadedCard variant={VariantEnum.Primary}>
-                            <div className="flex items-center gap-3 p-4">
-                                <FaHeart className="text-2xl" />
-                                <div>
-                                    <h3 className="font-semibold">Liked Songs</h3>
-                                    <p className="text-sm opacity-75">Your favorites</p>
-                                </div>
-                            </div>
-                        </HeadedCard>
-                        <HeadedCard variant={VariantEnum.Primary}>
-                            <div className="flex items-center gap-3 p-4">
-                                <FaList className="text-2xl" />
-                                <div>
-                                    <h3 className="font-semibold">Playlists</h3>
-                                    <p className="text-sm opacity-75">Custom collections</p>
-                                </div>
-                            </div>
-                        </HeadedCard>
-                    </HeadedCarousel>
-                </section>
 
                 {/* LLMs Section */}
                 <section>

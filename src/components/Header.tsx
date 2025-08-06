@@ -1,5 +1,5 @@
 "use client"
-import { HeadedCard, HeadedLink, VariantEnum } from 'headed-ui';
+import {HeadedCard, HeadedDropdown, HeadedDropdownOption, HeadedLink, VariantEnum} from 'headed-ui';
 import { useState, useEffect } from 'react';
 
 export default function Header() {
@@ -62,10 +62,13 @@ export default function Header() {
             flexDirection: isMobile ? 'column' : 'row'
           }}
         >
-          <HeadedLink variant={VariantEnum.Primary} href="/home">Home</HeadedLink>
+          <HeadedLink variant={VariantEnum.Primary} href="/">Home</HeadedLink>
+          <HeadedLink variant={VariantEnum.Primary} href="/dashboard">Dashboard</HeadedLink>
           <HeadedLink variant={VariantEnum.Primary} href="/calendar">Calendar</HeadedLink>
+
           <HeadedLink variant={VariantEnum.Primary} href="/github">GitHub</HeadedLink>
-          <HeadedLink variant={VariantEnum.Primary} href="/github/projects">Projects</HeadedLink>
+          <HeadedLink variant={VariantEnum.Primary} href="/github/projects">Github Projects</HeadedLink>
+
           <HeadedLink variant={VariantEnum.Primary} href="/gmail">Gmail</HeadedLink>
           <HeadedLink variant={VariantEnum.Primary} href="/llm">LLM</HeadedLink>
           <HeadedLink variant={VariantEnum.Primary} href="/login">Authenticate</HeadedLink>
