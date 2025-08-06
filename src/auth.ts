@@ -61,8 +61,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     signIn: "/login",
     signOut: "sign-out",
     error: "/error",
-  }
-
+  },
+  // events: {
+  //   createUser: async ({ user }) => {
+  //     // Create user in MongoDB
+  //     await createUserInMongoDB({
+  //       authId: user.id,
+  //       email: user.email,
+  //       name: user.name,
+  //       image: user.image,
+  //     });
+  //   },
+  // },
 
 //   callbacks: {
 //     authorized: async ({ auth }) => {

@@ -64,6 +64,8 @@ export default function Header() {
         >
           <HeadedLink variant={VariantEnum.Primary} href="/">Home</HeadedLink>
           <HeadedLink variant={VariantEnum.Primary} href="/dashboard">Dashboard</HeadedLink>
+            <HeadedLink variant={VariantEnum.Primary} href="/project">Projects</HeadedLink>
+
           <HeadedLink variant={VariantEnum.Primary} href="/calendar">Calendar</HeadedLink>
 
           <HeadedLink variant={VariantEnum.Primary} href="/github">GitHub</HeadedLink>
