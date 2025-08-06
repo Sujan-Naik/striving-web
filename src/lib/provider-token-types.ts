@@ -1,4 +1,4 @@
-export type ProviderName = "google" | "github" | "spotify"
+export type ProviderName = "google" | "github"
 
 export interface ProviderToken {
   accessToken: string

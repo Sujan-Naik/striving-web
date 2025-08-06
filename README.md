@@ -4,7 +4,6 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 mkdir certificates
 mkcert -key-file certificates/localhost-key.pem -cert-file certificates/localhost.pem localhost 192.168.1.225 127.0.0.1 ::1
 
-spotify redirect uri https://192.168.1.225:3000/api/auth/callback/spotify
 "dev": "next dev --turbopack --experimental-https --experimental-https-key ./certificates/localhost-key.pem --experimental-https-cert ./certificates/localhost.pem -H 192.168.1.225",
 
 https://artificialanalysis.ai/?models=llama-3-3-instruct-70b%2Cllama-3-2-instruct-90b-vision%2Cllama-4-maverick%2Cllama-4-scout%2Cclaude-4-opus%2Cclaude-4-sonnet%2Cdeepseek-r1%2Cnova-premier%2Caya-expanse-32b%2Caya-expanse-8b%2Ccommand-a%2Cclaude-3-7-sonnet%2Cnova-pro%2Cnova-lite%2Cnova-micro%2Ccommand-r-plus%2Ccommand-r-plus-04-2024%2Ccommand-r%2Ccommand-r-03-2024&intelligence-tab=coding
