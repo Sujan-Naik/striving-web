@@ -18,11 +18,15 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
       await dbConnect()
+    console.log('connected');
     const { searchParams } = new URL(request.url);
     const ownerId = searchParams.get('ownerId');
 
     if (ownerId) {
+            console.log('getting projects')
+
       const projects = await projectService.getProjectsByOwner(ownerId);
+      console.log('this')
       return NextResponse.json(projects);
     }
 

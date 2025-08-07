@@ -5,7 +5,9 @@ import dbConnect from "@/lib/mongodb";
 export async function GET(request: NextRequest, { params }: { params: { githubId: string } }) {
   try {
       await dbConnect()
-    const user = await userService.findByGithubId(params.githubId);
+
+    const {githubId} = await params
+    const user = await userService.findByGithubId(githubId);
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }

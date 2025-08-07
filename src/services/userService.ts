@@ -3,7 +3,11 @@ import User, {IUser} from '@/models/User';
 export class UserServiceClass {
   // Create user
   async createUser(userData: Partial<IUser>) {
-    return await User.create(userData);
+    return User.findOneAndUpdate(
+        {email: userData.email},
+        userData,
+        {upsert: true, new: true}
+    );
   }
 
   // Find user by GitHub ID

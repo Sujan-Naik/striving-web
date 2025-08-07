@@ -27,6 +27,14 @@ const providers: Provider[] = [
     clientId: process.env.AUTH_GITHUB_ID,
     clientSecret: process.env.AUTH_GITHUB_SECRET,
     allowDangerousEmailAccountLinking: true,
+    profile(profile){
+      return {
+        id: profile.id.toString(),
+        name: profile.login,
+        email: profile.email,
+        image: profile.avatar_url
+      }
+    },
     authorization: {
       params: {
         scope: 'repo project user:email',
@@ -67,6 +75,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     error: "/error",
   },
   callbacks: {
+
     signIn: async ({ user, account}) => {
 
       if (!account?.provider){
@@ -81,20 +90,22 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         case("github"):
         {
 
-          const username = await fetch('https://api.github.com/user', {
-            headers: { 'Authorization': `Bearer ${account.access_token}` }
-          }).then(res => res.json()).then(data => data.login);
-
-          if (!username){
+          // const username = await fetch('https://api.github.com/user', {
+          //   headers: { 'Authorization': `Bearer ${account.access_token}` }
+          // }).then(res => res.json()).then(data => data.login);
+          //
+          if (!user.name){
             return false;
           }
 
+          // initially user.name is the github username (the actual one not the display)
+          // username is a display name for Mongodb and githubId is the github name
           await dbConnect()
           try {
               await userService.createUser({
-              githubId: username,
+                username: user.name,
+              githubId: user.name,
               email: user.email!,
-              username: user.name!,
               avatarUrl: user.image!,
             });
               return true;
@@ -108,6 +119,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return true;
     },
   },
+
 
 //   callbacks: {
 //     authorized: async ({ auth }) => {

@@ -7,7 +7,7 @@ export const user = pgTable("user", {
   name: text("name"),
   email: text("email").unique(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
-  image: text("image"),
+    image: text("image"),
 })
 
 export const account = pgTable(
