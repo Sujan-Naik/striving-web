@@ -7,7 +7,7 @@ import {useParams} from "next/navigation";
 export default function ProjectPage() {
       return (
     <div className="container mx-auto p-4">
-      <ProjectDetail />
+      Editor
       {/*<ContributorManager projectId={projectId} />*/}
     </div>
   );
