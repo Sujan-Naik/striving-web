@@ -3,9 +3,10 @@ import { Schema, model, Document, Types } from 'mongoose';
 import {createModel} from "@/lib/utils/createModel";
 
 export interface IDocs extends Document {
-  wiki: Types.ObjectId;
+  project: Types.ObjectId;
   content: string;
   sections: {
+    id: string; // Unique section identifier
     title: string;
     content: string;
     order: number;
@@ -14,10 +15,12 @@ export interface IDocs extends Document {
   updatedAt: Date;
 }
 
+
 const DocsSchema = new Schema<IDocs>({
-  wiki: { type: Schema.Types.ObjectId, ref: 'Wiki', required: true },
+  project: { type: Schema.Types.ObjectId, ref: 'Project', required: true },
   content: { type: String, default: '' },
   sections: [{
+    id: { type: String, required: true },
     title: { type: String, required: true },
     content: { type: String, required: true },
     order: { type: Number, required: true }

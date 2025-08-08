@@ -10,6 +10,7 @@ export interface IProject extends Document {
   githubRepo: string; // owner/repo format
   features: Types.ObjectId[];
   wiki: Types.ObjectId;
+  docs: Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -22,6 +23,7 @@ const ProjectSchema = new Schema<IProject>({
   githubRepo: { type: String, required: true }, // e.g., "username/repo-name"
   features: [{ type: Schema.Types.ObjectId, ref: 'Feature' }],
   wiki: { type: Schema.Types.ObjectId, ref: 'Wiki' },
+  docs: { type: Schema.Types.ObjectId, ref: 'Docs' },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });

@@ -16,8 +16,12 @@ export interface IFeature extends Document {
   project: Types.ObjectId;
   assignedUsers: Types.ObjectId[];
   state: FeatureState;
-  commitShas: string[]; // GitHub commit SHA references
-  pullRequestNumbers: number[]; // GitHub PR numbers
+  commitShas: string[];
+  pullRequestNumbers: number[];
+  parent?: Types.ObjectId; // Parent feature
+  children: Types.ObjectId[]; // Child features
+  docSection?: string; // Section ID in docs
+  wikiSection?: string; // Section ID in wiki
   createdAt: Date;
   updatedAt: Date;
 }
@@ -30,6 +34,10 @@ const FeatureSchema = new Schema<IFeature>({
   state: { type: String, enum: Object.values(FeatureState), default: FeatureState.PLANNED },
   commitShas: [String],
   pullRequestNumbers: [Number],
+  parent: { type: Schema.Types.ObjectId, ref: 'Feature' },
+  children: [{ type: Schema.Types.ObjectId, ref: 'Feature' }],
+  docSection: String,
+  wikiSection: String,
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });
