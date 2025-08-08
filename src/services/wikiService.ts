@@ -1,32 +1,34 @@
 // wikiService.ts
 import Wiki, { IWiki } from '@/models/Wiki';
-import { Types } from 'mongoose';
+import '@/models/WikiSection'; // Add this import
 
 export const wikiService = {
-  async create(data: Partial<IWiki>): Promise<IWiki> {
+  async create(data: {
+    project: string;
+    content?: string;
+    wikiSection: string[];
+  }): Promise<IWiki> {
     return await Wiki.create(data);
   },
 
-  async findById(id: string): Promise<IWiki | null> {
-    return await Wiki.findById(id).populate('project features docs');
+  async getById(id: string): Promise<IWiki | null> {
+    return await Wiki.findById(id).populate('project').populate('wikiSection');
   },
 
-  async findByProject(projectId: string): Promise<IWiki[]> {
-    return await Wiki.find({ project: projectId }).populate([
-      // { path: 'features', match: { _id: { $exists: true } } },
-      { path: 'docs', match: { _id: { $exists: true } } }
-    ]);
+  async getByProject(projectId: string): Promise<IWiki[]> {
+    return await Wiki.find({ project: projectId }).populate('wikiSection');
   },
 
-  async update(id: string, data: Partial<IWiki>): Promise<IWiki | null> {
-    return await Wiki.findByIdAndUpdate(id, { ...data, updatedAt: new Date() }, { new: true });
+  async update(id: string, data: Partial<Pick<IWiki, 'content' | 'wikiSection'>>): Promise<IWiki | null> {
+    return await Wiki.findByIdAndUpdate(
+      id,
+      { ...data, updatedAt: new Date() },
+      { new: true }
+    ).populate('project').populate('wikiSection');
   },
 
-  async delete(id: string): Promise<IWiki | null> {
-    return await Wiki.findByIdAndDelete(id);
-  },
-
-  async findAll(): Promise<IWiki[]> {
-    return await Wiki.find().populate('project features docs');
+  async delete(id: string): Promise<boolean> {
+    const result = await Wiki.findByIdAndDelete(id);
+    return !!result;
   }
 };

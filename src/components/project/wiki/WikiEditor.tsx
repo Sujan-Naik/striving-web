@@ -5,9 +5,8 @@ import { useProject } from "@/context/ProjectContext";
 
 interface WikiData {
   _id?: string;
-  title: string;
-  description: string;
   content: string;
+  wikiSection: string[];
 }
 
 export default function WikiEditor() {
@@ -15,9 +14,8 @@ export default function WikiEditor() {
   const projectId = project._id;
 
   const [wiki, setWiki] = useState<WikiData>({
-    title: '',
-    description: '',
-    content: ''
+    content: '',
+    wikiSection: []
   });
   const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -26,14 +24,13 @@ export default function WikiEditor() {
   useEffect(() => {
     const fetchWiki = async () => {
       try {
-        const response = await fetch(`/api/project/wiki/project/${projectId}`);
+        const response = await fetch(`/api/project/${projectId}/wiki`);
         if (response.ok) {
           const existingWiki = await response.json();
           setWiki({
             _id: existingWiki._id,
-            title: existingWiki.title || '',
-            description: existingWiki.description || '',
-            content: existingWiki.content || ''
+            content: existingWiki.content || '',
+            wikiSection: existingWiki.wikiSection || []
           });
           setIsEditing(true);
           setWikiExists(true);
@@ -57,7 +54,7 @@ export default function WikiEditor() {
 
     try {
       const method = isEditing ? 'PUT' : 'POST';
-      const url = isEditing ? `/api/project/wiki/${wiki._id}` : '/api/project/wiki';
+      const url = isEditing ? `/api/project/${projectId}/wiki` : `/api/project/${projectId}/wiki`;
 
       const response = await fetch(url, {
         method,
@@ -93,25 +90,11 @@ export default function WikiEditor() {
       )}
 
       <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Title"
-          value={wiki.title}
-          onChange={(e) => setWiki({ ...wiki, title: e.target.value })}
-          required
-        />
-
         <textarea
-          placeholder="Description"
-          value={wiki.description}
-          onChange={(e) => setWiki({ ...wiki, description: e.target.value })}
-        />
-
-        <textarea
-          placeholder="Content"
+          placeholder="Wiki Content"
           value={wiki.content}
           onChange={(e) => setWiki({ ...wiki, content: e.target.value })}
-          rows={10}
+          rows={15}
         />
 
         <button type="submit" disabled={loading}>

@@ -1,27 +1,25 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import {useProject} from "@/context/ProjectContext";
+import { useProject } from "@/context/ProjectContext";
+import WikiSectionDisplay from "@/components/project/wiki/section/WikiSectionDisplay";
 
-interface Wiki {
-  _id: string;
-  title: string;
-  description: string;
+interface WikiData {
+  _id?: string;
   content: string;
-  createdAt: string;
-  updatedAt: string;
+  wikiSection: string[];
 }
 
 export default function WikiDisplay() {
   const { project } = useProject();
-  const projectId = project._id
-  const [wiki, setWiki] = useState<Wiki | null>(null);
+  const projectId = project._id;
+  const [wiki, setWiki] = useState<WikiData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchWiki = async () => {
       try {
-        const response = await fetch(`/api/project/wiki/project/${projectId}`);
+        const response = await fetch(`/api/project/${projectId}/wiki`);
         if (response.ok) {
           const data = await response.json();
           setWiki(data);
@@ -41,19 +39,22 @@ export default function WikiDisplay() {
   if (loading) return <div>Loading...</div>;
   if (!wiki) return <div>No wiki found</div>;
 
-    console.log(wiki)
   return (
     <div>
-      <h1>{wiki.title}</h1>
-      <p>{wiki.description}</p>
-      <div>
-        <h3>Content:</h3>
-        <div style={{ whiteSpace: 'pre-wrap' }}>{wiki.content}</div>
-      </div>
-      <small>
-        Created: {new Date(wiki.createdAt).toLocaleDateString()} |
-        Updated: {new Date(wiki.updatedAt).toLocaleDateString()}
-      </small>
+      <div style={{ whiteSpace: 'pre-wrap' }}>{wiki.content}</div>
+
+      {wiki.wikiSection.length > 0 && (
+        <div>
+          <h2>Sections:</h2>
+          {wiki.wikiSection.map((sectionId) => (
+            <WikiSectionDisplay
+              key={sectionId}
+              sectionId={sectionId}
+              projectId={projectId}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

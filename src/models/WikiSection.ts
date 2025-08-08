@@ -1,5 +1,5 @@
 // WikiSection.ts
-import { Schema, model, Document, Types } from 'mongoose';
+import { Schema, Document, Types } from 'mongoose';
 import { createModel } from "@/lib/utils/createModel";
 
 export interface IWikiSection extends Document {
