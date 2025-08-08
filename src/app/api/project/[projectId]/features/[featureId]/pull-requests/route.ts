@@ -4,16 +4,16 @@ import dbConnect from "@/lib/mongodb";
 
 const featureService = new FeatureService();
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: { projectId: string } }) {
   try {
       await dbConnect()
-    const { commitSha } = await request.json();
-    const feature = await featureService.addCommitSha(params.id, commitSha);
+    const { prNumber } = await request.json();
+    const feature = await featureService.addPullRequest(params.projectId, prNumber);
     if (!feature) {
       return NextResponse.json({ error: 'Feature not found' }, { status: 404 });
     }
     return NextResponse.json(feature);
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to add commit' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to add pull request' }, { status: 500 });
   }
 }

@@ -4,7 +4,7 @@ import dbConnect from "@/lib/mongodb";
 
 const projectService = new ProjectService();
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: { projectId: string } }) {
   try {
     await dbConnect()
 
@@ -12,8 +12,8 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         return NextResponse.json({ error: 'MongoDB connection failed' }, { status: 500 });
   }
   try {
-    const {id} = await params
-    const project = await projectService.getProjectById(id);
+    const {projectId} = await params
+    const project = await projectService.getProjectById(projectId);
     if (!project) {
       return NextResponse.json({ error: 'Project not found' }, { status: 404 });
     }
@@ -23,11 +23,11 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: { projectId: string } }) {
   try {
       await dbConnect()
     const updates = await request.json();
-    const project = await projectService.updateProject(params.id, updates);
+    const project = await projectService.updateProject(params.projectId, updates);
     if (!project) {
       return NextResponse.json({ error: 'Project not found' }, { status: 404 });
     }
@@ -37,10 +37,10 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: { projectId: string } }) {
   try {
       await dbConnect()
-    const deleted = await projectService.deleteProject(params.id);
+    const deleted = await projectService.deleteProject(params.projectId);
     if (!deleted) {
       return NextResponse.json({ error: 'Project not found' }, { status: 404 });
     }

@@ -4,16 +4,16 @@ import dbConnect from "@/lib/mongodb";
 
 const featureService = new FeatureService();
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: { projectId: string } }) {
   try {
       await dbConnect()
-    const { prNumber } = await request.json();
-    const feature = await featureService.addPullRequest(params.id, prNumber);
+    const { userIds } = await request.json();
+    const feature = await featureService.assignUsers(params.projectId, userIds);
     if (!feature) {
       return NextResponse.json({ error: 'Feature not found' }, { status: 404 });
     }
     return NextResponse.json(feature);
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to add pull request' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to assign users' }, { status: 500 });
   }
 }

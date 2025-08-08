@@ -4,11 +4,11 @@ import dbConnect from "@/lib/mongodb";
 
 const projectService = new ProjectService();
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, { params }: { params: { projectId: string } }) {
   try {
       await dbConnect()
     const { contributorId } = await request.json();
-    const project = await projectService.addContributor(params.id, contributorId);
+    const project = await projectService.addContributor(params.projectId, contributorId);
     if (!project) {
       return NextResponse.json({ error: 'Project not found' }, { status: 404 });
     }
@@ -18,11 +18,11 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: { projectId: string } }) {
   try {
       await dbConnect()
     const { contributorId } = await request.json();
-    const project = await projectService.removeContributor(params.id, contributorId);
+    const project = await projectService.removeContributor(params.projectId, contributorId);
     if (!project) {
       return NextResponse.json({ error: 'Project not found' }, { status: 404 });
     }

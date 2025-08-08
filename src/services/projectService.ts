@@ -2,6 +2,7 @@
 import Project from '@/models/Project';
 import { IProject } from '@/models/Project';
 import mongoose, { Types } from 'mongoose';
+import {UserServiceClass} from "@/services/userService";
 
 export class ProjectService {
   async createProject(projectData: Partial<IProject>): Promise<IProject> {
@@ -68,3 +69,6 @@ export class ProjectService {
     );
   }
 }
+
+const projectService = new ProjectService();
+export default projectService;

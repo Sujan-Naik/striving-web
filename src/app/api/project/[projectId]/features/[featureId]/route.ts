@@ -4,10 +4,11 @@ import dbConnect from "@/lib/mongodb";
 
 const featureService = new FeatureService();
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: { featureId: string } }) {
   try {
       await dbConnect()
-    const feature = await featureService.getFeatureById(params.id);
+    const {featureId} = await params;
+    const feature = await featureService.getFeatureById(featureId);
     if (!feature) {
       return NextResponse.json({ error: 'Feature not found' }, { status: 404 });
     }
@@ -17,11 +18,13 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: { featureId: string } }) {
   try {
       await dbConnect()
     const updateData = await request.json();
-    const feature = await featureService.updateFeature(params.id, updateData);
+          const {featureId} = await params;
+
+    const feature = await featureService.updateFeature(featureId, updateData);
     if (!feature) {
       return NextResponse.json({ error: 'Feature not found' }, { status: 404 });
     }
@@ -31,10 +34,12 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: { featureId: string } }) {
   try {
       await dbConnect()
-    const deleted = await featureService.deleteFeature(params.id);
+        const {featureId} = await params;
+
+    const deleted = await featureService.deleteFeature(featureId);
     if (!deleted) {
       return NextResponse.json({ error: 'Feature not found' }, { status: 404 });
     }
