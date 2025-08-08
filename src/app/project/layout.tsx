@@ -12,7 +12,6 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
 
   return (
     <div>
-      <header>{`Hello, ${user.username}`}</header>
       {children}
     </div>
   );

@@ -6,15 +6,37 @@ import {ProjectProvider, useProject} from "@/context/ProjectContext";
 
 function LayoutContent({ children, editor, preview }: { children: React.ReactNode, editor: React.ReactNode, preview: React.ReactNode }) {
   const { project, owner } = useProject();
+const {user} = useUser();
 
   if (!project) return <div>No project found</div>;
 
+  if (owner.username === user?.username) {
+    return (
+      <div className="h-screen flex flex-col">
+        <div className="flex-shrink-0">
+          {children}
+        </div>
+        <div className="w-1/2 border-r">
+          {editor}
+        </div>
+          <div className="w-1/2">
+            {preview}
+          </div>
+      </div>
+    );
+  }
+
   return (
-    <div>
-      <header>{`Welcome to ${project.name} by ${owner.username}`}</header>
-      {children}
-        {editor}
-        {preview}
+    <div className="h-screen flex flex-col">
+      <div className="flex-shrink-0">
+        {children}
+      </div>
+      <div className="flex-1 flex">
+
+        <div className="w-1/2">
+          {preview}
+        </div>
+      </div>
     </div>
   );
 }

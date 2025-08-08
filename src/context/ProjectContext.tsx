@@ -63,6 +63,7 @@ export const ProjectProvider = ({
             throw new Error('Failed to fetch owner');
           }
           const ownerData = await response.json();
+
           setOwner(ownerData);
         } catch (err) {
           setError(err instanceof Error ? err.message : 'Unknown error');
