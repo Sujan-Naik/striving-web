@@ -12,7 +12,10 @@ export const wikiService = {
   },
 
   async findByProject(projectId: string): Promise<IWiki[]> {
-    return await Wiki.find({ project: projectId }).populate('features docs');
+    return await Wiki.find({ project: projectId }).populate([
+      // { path: 'features', match: { _id: { $exists: true } } },
+      { path: 'docs', match: { _id: { $exists: true } } }
+    ]);
   },
 
   async update(id: string, data: Partial<IWiki>): Promise<IWiki | null> {

@@ -34,10 +34,10 @@ export function ProjectDetail() {
         Owner: {owner?.username || 'Loading...'}
       </p>
       <p>Github: {project.githubRepo}</p>
-      <HeadedLink variant={VariantEnum.Outline} href={'/contributor'}>Contributors</HeadedLink>
-        <HeadedLink variant={VariantEnum.Outline} href={'/docs'}>Documentation</HeadedLink>
-        <HeadedLink variant={VariantEnum.Outline} href={'/features'}>Features</HeadedLink>
-        <HeadedLink variant={VariantEnum.Outline} href={'/wiki'}>Wiki</HeadedLink>
+      <HeadedLink variant={VariantEnum.Outline} href={'contributor'}>Contributors</HeadedLink>
+        <HeadedLink variant={VariantEnum.Outline} href={'docs'}>Documentation</HeadedLink>
+        <HeadedLink variant={VariantEnum.Outline} href={'feature'}>Features</HeadedLink>
+        <HeadedLink variant={VariantEnum.Outline} href={'wiki'}>Wiki</HeadedLink>
     </div>
   );
 }

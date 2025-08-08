@@ -8,8 +8,12 @@ export async function GET(
 ) {
   try {
     await dbConnect();
-    const wikis = await wikiService.findByProject(params.projectId);
-    return NextResponse.json(wikis);
+    const {projectId} = await params;
+    const wikis = await wikiService.findByProject(projectId);
+    if (wikis.length ==0){
+      return NextResponse.json({ error: 'No Wiki found' }, { status: 404 });
+    }
+    return NextResponse.json(wikis[0]);
   } catch (error) {
     return NextResponse.json({ error: 'Failed to fetch project wikis' }, { status: 500 });
   }

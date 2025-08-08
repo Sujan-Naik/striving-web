@@ -41,6 +41,7 @@ export default function WikiDisplay() {
   if (loading) return <div>Loading...</div>;
   if (!wiki) return <div>No wiki found</div>;
 
+    console.log(wiki)
   return (
     <div>
       <h1>{wiki.title}</h1>
