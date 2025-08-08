@@ -19,7 +19,7 @@ async function dbConnect() {
   }
 
   if (!cached!.promise) {
-    cached!.promise = mongoose.connect(uri)
+    cached!.promise = mongoose.connect(uri, {dbName: 'Striving'})
   }
 
   try {

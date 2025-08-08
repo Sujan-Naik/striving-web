@@ -9,13 +9,28 @@ export class ProjectService {
     return await project.save();
   }
 
-  async getProjectById(id: string): Promise<IProject | null> {
-    return Project.findById(id)
-        .populate('owner', 'username email')
-        .populate('contributors', 'username email')
-        .populate('features')
-        .populate('wiki');
-  }
+  async getProjectById(id: string, populate?: string[]): Promise<IProject | null> {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return null;
+    }
+
+    let query = Project.findById(id);
+
+    if (populate?.includes('owner')) {
+        query = query.populate('owner', 'username');
+    }
+    if (populate?.includes('contributors')) {
+        query = query.populate('contributors', 'username');
+    }
+    if (populate?.includes('features')) {
+        query = query.populate('features');
+    }
+    if (populate?.includes('wiki')) {
+        query = query.populate('wiki');
+    }
+
+    return await query;
+}
 
   async getProjectsByOwner(ownerId: string): Promise<IProject[]> {
   console.log(`MongoDB: ${mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected'}`);

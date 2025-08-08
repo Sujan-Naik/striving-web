@@ -6,8 +6,14 @@ const projectService = new ProjectService();
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-      await dbConnect()
-    const project = await projectService.getProjectById(params.id);
+    await dbConnect()
+
+  } catch (error){
+        return NextResponse.json({ error: 'MongoDB connection failed' }, { status: 500 });
+  }
+  try {
+    const {id} = await params
+    const project = await projectService.getProjectById(id);
     if (!project) {
       return NextResponse.json({ error: 'Project not found' }, { status: 404 });
     }

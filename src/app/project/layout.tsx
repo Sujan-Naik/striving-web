@@ -1,6 +1,7 @@
 'use client'
 import { useSession } from "next-auth/react";
 import { UserProvider, useUser } from "@/context/UserContext";
+import React from "react";
 
 function LayoutContent({ children }: { children: React.ReactNode }) {
   const { user, loading, error } = useUser();

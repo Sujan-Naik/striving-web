@@ -4,7 +4,7 @@ import dbConnect from "@/lib/mongodb";
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-      await dbConnect()
+    await dbConnect();
     const {id} = await params;
     const user = await userService.findById(id);
     if (!user) {

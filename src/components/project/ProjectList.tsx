@@ -32,7 +32,7 @@ const {user} = useUser();
     <div className="grid gap-4">
       {projects && projects.length > 0 && projects.map(project => (
         <div key={project._id} className="border p-4 rounded">
-          <Link href={`/projects/${project._id}`}>
+          <Link href={`/project/${project._id}`}>
             <h3 className="text-lg font-semibold">{project.name}</h3>
             <p>{project.description}</p>
             <span className="text-sm text-gray-600">
