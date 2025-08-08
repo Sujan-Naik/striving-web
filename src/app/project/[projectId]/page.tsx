@@ -1,7 +1,6 @@
 'use client'
 import {ProjectDetail} from '@/components/project/ProjectDetail';
-import { ContributorManager } from '@/components/project/ContributorManager';
-import {useParams} from "next/navigation";
+import {HeadedLink, VariantEnum} from "headed-ui";
 
 
 export default function ProjectPage() {
@@ -9,6 +8,7 @@ export default function ProjectPage() {
     <div className="container mx-auto p-4">
       <ProjectDetail />
       {/*<ContributorManager projectId={projectId} />*/}
+
     </div>
   );
 }

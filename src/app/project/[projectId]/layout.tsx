@@ -3,8 +3,9 @@ import { useSession } from "next-auth/react";
 import { UserProvider, useUser } from "@/context/UserContext";
 import React from "react";
 import {ProjectProvider, useProject} from "@/context/ProjectContext";
+import {ProjectDetail} from "@/components/project/ProjectDetail";
 
-function LayoutContent({ children, editor, preview }: { children: React.ReactNode, editor: React.ReactNode, preview: React.ReactNode }) {
+function LayoutContent({ editor, preview }: {editor: React.ReactNode, preview: React.ReactNode }) {
   const { project, owner } = useProject();
 const {user} = useUser();
 
@@ -14,7 +15,7 @@ const {user} = useUser();
     return (
       <div className="h-screen flex flex-col">
         <div className="flex-shrink-0">
-          {children}
+          <ProjectDetail></ProjectDetail>
         </div>
         <div className="w-1/2 border-r">
           {editor}
@@ -29,10 +30,9 @@ const {user} = useUser();
   return (
     <div className="h-screen flex flex-col">
       <div className="flex-shrink-0">
-        {children}
       </div>
       <div className="flex-1 flex">
-
+          <ProjectDetail></ProjectDetail>
         <div className="w-1/2">
           {preview}
         </div>
@@ -42,7 +42,7 @@ const {user} = useUser();
 }
 
 export default function Layout({
-  children,
+  // children,
   editor,
   preview,
   params
@@ -59,7 +59,7 @@ export default function Layout({
 
   return (
     <ProjectProvider projectId={projectId}>
-      <LayoutContent children={children} editor={editor} preview={preview}/>
+      <LayoutContent  editor={editor} preview={preview}/>
     </ProjectProvider>
   );
 }
