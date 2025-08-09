@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { FeatureService } from '@/services/featureService';
 import dbConnect from "@/lib/mongodb";
 
-const featureService = new FeatureService();
+import featureService from "@/services/featureService";
+
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ projectId: string }> }) {
   try {

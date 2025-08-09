@@ -1,7 +1,7 @@
 'use client'
 import {useEffect, useState} from "react";
 import {useProject} from "@/context/ProjectContext";
-import FeatureEditor from "@/components/project/feature/FeatureEditor";
+import FeatureEditor from "@/components/project/feature/edit/FeatureEditor";
 import FeatureCreate from "@/components/project/feature/FeatureCreate";
 
 
@@ -25,7 +25,7 @@ interface FeatureEditorProps {
 
 export default function Page(){
 
-    const [features, setFeatures] = useState<Feature[]>([]);
+    let [features, setFeatures] = useState<Feature[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -49,7 +49,7 @@ export default function Page(){
 
     fetchFeatures();
   }, [projectId]);
-
+  features = [features[0]]
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 

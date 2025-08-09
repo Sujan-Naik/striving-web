@@ -1,8 +1,9 @@
 import Feature, { IFeature } from '@/models/Feature';
 import { Types } from 'mongoose';
 import Project from "@/models/Project";
+import {ProjectService} from "@/services/projectService";
 
-export class FeatureService {
+class FeatureService {
   async createFeature(featureData: Partial<IFeature>): Promise<IFeature> {
     const feature = new Feature(featureData);
     const savedFeature = await feature.save();
@@ -82,4 +83,15 @@ export class FeatureService {
       { new: true }
     );
   }
+
+  async removeCommitSha(featureId: string, commitSha: string): Promise<IFeature | null> {
+  return await Feature.findByIdAndUpdate(
+    featureId,
+    { $pull: { commitShas: commitSha } },
+    { new: true }
+  );
 }
+}
+
+const featureService = new FeatureService();
+export default featureService;

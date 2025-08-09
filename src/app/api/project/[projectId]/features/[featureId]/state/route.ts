@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { FeatureService } from '@/services/featureService';
 import dbConnect from "@/lib/mongodb";
+import featureService from "@/services/featureService";
 
-const featureService = new FeatureService();
 
 export async function PUT(request: NextRequest, { params }: { params: { featureId: string } }) {
   try {
