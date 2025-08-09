@@ -1,10 +1,18 @@
 import Feature, { IFeature } from '@/models/Feature';
 import { Types } from 'mongoose';
+import Project from "@/models/Project";
 
 export class FeatureService {
   async createFeature(featureData: Partial<IFeature>): Promise<IFeature> {
     const feature = new Feature(featureData);
-    return await feature.save();
+    const savedFeature = await feature.save();
+
+    await Project.findByIdAndUpdate(
+        savedFeature.project,
+        { $push: { features: savedFeature._id }, updatedAt: new Date() }
+    );
+
+    return savedFeature;
   }
 
   async getFeatureById(id: string): Promise<IFeature | null> {

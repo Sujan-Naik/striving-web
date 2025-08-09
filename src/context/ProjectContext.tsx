@@ -9,6 +9,7 @@ interface Project {
   contributors: { name: string; email: string }[];
   githubRepo: string;
   createdAt: string;
+  features: string[];
 }
 
 interface User {

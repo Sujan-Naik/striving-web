@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { wikiService } from '@/services/wikiService';
 import dbConnect from '@/lib/mongodb';
+import Wiki from "@/models/Wiki";
+import {Types} from "mongoose";
 
 export async function GET(
   request: NextRequest,
@@ -39,5 +41,28 @@ export async function POST(
     return NextResponse.json(wiki, { status: 201 });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to create wiki' }, { status: 500 });
+  }
+}
+
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { projectId: string } }
+) {
+  try {
+    await dbConnect();
+    const { projectId } = await params;
+    const body = await request.json();
+
+    // Find wiki by project ID first
+    const existingWiki = await Wiki.findOne({ project: projectId });
+    if (!existingWiki) {
+      return NextResponse.json({ error: 'Wiki not found' }, { status: 404 });
+    }
+
+    // Update using the wiki's _id
+    const updatedWiki = await wikiService.update((existingWiki._id as Types.ObjectId), body);
+    return NextResponse.json(updatedWiki);
+  } catch (error) {
+    return NextResponse.json({ error: 'Failed to update wiki' }, { status: 500 });
   }
 }

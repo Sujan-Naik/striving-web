@@ -5,6 +5,23 @@ import mongoose, { Types } from 'mongoose';
 import {UserServiceClass} from "@/services/userService";
 
 export class ProjectService {
+
+  async addDocsReference(projectId: string, docsId: string): Promise<IProject | null> {
+  return await Project.findByIdAndUpdate(
+    projectId,
+    { docs: docsId, updatedAt: new Date() },
+    { new: true }
+  );
+}
+
+async addWikiReference(projectId: string, wikiId: string): Promise<IProject | null> {
+  return await Project.findByIdAndUpdate(
+    projectId,
+    { wiki: wikiId, updatedAt: new Date() },
+    { new: true }
+  );
+}
+
   async createProject(projectData: Partial<IProject>): Promise<IProject> {
     const project = new Project(projectData);
     return await project.save();

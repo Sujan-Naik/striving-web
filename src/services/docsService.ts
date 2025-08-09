@@ -1,16 +1,23 @@
 import { Types } from 'mongoose';
 import Docs from '@/models/Docs';
 import { IDocs } from '@/models/Docs';
+import projectService from "@/services/projectService";
 
 class DocsService {
   async createDoc(projectId: string, content?: string, documentationSections?: string[]): Promise<IDocs> {
-    const doc = new Docs({
-      project: new Types.ObjectId(projectId),
-      content: content || '',
-      documentationSection: documentationSections?.map(id => new Types.ObjectId(id)) || []
-    });
-    return await doc.save();
-  }
+  const doc = new Docs({
+    project: new Types.ObjectId(projectId),
+    content: content || '',
+    documentationSection: documentationSections?.map(id => new Types.ObjectId(id)) || []
+  });
+
+  const savedDoc = await doc.save();
+
+  // Update project with docs reference
+  await projectService.addDocsReference(projectId, (savedDoc._id as Types.ObjectId).toString());
+
+  return savedDoc;
+}
 
   async getDocById(id: string): Promise<IDocs | null> {
     return await Docs.findById(id).populate('project').populate('documentationSection');

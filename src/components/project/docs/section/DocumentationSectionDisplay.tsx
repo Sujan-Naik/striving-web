@@ -44,7 +44,6 @@ export default function DocumentationSectionDisplay({ projectId, sectionId }: Do
 
   return (
     <div>
-        <p>Temporary</p>
       <h1>{section.title}</h1>
       <div>{section.content}</div>
     </div>

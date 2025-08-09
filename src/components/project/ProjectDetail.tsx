@@ -25,7 +25,7 @@ interface Props {
 
 export function ProjectDetail() {
   const {project, owner} = useProject()
-
+    const projectId = project._id
   return (
     <div className="mb-6">
       <h1 className="text-3xl font-bold mb-2">{project.name}</h1>
@@ -34,10 +34,10 @@ export function ProjectDetail() {
         Owner: {owner?.username || 'Loading...'}
       </p>
       <p>Github: {project.githubRepo}</p>
-      <HeadedLink variant={VariantEnum.Outline} href={'contributor'}>Contributors</HeadedLink>
-        <HeadedLink variant={VariantEnum.Outline} href={'docs'}>Documentation</HeadedLink>
-        <HeadedLink variant={VariantEnum.Outline} href={'feature'}>Features</HeadedLink>
-        <HeadedLink variant={VariantEnum.Outline} href={'wiki'}>Wiki</HeadedLink>
+      <HeadedLink variant={VariantEnum.Outline} href={`/project/${projectId}/contributor`}>Contributors</HeadedLink>
+        <HeadedLink variant={VariantEnum.Outline} href={`/project/${projectId}/docs`}>Documentation</HeadedLink>
+        <HeadedLink variant={VariantEnum.Outline} href={`/project/${projectId}/feature`}>Features</HeadedLink>
+        <HeadedLink variant={VariantEnum.Outline} href={`/project/${projectId}/wiki`}>Wiki</HeadedLink>
     </div>
   );
 }

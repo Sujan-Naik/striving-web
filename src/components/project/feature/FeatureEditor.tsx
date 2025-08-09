@@ -1,8 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import WikiSectionEditor from "@/components/project/wiki/section/WikiSectionEditor";
-import documentationSection from "@/models/DocumentationSection";
-import wikiSection from "@/models/WikiSection";
+import React, { useState, useEffect } from 'react';
 import DocumentationSectionEditor from "@/components/project/docs/section/DocumentationSectionEditor";
+import WikiSectionEditor from "@/components/project/wiki/section/WikiSectionEditor";
 
 interface Feature {
   _id: string;
@@ -27,18 +25,11 @@ export default function FeatureEditor({ projectId, featureId }: FeatureEditorPro
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-  const [newUserId, setNewUserId] = useState('');
-  const [newCommitSha, setNewCommitSha] = useState('');
-  const [newPrNumber, setNewPrNumber] = useState('');
 
   useEffect(() => {
     const fetchFeature = async () => {
       try {
         const response = await fetch(`/api/project/${projectId}/features/${featureId}`);
-        if (response.status === 404) {
-          setError('Feature not found');
-          return;
-        }
         if (!response.ok) throw new Error('Failed to fetch feature');
         const data = await response.json();
         setFeature(data);
@@ -49,29 +40,27 @@ export default function FeatureEditor({ projectId, featureId }: FeatureEditorPro
         setLoading(false);
       }
     };
-
     fetchFeature();
   }, [projectId, featureId]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!feature) return;
-
+  const updateFeature = async (endpoint: string | null, data: any) => {
     setSaving(true);
-    setError(null);
-
     try {
-      const response = await fetch(`/api/project/${projectId}/features/${featureId}`, {
-        method: 'PUT',
+      const url = endpoint
+        ? `/api/project/${projectId}/features/${featureId}/${endpoint}`
+        : `/api/project/${projectId}/features/${featureId}`;
+
+      const response = await fetch(url, {
+        method: endpoint ? 'PUT' : 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(data)
       });
 
-      if (!response.ok) throw new Error('Update failed');
-
-      const updated = await response.json();
-      setFeature(updated);
-      setFormData(updated);
+      if (response.ok) {
+        const updated = await response.json();
+        setFeature(updated);
+        setFormData(updated);
+      }
     } catch (error) {
       setError(error instanceof Error ? error.message : 'Update failed');
     } finally {
@@ -79,51 +68,17 @@ export default function FeatureEditor({ projectId, featureId }: FeatureEditorPro
     }
   };
 
-  const addUser = () => {
-    if (!newUserId.trim() || !formData.assignedUsers) return;
-    setFormData({
-      ...formData,
-      assignedUsers: [...formData.assignedUsers, newUserId.trim()]
-    });
-    setNewUserId('');
-  };
-
-  const addCommit = () => {
-    if (!newCommitSha.trim() || !formData.commitShas) return;
-    setFormData({
-      ...formData,
-      commitShas: [...formData.commitShas, newCommitSha.trim()]
-    });
-    setNewCommitSha('');
-  };
-
-  const addPr = () => {
-    const prNum = parseInt(newPrNumber);
-    if (!prNum || !formData.pullRequestNumbers) return;
-    setFormData({
-      ...formData,
-      pullRequestNumbers: [...formData.pullRequestNumbers, prNum]
-    });
-    setNewPrNumber('');
-  };
-
-  const removeItem = (type: 'assignedUsers' | 'commitShas' | 'pullRequestNumbers', index: number) => {
-    const current = formData[type] as any[];
-    if (!current) return;
-    setFormData({
-      ...formData,
-      [type]: current.filter((_, i) => i !== index)
-    });
+  const handleBulkUpdate = () => {
+    const { title, description, state } = formData;
+    updateFeature(null, { title, description, state });
   };
 
   if (loading) return <div>Loading...</div>;
-  if (error && !feature) return <div>Error: {error}</div>;
   if (!feature) return <div>Feature not found</div>;
 
   return (
-    <form onSubmit={handleSubmit}>
+    <div>
       <h2>Edit Feature: {feature.title}</h2>
-
       {error && <div style={{color: 'red', marginBottom: '1rem'}}>{error}</div>}
 
       <div>
@@ -132,8 +87,10 @@ export default function FeatureEditor({ projectId, featureId }: FeatureEditorPro
           value={formData.title || ''}
           onChange={(e) => setFormData({...formData, title: e.target.value})}
           disabled={saving}
-          required
         />
+        <button onClick={() => updateFeature(null, { title: formData.title })}>
+          Update Title
+        </button>
       </div>
 
       <div>
@@ -142,15 +99,21 @@ export default function FeatureEditor({ projectId, featureId }: FeatureEditorPro
           value={formData.description || ''}
           onChange={(e) => setFormData({...formData, description: e.target.value})}
           disabled={saving}
-          required
         />
+        <button onClick={() => updateFeature(null, { description: formData.description })}>
+          Update Description
+        </button>
       </div>
 
       <div>
         <h3>State</h3>
         <select
           value={formData.state || ''}
-          onChange={(e) => setFormData({...formData, state: e.target.value})}
+          onChange={(e) => {
+            const newState = e.target.value;
+            setFormData({...formData, state: newState});
+            updateFeature('state', { state: newState });
+          }}
           disabled={saving}
         >
           <option value="PLANNED">Planned</option>
@@ -160,83 +123,60 @@ export default function FeatureEditor({ projectId, featureId }: FeatureEditorPro
       </div>
 
       <div>
-        <h3>Assigned Users</h3>
-        <div>
-          <input
-            value={newUserId}
-            onChange={(e) => setNewUserId(e.target.value)}
-            placeholder="User ID"
-            disabled={saving}
-          />
-          <button type="button" onClick={addUser} disabled={saving}>Add</button>
-        </div>
-        <ul>
-          {(formData.assignedUsers || []).map((user, i) => (
-            <li key={i}>
-              {user}
-              <button type="button" onClick={() => removeItem('assignedUsers', i)} disabled={saving}>×</button>
-            </li>
-          ))}
-        </ul>
+        <h3>Assign Users</h3>
+        <input
+          placeholder="User ID"
+          onKeyPress={(e) => {
+            if (e.key === 'Enter') {
+              updateFeature('assign-users', { userId: e.currentTarget.value });
+              e.currentTarget.value = '';
+            }
+          }}
+        />
       </div>
 
       <div>
-        <h3>Commits</h3>
-        <div>
-          <input
-            value={newCommitSha}
-            onChange={(e) => setNewCommitSha(e.target.value)}
-            placeholder="Commit SHA"
-            disabled={saving}
-          />
-          <button type="button" onClick={addCommit} disabled={saving}>Add</button>
-        </div>
-        <ul>
-          {(formData.commitShas || []).map((sha, i) => (
-            <li key={i}>
-              {sha}
-              <button type="button" onClick={() => removeItem('commitShas', i)} disabled={saving}>×</button>
-            </li>
-          ))}
-        </ul>
+        <h3>Add Commit</h3>
+        <input
+          placeholder="Commit SHA"
+          onKeyPress={(e) => {
+            if (e.key === 'Enter') {
+              updateFeature('commits', { commitSha: e.currentTarget.value });
+              e.currentTarget.value = '';
+            }
+          }}
+        />
       </div>
 
       <div>
-        <h3>Pull Requests</h3>
-        <div>
-          <input
-            type="number"
-            value={newPrNumber}
-            onChange={(e) => setNewPrNumber(e.target.value)}
-            placeholder="PR Number"
-            disabled={saving}
-          />
-          <button type="button" onClick={addPr} disabled={saving}>Add</button>
-        </div>
-        <ul>
-          {(formData.pullRequestNumbers || []).map((pr, i) => (
-            <li key={i}>
-              #{pr}
-              <button type="button" onClick={() => removeItem('pullRequestNumbers', i)} disabled={saving}>×</button>
-            </li>
-          ))}
-        </ul>
+        <h3>Add Pull Request</h3>
+        <input
+          type="number"
+          placeholder="PR Number"
+          onKeyPress={(e) => {
+            if (e.key === 'Enter') {
+              updateFeature('pull-requests', { prNumber: parseInt(e.currentTarget.value) });
+              e.currentTarget.value = '';
+            }
+          }}
+        />
       </div>
+
+      <button onClick={handleBulkUpdate} disabled={saving}>
+        Update All Basic Fields
+      </button>
 
       <div>
         <h3>Documentation Section</h3>
-             <DocumentationSectionEditor projectId={projectId} sectionId={feature.docSection!} />
+        <DocumentationSectionEditor projectId={projectId} sectionId={feature.docSection!}/>
       </div>
 
       <div>
         <h3>Wiki Section</h3>
-                     <WikiSectionEditor projectId={projectId} sectionId={feature.wikiSection!} />
-
+        <WikiSectionEditor projectId={projectId} sectionId={feature.wikiSection!}/>
       </div>
 
-      <button type="submit" disabled={saving}>
-        {saving ? 'Saving...' : 'Save Changes'}
-      </button>
-    </form>
+
+    </div>
   );
 }
