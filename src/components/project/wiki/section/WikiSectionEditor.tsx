@@ -26,6 +26,7 @@ export default function WikiSectionEditor({ projectId, sectionId }: WikiSectionP
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
+  console.log('ewrwerwerw')
   useEffect(() => {
     const fetchSection = async () => {
       try {

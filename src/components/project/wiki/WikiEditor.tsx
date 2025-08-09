@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { useProject } from "@/context/ProjectContext";
+import WikiSectionEditor from './section/WikiSectionEditor';
+import wikiSection from "@/models/WikiSection";
 
 interface WikiData {
   _id?: string;
@@ -101,6 +103,10 @@ export default function WikiEditor() {
           {loading ? 'Saving...' : isEditing ? 'Update Wiki' : 'Create Wiki'}
         </button>
       </form>
+
+      {wiki.wikiSection.map(value => {
+  return <WikiSectionEditor key={value} projectId={projectId} sectionId={value} />
+})}
     </div>
   );
 }

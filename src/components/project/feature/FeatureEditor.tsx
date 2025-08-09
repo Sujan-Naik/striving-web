@@ -1,4 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import WikiSectionEditor from "@/components/project/wiki/section/WikiSectionEditor";
+import documentationSection from "@/models/DocumentationSection";
+import wikiSection from "@/models/WikiSection";
+import DocumentationSectionEditor from "@/components/project/docs/section/DocumentationSectionEditor";
 
 interface Feature {
   _id: string;
@@ -221,20 +225,13 @@ export default function FeatureEditor({ projectId, featureId }: FeatureEditorPro
 
       <div>
         <h3>Documentation Section</h3>
-        <input
-          value={formData.docSection || ''}
-          onChange={(e) => setFormData({...formData, docSection: e.target.value})}
-          disabled={saving}
-        />
+             <DocumentationSectionEditor projectId={projectId} sectionId={feature.docSection!} />
       </div>
 
       <div>
         <h3>Wiki Section</h3>
-        <input
-          value={formData.wikiSection || ''}
-          onChange={(e) => setFormData({...formData, wikiSection: e.target.value})}
-          disabled={saving}
-        />
+                     <WikiSectionEditor projectId={projectId} sectionId={feature.wikiSection!} />
+
       </div>
 
       <button type="submit" disabled={saving}>

@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import DocumentationSectionDisplay from "@/components/project/docs/section/DocumentationSectionDisplay";
+import WikiSectionDisplay from "@/components/project/wiki/section/WikiSectionDisplay";
 
 interface Feature {
   _id: string;
@@ -53,6 +55,8 @@ export default function FeatureDisplay({ projectId }: FeatureDisplayProps) {
           <h3>{feature.title}</h3>
           <p>{feature.description}</p>
           <p>State: {feature.state}</p>
+          <DocumentationSectionDisplay projectId={projectId} sectionId={feature.docSection!}/>
+          <WikiSectionDisplay projectId={projectId} sectionId={feature.wikiSection!}/>
         </div>
       ))}
     </div>
