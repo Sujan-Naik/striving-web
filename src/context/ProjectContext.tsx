@@ -5,7 +5,7 @@ interface Project {
   _id: string;
   name: string;
   description: string;
-  owner: { name: string; email: string };
+  owner: string;
   contributors: { name: string; email: string }[];
   githubRepo: string;
   createdAt: string;

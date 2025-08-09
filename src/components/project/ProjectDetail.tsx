@@ -35,6 +35,7 @@ export function ProjectDetail() {
       </p>
       <p>Github: {project.githubRepo}</p>
       <HeadedLink variant={VariantEnum.Outline} href={`/project/${projectId}/contributor`}>Contributors</HeadedLink>
+      <HeadedLink variant={VariantEnum.Outline} href={`/project/${projectId}/application`}>Application</HeadedLink>
         <HeadedLink variant={VariantEnum.Outline} href={`/project/${projectId}/docs`}>Documentation</HeadedLink>
         <HeadedLink variant={VariantEnum.Outline} href={`/project/${projectId}/feature`}>Features</HeadedLink>
         <HeadedLink variant={VariantEnum.Outline} href={`/project/${projectId}/wiki`}>Wiki</HeadedLink>
