@@ -24,12 +24,27 @@ export class FeatureService {
   }
 
   async updateFeature(id: string, updateData: Partial<IFeature>): Promise<IFeature | null> {
-    return await Feature.findByIdAndUpdate(
+  try {
+        console.log('Update data:', updateData); // Add this
+    const updatedFeature = await Feature.findByIdAndUpdate(
       id,
       { ...updateData, updatedAt: new Date() },
       { new: true }
-    ).populate('project assignedUsers');
+    )
+
+        console.log('Updated feature:', updatedFeature); // Add this
+
+    if (!updatedFeature) {
+      console.log(`Feature with id ${id} not found`);
+      return null;
+    }
+
+    return updatedFeature;
+  } catch (error) {
+    console.error('Error updating feature:', error);
+    throw error;
   }
+}
 
   async deleteFeature(id: string): Promise<boolean> {
     const result = await Feature.findByIdAndDelete(id);

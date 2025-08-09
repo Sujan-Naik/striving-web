@@ -20,7 +20,7 @@ export interface IFeature extends Document {
   pullRequestNumbers: number[];
   parent?: Types.ObjectId;
   children: Types.ObjectId[];
-  docSection?: Types.ObjectId; // Reference to DocumentationSection
+  documentationSection?: Types.ObjectId; // Reference to DocumentationSection
   wikiSection?: Types.ObjectId; // Reference to WikiSection
   createdAt: Date;
   updatedAt: Date;
@@ -36,7 +36,7 @@ const FeatureSchema = new Schema<IFeature>({
   pullRequestNumbers: [Number],
   parent: { type: Schema.Types.ObjectId, ref: 'Feature' },
   children: [{ type: Schema.Types.ObjectId, ref: 'Feature' }],
-  docSection: { type: Schema.Types.ObjectId, ref: 'DocumentationSection' },
+  documentationSection: { type: Schema.Types.ObjectId, ref: 'DocumentationSection' },
   wikiSection: { type: Schema.Types.ObjectId, ref: 'WikiSection' },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }

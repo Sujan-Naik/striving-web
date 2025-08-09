@@ -58,7 +58,7 @@ export default function FeatureCreate({ projectId, onFeatureCreated }: FeatureCr
         throw new Error('Failed to create sections');
       }
 
-      const docSection = await docResponse.json();
+      const documentationSection = await docResponse.json();
       const wikiSection = await wikiResponse.json();
 
       // Update feature with section references
@@ -66,7 +66,7 @@ export default function FeatureCreate({ projectId, onFeatureCreated }: FeatureCr
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          docSection: docSection._id,
+          documentationSection: documentationSection._id,
           wikiSection: wikiSection._id
         })
       });

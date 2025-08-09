@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useProject } from "@/context/ProjectContext";
-import DocumentationSectionDisplay from "@/components/project/documentation/section/DocumentationSectionDisplay";
+import DocumentationSectionDisplay from "@/components/project/docs/section/DocumentationSectionDisplay";
 
 interface DocumentationData {
   _id?: string;
@@ -10,7 +10,7 @@ interface DocumentationData {
   documentationSection: string[];
 }
 
-export default function DocumentationDisplay() {
+export default function DocsDisplay() {
   const { project } = useProject();
   const projectId = project._id;
   const [documentation, setDocumentation] = useState<DocumentationData | null>(null);
@@ -19,7 +19,7 @@ export default function DocumentationDisplay() {
   useEffect(() => {
     const fetchDocumentation = async () => {
       try {
-        const response = await fetch(`/api/project/${projectId}/documentation`);
+        const response = await fetch(`/api/project/${projectId}/docs`);
         if (response.ok) {
           const data = await response.json();
           setDocumentation(data);

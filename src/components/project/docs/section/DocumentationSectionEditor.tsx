@@ -26,6 +26,7 @@ export default function DocumentationSectionEditor({ projectId, sectionId }: Doc
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
+  console.log('ewrwerwerw')
   useEffect(() => {
     const fetchSection = async () => {
       try {
@@ -71,7 +72,7 @@ export default function DocumentationSectionEditor({ projectId, sectionId }: Doc
         method: 'DELETE',
       });
       if (!response.ok) throw new Error('Failed to delete section');
-      router.push(`/project/${projectId}/documentation`);
+      router.push(`/project/${projectId}/docs`);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete');
     }

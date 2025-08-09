@@ -12,7 +12,7 @@ interface Feature {
   pullRequestNumbers: number[];
   parent?: string;
   children: string[];
-  docSection?: string;
+  documentationSection?: string;
   wikiSection?: string;
   createdAt: string;
   updatedAt: string;
@@ -47,6 +47,7 @@ export default function FeatureDisplay({ projectId }: FeatureDisplayProps) {
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
+  console.log(features)
   return (
     <div>
       <h2>Features</h2>
@@ -55,7 +56,7 @@ export default function FeatureDisplay({ projectId }: FeatureDisplayProps) {
           <h3>{feature.title}</h3>
           <p>{feature.description}</p>
           <p>State: {feature.state}</p>
-          <DocumentationSectionDisplay projectId={projectId} sectionId={feature.docSection!}/>
+          <DocumentationSectionDisplay projectId={projectId} sectionId={feature.documentationSection!}/>
           <WikiSectionDisplay projectId={projectId} sectionId={feature.wikiSection!}/>
         </div>
       ))}

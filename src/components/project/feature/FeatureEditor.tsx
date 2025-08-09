@@ -10,7 +10,7 @@ interface Feature {
   assignedUsers: string[];
   commitShas: string[];
   pullRequestNumbers: number[];
-  docSection?: string;
+  documentationSection?: string;
   wikiSection?: string;
 }
 
@@ -168,7 +168,7 @@ export default function FeatureEditor({ projectId, featureId }: FeatureEditorPro
 
       <div>
         <h3>Documentation Section</h3>
-        <DocumentationSectionEditor projectId={projectId} sectionId={feature.docSection!}/>
+        <DocumentationSectionEditor projectId={projectId} sectionId={feature.documentationSection!}/>
       </div>
 
       <div>

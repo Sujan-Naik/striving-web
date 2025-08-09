@@ -13,7 +13,7 @@ interface Feature {
   assignedUsers: string[];
   commitShas: string[];
   pullRequestNumbers: number[];
-  docSection?: string;
+  documentationSection?: string;
   wikiSection?: string;
 }
 
