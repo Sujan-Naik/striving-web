@@ -1,9 +1,4 @@
-'use client'
-import {useEffect, useState} from "react";
-import {useProject} from "@/context/ProjectContext";
-import FeatureEditor from "@/components/project/feature/FeatureEditor";
-import FeatureCreate from "@/components/project/feature/FeatureCreate";
-
+import { useState, useEffect } from 'react';
 
 interface Feature {
   _id: string;
@@ -13,25 +8,22 @@ interface Feature {
   assignedUsers: string[];
   commitShas: string[];
   pullRequestNumbers: number[];
+  parent?: string;
+  children: string[];
   docSection?: string;
   wikiSection?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
-interface FeatureEditorProps {
+interface FeatureDisplayProps {
   projectId: string;
-  featureId: string;
 }
 
-
-export default function Page(){
-
-    const [features, setFeatures] = useState<Feature[]>([]);
+export default function FeatureDisplay({ projectId }: FeatureDisplayProps) {
+  const [features, setFeatures] = useState<Feature[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const {project} = useProject();
-
-  const projectId = project._id
 
   useEffect(() => {
     const fetchFeatures = async () => {
@@ -53,9 +45,16 @@ export default function Page(){
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
-    return (<div>
-                <FeatureCreate projectId={projectId}/>
-
-        {features.map(value => {return <FeatureEditor key={value._id} projectId={projectId} featureId={value._id}/>})}
-    </div>)
+  return (
+    <div>
+      <h2>Features</h2>
+      {features.map(feature => (
+        <div key={feature._id}>
+          <h3>{feature.title}</h3>
+          <p>{feature.description}</p>
+          <p>State: {feature.state}</p>
+        </div>
+      ))}
+    </div>
+  );
 }

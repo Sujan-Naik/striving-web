@@ -4,11 +4,12 @@ import dbConnect from "@/lib/mongodb";
 
 const featureService = new FeatureService();
 
-export async function PUT(request: NextRequest, { params }: { params: { projectId: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: { featureId: string } }) {
   try {
       await dbConnect()
     const { state } = await request.json();
-    const feature = await featureService.updateState(params.projectId, state);
+      const {featureId} = await params;
+    const feature = await featureService.updateState(featureId, state);
     if (!feature) {
       return NextResponse.json({ error: 'Feature not found' }, { status: 404 });
     }

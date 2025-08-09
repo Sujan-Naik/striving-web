@@ -5,9 +5,10 @@ import  projectService  from '@/services/projectService';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { projectId: string; featureId: string } }
+  { params }: { params: {featureId: string } }
 ) {
-  const project = await projectService.getProjectById(params.projectId);
-  const sections = await documentationSectionService.findByFeature(params.featureId);
+        const {featureId} = await params;
+
+  const sections = await documentationSectionService.findByFeature(featureId);
   return NextResponse.json(sections);
 }
