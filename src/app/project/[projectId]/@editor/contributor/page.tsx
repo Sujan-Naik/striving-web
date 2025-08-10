@@ -3,6 +3,6 @@ import {ContributorManager} from "@/components/project/contributors/ContributorM
 import {useProject} from "@/context/ProjectContext";
 
 export default function Page(){
-    const {project} = useProject();
+    const project = useProject()!;
     return (<ContributorManager projectId={project._id}/>)
 }

@@ -3,7 +3,7 @@ import {ContributorDisplay} from "@/components/project/contributors/ContributorD
 import {useProject} from "@/context/ProjectContext";
 
 export default function Page(){
-        const {project} = useProject();
+        const project = useProject()!;
 
     return (<div>
         <ContributorDisplay projectId={project._id} />

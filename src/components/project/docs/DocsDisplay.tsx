@@ -30,7 +30,7 @@ interface SectionNode extends IDocsSection {
 }
 
 export default function DocsDisplay() {
-  const { project } = useProject();
+  const  project  = useProject()!;
   const projectId = project?._id;
   const [documentation, setDocumentation] = useState<DocumentationData | null>(null);
   const [loading, setLoading] = useState(true);

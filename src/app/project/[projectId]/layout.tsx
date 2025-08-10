@@ -6,7 +6,7 @@ import {ProjectProvider, useProject} from "@/context/ProjectContext";
 import {ProjectMenu} from "@/components/project/ProjectMenu";
 
 function LayoutContent({ editor, preview }: {editor: React.ReactNode, preview: React.ReactNode }) {
-const { project } = useProject();
+const project  = useProject();
 const {user} = useUser();
 
 if (!project) return <div>No project found</div>;

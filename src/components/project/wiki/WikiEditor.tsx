@@ -32,7 +32,7 @@ interface Feature {
 }
 
 export default function WikiEditor() {
-  const { project } = useProject();
+  const project = useProject()!;
   const projectId = project._id;
 
   const [wiki, setWiki] = useState<WikiData>({

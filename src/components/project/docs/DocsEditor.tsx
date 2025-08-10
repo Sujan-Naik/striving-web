@@ -32,7 +32,7 @@ interface Feature {
 }
 
 export default function DocsEditor() {
-  const { project } = useProject();
+  const project  = useProject()!;
   const projectId = project._id;
 
   const [docs, setDocs] = useState<DocsData>({

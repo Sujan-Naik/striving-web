@@ -21,7 +21,8 @@ class FeatureService {
   }
 
   async getFeaturesByProject(projectId: string): Promise<IFeature[]> {
-    return await Feature.find({ project: projectId }).populate('assignedUsers').populate('documentationSection').populate('wikiSection');
+    // return await Feature.find({ project: projectId }).populate('assignedUsers').populate('documentationSection').populate('wikiSection');
+    return await Feature.find({ project: projectId })
   }
 
   async updateFeature(id: string, updateData: Partial<IFeature>): Promise<IFeature | null> {

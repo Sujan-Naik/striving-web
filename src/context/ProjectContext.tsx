@@ -3,11 +3,8 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import {PipelineStage} from "mongoose";
 import {Project} from "@/types/project/Project";
 
-interface ProjectContextType {
-  project: Project;
-}
 
-const ProjectContext = createContext<ProjectContextType | undefined>(undefined);
+const ProjectContext = createContext<Project | null>(null);
 
 export const ProjectProvider = ({
   children,
@@ -64,7 +61,7 @@ export const ProjectProvider = ({
   if (!project) return null;
 
   return (
-    <ProjectContext.Provider value={{ project }}>
+    <ProjectContext.Provider value={ project }>
       {children}
     </ProjectContext.Provider>
   );

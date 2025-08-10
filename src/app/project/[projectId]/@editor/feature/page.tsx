@@ -24,7 +24,7 @@ export default function Page(){
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const {project} = useProject();
+  const project = useProject()!;
   const projectId = project._id
 
   useEffect(() => {

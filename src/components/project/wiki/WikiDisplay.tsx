@@ -30,7 +30,7 @@ interface SectionNode extends IWikiSection {
 }
 
 export default function WikiDisplay() {
-  const { project } = useProject();
+  const project = useProject()!;
   const projectId = project?._id;
   const [wiki, setWiki] = useState<WikiData | null>(null);
   const [loading, setLoading] = useState(true);

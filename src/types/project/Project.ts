@@ -1,7 +1,7 @@
 import {IUser} from "@/types/project/User";
 
 export interface Project {
-  _id?: string;
+  _id: string;
   name: string;
   description: string;
   owner: IUser;

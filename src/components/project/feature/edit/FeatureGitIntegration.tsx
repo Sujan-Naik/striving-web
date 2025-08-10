@@ -20,7 +20,7 @@ export default function FeatureGitIntegration({
   onUpdate
 }: FeatureGitIntegrationProps) {
 
-    const {project} = useProject();
+    const project = useProject()!;
     const githubRepo = project.githubRepo!
   return (
     <div>

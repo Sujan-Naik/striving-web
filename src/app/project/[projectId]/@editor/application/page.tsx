@@ -3,7 +3,7 @@ import ProjectApplications from "@/components/project/application/ProjectApplica
 import {useProject} from "@/context/ProjectContext";
 
 export default function Page(){
-    const {project} = useProject()
+    const project = useProject()!
 
     return <div>
         <ProjectApplications projectId={project._id}/>
