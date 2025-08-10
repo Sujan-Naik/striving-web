@@ -3,7 +3,7 @@ import { useSession } from "next-auth/react";
 import { UserProvider, useUser } from "@/context/UserContext";
 import React from "react";
 import {ProjectProvider, useProject} from "@/context/ProjectContext";
-import {ProjectDetail} from "@/components/project/ProjectDetail";
+import {ProjectMenu} from "@/components/project/ProjectMenu";
 
 function LayoutContent({ editor, preview }: {editor: React.ReactNode, preview: React.ReactNode }) {
 const { project, owner } = useProject();
@@ -15,7 +15,7 @@ if (owner.username === user?.username) {
 return (
   <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
     <div style={{ flexShrink: 0 }}>
-      <ProjectDetail></ProjectDetail>
+      <ProjectMenu></ProjectMenu>
     </div>
     <div style={{ display: 'flex', flex: 1 }}>
       <div style={{ width: '50%', borderRight: '1px solid #ccc', display: 'flex', justifyContent: 'center' }}>
@@ -34,7 +34,7 @@ return (
     <div style={{ flexShrink: 0 }}>
     </div>
     <div style={{ flex: 1, display: 'flex' }}>
-        <ProjectDetail></ProjectDetail>
+        <ProjectMenu></ProjectMenu>
       <div style={{ width: '50%' }}>
         {preview}
       </div>

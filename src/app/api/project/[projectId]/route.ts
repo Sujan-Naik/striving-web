@@ -13,7 +13,7 @@ export async function GET(request: NextRequest, { params }: { params: { projectI
   }
   try {
     const {projectId} = await params
-    const project = await projectService.getProjectById(projectId);
+    const project = await projectService.getProjectById(projectId, ['contributors', 'owner']);
     if (!project) {
       return NextResponse.json({ error: 'Project not found' }, { status: 404 });
     }

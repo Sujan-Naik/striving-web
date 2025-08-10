@@ -8,6 +8,7 @@ export async function POST(request: NextRequest) {
   try {
       await dbConnect()
     const projectData = await request.json();
+      console.log(projectData)
     const project = await projectService.createProject(projectData);
     return NextResponse.json(project, { status: 201 });
   } catch (error) {
@@ -23,14 +24,14 @@ export async function GET(request: NextRequest) {
     const ownerId = searchParams.get('ownerId');
 
     if (ownerId) {
-            console.log('getting projects')
-
       const projects = await projectService.getProjectsByOwner(ownerId);
-      console.log('this')
+      return NextResponse.json(projects);
+    } else {
+      const projects = await projectService.getProjects();
       return NextResponse.json(projects);
     }
 
-    return NextResponse.json({ error: 'ownerId required' }, { status: 400 });
+    // return NextResponse.json({ error: 'ownerId required' }, { status: 400 });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to fetch projects' }, { status: 500 });
   }

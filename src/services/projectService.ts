@@ -52,11 +52,14 @@ async addWikiReference(projectId: string, wikiId: string): Promise<IProject | nu
 }
 
   async getProjectsByOwner(ownerId: string): Promise<IProject[]> {
-  console.log(`MongoDB: ${mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected'}`);
-
   return await Project.find({owner: ownerId})
         .populate('contributors', 'username email');
   }
+
+  async getProjects(): Promise<IProject[]> {
+    return await Project.find().populate('contributors', 'username').populate('owner', 'username');
+  }
+
 
   async updateProject(id: string, updates: Partial<IProject>): Promise<IProject | null> {
     return Project.findByIdAndUpdate(

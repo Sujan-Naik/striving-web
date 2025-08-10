@@ -1,12 +1,12 @@
 'use client'
-import {ProjectDetail} from '@/components/project/ProjectDetail';
+import {ProjectMenu} from '@/components/project/ProjectMenu';
 import {HeadedLink, VariantEnum} from "headed-ui";
 
 
 export default function ProjectPage() {
       return (
     <div className="container mx-auto p-4">
-      <ProjectDetail />
+      <ProjectMenu />
       {/*<ContributorManager projectId={projectId} />*/}
 
     </div>

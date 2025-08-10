@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import {useSession} from "next-auth/react";
+import {useEffect, useState} from 'react';
 import {useUser} from "@/context/UserContext";
+import {HeadedButton, HeadedInput, HeadedSelect, HeadedTextArea, VariantEnum} from "headed-ui";
 
 interface CreateProjectProps {
   onProjectCreated?: (project: any) => void;
@@ -88,17 +88,19 @@ export default function CreateProject({ onProjectCreated }: CreateProjectProps) 
   return (
     <form onSubmit={handleSubmit}>
       <div>
-        <input
+        <HeadedInput
           name="name"
           placeholder="Project name"
           value={formData.name}
           onChange={handleChange}
+          variant={VariantEnum.Outline}
           required
         />
       </div>
 
       <div>
-        <textarea
+        <HeadedTextArea
+            variant={VariantEnum.Outline}
           name="description"
           placeholder="Project description"
           value={formData.description}
@@ -108,29 +110,24 @@ export default function CreateProject({ onProjectCreated }: CreateProjectProps) 
       </div>
 
       <div>
-        <select
-          name="githubRepo"
-          value={formData.githubRepo}
+        <HeadedSelect
+            name="githubRepo"
+          options={[
+            loadingRepos ? 'Loading repositories...' : 'Select a repository',
+            ...repositories.map(repo => repo.full_name)
+          ]}
+          label="GitHub Repository"
+          description="Choose a repository to link with your project"
           onChange={handleChange}
-          required
-          disabled={loadingRepos}
-        >
-          <option value="">
-            {loadingRepos ? 'Loading repositories...' : 'Select a repository'}
-          </option>
-          {repositories.map(repo => (
-            <option key={repo.id} value={repo.full_name}>
-              {repo.name}
-            </option>
-          ))}
-        </select>
+          variant={VariantEnum.Outline}
+        />
       </div>
 
       {error && <div style={{ color: 'red' }}>{error}</div>}
 
-      <button type="submit" disabled={loading || loadingRepos}>
+      <HeadedButton variant={VariantEnum.Outline} type="submit" disabled={loading || loadingRepos}>
         {loading ? 'Creating...' : 'Create Project'}
-      </button>
+      </HeadedButton>
     </form>
   );
 }

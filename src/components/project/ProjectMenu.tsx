@@ -2,28 +2,7 @@
 import {useProject} from "@/context/ProjectContext";
 import {HeadedLink, VariantEnum} from "headed-ui";
 
-
-interface Project {
-  _id: string;
-  name: string;
-  description: string;
-  owner: { name: string; email: string };
-  contributors: { name: string; email: string }[];
-  githubRepo: string;
-  createdAt: string;
-}
-
-
-interface User {
-  username: string;
-  email: string;
-}
-
-interface Props {
-  projectId: string;
-}
-
-export function ProjectDetail() {
+export function ProjectMenu() {
   const {project, owner} = useProject()
     const projectId = project._id
   return (
