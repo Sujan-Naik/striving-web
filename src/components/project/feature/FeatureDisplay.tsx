@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import {useState, useEffect, JSX} from 'react';
 import DocumentationSectionDisplay from "@/components/project/docs/section/DocumentationSectionDisplay";
 import WikiSectionDisplay from "@/components/project/wiki/section/WikiSectionDisplay";
+import {HeadedTabs} from "headed-ui";
 
 interface Feature {
   _id: string;
@@ -44,22 +45,40 @@ export default function FeatureDisplay({ projectId }: FeatureDisplayProps) {
     fetchFeatures();
   }, [projectId]);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  const buildHierarchy = (features: Feature[]): Feature[] => {
+    const featureMap = new Map(features.map(f => [f._id, f]));
+    return features.filter(f => !f.parent);
+  };
 
-  console.log(features)
-  return (
-    <div>
-      <h2>Features</h2>
-      {features.map(feature => (
-        <div key={feature._id}>
-          <h3>{feature.title}</h3>
+  const renderFeature = (feature: Feature, level = 0): JSX.Element => {
+    const children = features.filter(f => f.parent === feature._id);
+
+    return (
+      <div key={feature._id} style={{ marginLeft: `${level * 20}px`, marginBottom: '1rem' }}>
+        <div style={{ border: '1px solid #ccc', padding: '1rem' }}>
+          <h3>{feature.title} {feature.children.length > 0 && '(Parent)'}</h3>
           <p>{feature.description}</p>
           <p>State: {feature.state}</p>
           <DocumentationSectionDisplay projectId={projectId} sectionId={feature.documentationSection!}/>
           <WikiSectionDisplay projectId={projectId} sectionId={feature.wikiSection!}/>
         </div>
-      ))}
+        {children.map(child => renderFeature(child, level + 1))}
+      </div>
+    );
+  };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+
+  const rootFeatures = buildHierarchy(features);
+
+  return (
+    <div>
+      <h2>Features</h2>
+            <HeadedTabs tabs={rootFeatures.map(value => value.title)} >
+
+      {rootFeatures.map(feature => renderFeature(feature))}
+            </HeadedTabs>
     </div>
   );
 }

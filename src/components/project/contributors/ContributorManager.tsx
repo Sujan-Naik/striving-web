@@ -27,15 +27,15 @@ export function ContributorManager({ projectId }: Props) {
     setContributors(data);
   };
 
-  const addContributor = async () => {
-    await fetch(`/api/project/${projectId}/contributors`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ contributorId: newContributorId })
-    });
-    setNewContributorId('');
-    fetchContributors();
-  };
+  // const addContributor = async () => {
+  //   await fetch(`/api/project/${projectId}/contributors`, {
+  //     method: 'POST',
+  //     headers: { 'Content-Type': 'application/json' },
+  //     body: JSON.stringify({ contributorId: newContributorId })
+  //   });
+  //   setNewContributorId('');
+  //   fetchContributors();
+  // };
 
   const removeContributor = async (contributorId: string) => {
     await fetch(`/api/project/${projectId}/contributors`, {
@@ -50,18 +50,18 @@ export function ContributorManager({ projectId }: Props) {
     <div>
       <h2 className="text-xl font-semibold mb-4">Contributors</h2>
 
-      <div className="mb-4">
-        <input
-          type="text"
-          placeholder="Contributor ID"
-          value={newContributorId}
-          onChange={(e) => setNewContributorId(e.target.value)}
-          className="border p-2 mr-2"
-        />
-        <button onClick={addContributor} className="bg-blue-500 text-white px-4 py-2">
-          Add
-        </button>
-      </div>
+      {/*<div className="mb-4">*/}
+      {/*  <input*/}
+      {/*    type="text"*/}
+      {/*    placeholder="Contributor ID"*/}
+      {/*    value={newContributorId}*/}
+      {/*    onChange={(e) => setNewContributorId(e.target.value)}*/}
+      {/*    className="border p-2 mr-2"*/}
+      {/*  />*/}
+      {/*  <button onClick={addContributor} className="bg-blue-500 text-white px-4 py-2">*/}
+      {/*    Add*/}
+      {/*  </button>*/}
+      {/*</div>*/}
 
       <div className="space-y-2">
         {contributors.map(contributor => (

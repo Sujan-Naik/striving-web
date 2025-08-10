@@ -1,4 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+
+interface Feature {
+  _id: string;
+  title: string;
+  parent?: string;
+  children: string[];
+}
 
 interface FeatureCreateProps {
   projectId: string;
@@ -8,8 +15,25 @@ interface FeatureCreateProps {
 export default function FeatureCreate({ projectId, onFeatureCreated }: FeatureCreateProps) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [parentId, setParentId] = useState('');
+  const [features, setFeatures] = useState<Feature[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchFeatures = async () => {
+      try {
+        const response = await fetch(`/api/project/${projectId}/features`);
+        if (response.ok) {
+          const data = await response.json();
+          setFeatures(data);
+        }
+      } catch (err) {
+        console.error('Failed to fetch features:', err);
+      }
+    };
+    fetchFeatures();
+  }, [projectId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,18 +41,19 @@ export default function FeatureCreate({ projectId, onFeatureCreated }: FeatureCr
     setError(null);
 
     try {
-      // Create feature
+      const featureData: any = { title, description };
+      if (parentId) featureData.parent = parentId;
+
       const featureResponse = await fetch(`/api/project/${projectId}/features`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, description })
+        body: JSON.stringify(featureData)
       });
 
       if (!featureResponse.ok) throw new Error('Failed to create feature');
 
       const feature = await featureResponse.json();
 
-      // Create documentation section
       const docResponse = await fetch(`/api/project/${projectId}/documentation-sections`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -41,7 +66,6 @@ export default function FeatureCreate({ projectId, onFeatureCreated }: FeatureCr
         })
       });
 
-      // Create wiki section
       const wikiResponse = await fetch(`/api/project/${projectId}/wiki-sections`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -61,7 +85,6 @@ export default function FeatureCreate({ projectId, onFeatureCreated }: FeatureCr
       const documentationSection = await docResponse.json();
       const wikiSection = await wikiResponse.json();
 
-      // Update feature with section references
       await fetch(`/api/project/${projectId}/features/${feature._id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -73,6 +96,7 @@ export default function FeatureCreate({ projectId, onFeatureCreated }: FeatureCr
 
       setTitle('');
       setDescription('');
+      setParentId('');
       onFeatureCreated?.();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
@@ -103,6 +127,17 @@ export default function FeatureCreate({ projectId, onFeatureCreated }: FeatureCr
           onChange={(e) => setDescription(e.target.value)}
           required
         />
+      </div>
+
+      <div>
+        <select value={parentId} onChange={(e) => setParentId(e.target.value)}>
+          <option value="">No Parent (Root Feature)</option>
+          {features.map(feature => (
+            <option key={feature._id} value={feature._id}>
+              {feature.title}
+            </option>
+          ))}
+        </select>
       </div>
 
       <button type="submit" disabled={loading}>
