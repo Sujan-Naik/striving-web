@@ -6,12 +6,12 @@ import {ProjectProvider, useProject} from "@/context/ProjectContext";
 import {ProjectMenu} from "@/components/project/ProjectMenu";
 
 function LayoutContent({ editor, preview }: {editor: React.ReactNode, preview: React.ReactNode }) {
-const { project, owner } = useProject();
+const { project } = useProject();
 const {user} = useUser();
 
 if (!project) return <div>No project found</div>;
 
-if (owner.username === user?.username) {
+if (project.owner._id === user?._id) {
 return (
   <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
     <div style={{ flexShrink: 0 }}>

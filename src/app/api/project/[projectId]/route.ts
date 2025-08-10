@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { ProjectService } from '@/services/projectService';
+import projectService from '@/services/projectService';
 import dbConnect from "@/lib/mongodb";
 
-const projectService = new ProjectService();
 
 export async function GET(request: NextRequest, { params }: { params: { projectId: string } }) {
   try {
@@ -13,7 +12,8 @@ export async function GET(request: NextRequest, { params }: { params: { projectI
   }
   try {
     const {projectId} = await params
-    const project = await projectService.getProjectById(projectId, ['contributors', 'owner']);
+    // const project = await projectService.getProjectById(projectId, ['contributors', 'owner']);
+    const project = await projectService.getProjectByName(projectId, ['contributors', 'owner']);
     if (!project) {
       return NextResponse.json({ error: 'Project not found' }, { status: 404 });
     }

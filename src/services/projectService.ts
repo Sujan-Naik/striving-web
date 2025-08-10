@@ -51,6 +51,29 @@ async addWikiReference(projectId: string, wikiId: string): Promise<IProject | nu
     return await query;
 }
 
+async getProjectByName(id: string, populate?: string[]): Promise<IProject | null> {
+    // if (!mongoose.Types.ObjectId.isValid(id)) {
+    //     return null;
+    // }
+
+    let query = Project.findOne({name: id});
+
+    if (populate?.includes('owner')) {
+        query = query.populate('owner', 'username');
+    }
+    if (populate?.includes('contributors')) {
+        query = query.populate('contributors', 'username');
+    }
+    if (populate?.includes('features')) {
+        query = query.populate('features');
+    }
+    if (populate?.includes('wiki')) {
+        query = query.populate('wiki');
+    }
+
+    return await query;
+}
+
   async getProjectsByOwner(ownerId: string): Promise<IProject[]> {
   return await Project.find({owner: ownerId})
         .populate('contributors', 'username email');

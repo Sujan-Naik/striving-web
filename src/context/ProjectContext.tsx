@@ -1,25 +1,10 @@
 "use client";
 import { createContext, useContext, useState, useEffect } from 'react';
-
-interface Project {
-  _id: string;
-  name: string;
-  description: string;
-  owner: string;
-  contributors: { name: string; email: string }[];
-  githubRepo: string;
-  createdAt: string;
-  features: string[];
-}
-
-interface User {
-  username: string;
-  email: string;
-}
+import {PipelineStage} from "mongoose";
+import {Project} from "@/types/project/Project";
 
 interface ProjectContextType {
   project: Project;
-  owner: User;
 }
 
 const ProjectContext = createContext<ProjectContextType | undefined>(undefined);
@@ -32,7 +17,6 @@ export const ProjectProvider = ({
   projectId: string;
 }) => {
   const [project, setProject] = useState<Project | null>(null);
-  const [owner, setOwner] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -55,32 +39,32 @@ export const ProjectProvider = ({
     fetchProject();
   }, [projectId]);
 
-  useEffect(() => {
-    if (project?.owner) {
-      const fetchOwner = async () => {
-        try {
-          const response = await fetch(`/api/project/user/${project.owner}`);
-          if (!response.ok) {
-            throw new Error('Failed to fetch owner');
-          }
-          const ownerData = await response.json();
-
-          setOwner(ownerData);
-        } catch (err) {
-          setError(err instanceof Error ? err.message : 'Unknown error');
-        }
-      };
-
-      fetchOwner();
-    }
-  }, [project?.owner]);
+  // useEffect(() => {
+  //   if (project?.owner) {
+  //     const fetchOwner = async () => {
+  //       try {
+  //         const response = await fetch(`/api/project/user/${project.owner}`);
+  //         if (!response.ok) {
+  //           throw new Error('Failed to fetch owner');
+  //         }
+  //         const ownerData = await response.json();
+  //
+  //         setOwner(ownerData);
+  //       } catch (err) {
+  //         setError(err instanceof Error ? err.message : 'Unknown error');
+  //       }
+  //     };
+  //
+  //     fetchOwner();
+  //   }
+  // }, [project?.owner]);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
-  if (!project || !owner) return null;
+  if (!project) return null;
 
   return (
-    <ProjectContext.Provider value={{ project, owner }}>
+    <ProjectContext.Provider value={{ project }}>
       {children}
     </ProjectContext.Provider>
   );
