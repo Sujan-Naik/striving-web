@@ -49,10 +49,8 @@ export default function Page(){
 
     fetchFeatures();
   }, [projectId]);
-  features = [features[0]]
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
-
     return (<div>
                 <FeatureCreate projectId={projectId}/>
 

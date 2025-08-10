@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {useSession} from "next-auth/react";
 import {useUser} from "@/context/UserContext";
 
@@ -8,8 +8,13 @@ interface CreateProjectProps {
   onProjectCreated?: (project: any) => void;
 }
 
-export default function CreateProject({ onProjectCreated }: CreateProjectProps) {
+interface Repository {
+  id: number;
+  name: string;
+  full_name: string;
+}
 
+export default function CreateProject({ onProjectCreated }: CreateProjectProps) {
   const {user} = useUser();
 
   if (!user){
@@ -18,14 +23,33 @@ export default function CreateProject({ onProjectCreated }: CreateProjectProps) 
     </div>)
   }
 
-
   const [formData, setFormData] = useState({
     name: '',
     description: '',
     githubRepo: ''
   });
+  const [repositories, setRepositories] = useState<Repository[]>([]);
   const [loading, setLoading] = useState(false);
+  const [loadingRepos, setLoadingRepos] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    const fetchRepositories = async () => {
+      setLoadingRepos(true);
+      try {
+        const response = await fetch('/api/github/repos');
+        if (!response.ok) throw new Error('Failed to fetch repositories');
+        const repos = await response.json();
+        setRepositories(repos);
+      } catch (err) {
+        setError('Failed to load repositories');
+      } finally {
+        setLoadingRepos(false);
+      }
+    };
+
+    fetchRepositories();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,7 +63,6 @@ export default function CreateProject({ onProjectCreated }: CreateProjectProps) 
         body: JSON.stringify({
           ...formData,
           owner: user._id
-          // owner: ownerId
         })
       });
 
@@ -55,7 +78,7 @@ export default function CreateProject({ onProjectCreated }: CreateProjectProps) 
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData(prev => ({
       ...prev,
       [e.target.name]: e.target.value
@@ -85,18 +108,27 @@ export default function CreateProject({ onProjectCreated }: CreateProjectProps) 
       </div>
 
       <div>
-        <input
+        <select
           name="githubRepo"
-          placeholder="GitHub repo (username/repo-name)"
           value={formData.githubRepo}
           onChange={handleChange}
           required
-        />
+          disabled={loadingRepos}
+        >
+          <option value="">
+            {loadingRepos ? 'Loading repositories...' : 'Select a repository'}
+          </option>
+          {repositories.map(repo => (
+            <option key={repo.id} value={repo.full_name}>
+              {repo.name}
+            </option>
+          ))}
+        </select>
       </div>
 
       {error && <div style={{ color: 'red' }}>{error}</div>}
 
-      <button type="submit" disabled={loading}>
+      <button type="submit" disabled={loading || loadingRepos}>
         {loading ? 'Creating...' : 'Create Project'}
       </button>
     </form>
