@@ -4,15 +4,30 @@ import React, { useState, useEffect } from 'react';
 import { useProject } from "@/context/ProjectContext";
 import DocumentationSectionEditor from './section/DocumentationSectionEditor';
 
+interface PopulatedDocsSection {
+  _id: string;
+  title: string;
+  content: string;
+}
+
+interface DocsSection {
+  documentationSection: string | PopulatedDocsSection; // Can be ID or populated object
+  order: number;
+  level: number;
+  parentSection?: string;
+}
+
 interface DocsData {
   _id?: string;
   content: string;
-  documentationSection: string[];
+  documentationSections: DocsSection[];
 }
 
 interface Feature {
   _id: string;
   title: string;
+  parent?: string;
+  children: string[];
   documentationSection?: string;
 }
 
@@ -22,7 +37,7 @@ export default function DocsEditor() {
 
   const [docs, setDocs] = useState<DocsData>({
     content: '',
-    documentationSection: []
+    documentationSections: []
   });
   const [features, setFeatures] = useState<Feature[]>([]);
   const [selectedDocumentationSections, setSelectedDocumentationSections] = useState<string[]>([]);
@@ -32,59 +47,141 @@ export default function DocsEditor() {
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const docsResponse = await fetch(`/api/project/${projectId}/docs`);
-        if (docsResponse.ok) {
-          const existingDocs = await docsResponse.json();
-          setDocs({
-            _id: existingDocs._id,
-            content: existingDocs.content || '',
-            documentationSection: existingDocs.documentationSection || []
-          });
-          setSelectedDocumentationSections(existingDocs.documentationSection || []);
-          setIsEditing(true);
-          setDocsExists(true);
-        } else if (docsResponse.status === 404) {
-          setDocsExists(false);
-        }
+  const fetchData = async () => {
+    try {
+      const docsResponse = await fetch(`/api/project/${projectId}/docs`);
+      if (docsResponse.ok) {
+        const existingDocs = await docsResponse.json();
+        setDocs({
+          _id: existingDocs._id,
+          content: existingDocs.content || '',
+          documentationSections: existingDocs.documentationSections || []
+        });
 
-        const featuresResponse = await fetch(`/api/project/${projectId}/features`);
-        if (featuresResponse.ok) {
-          const featuresData = await featuresResponse.json();
-          setFeatures(featuresData);
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
+        // Extract IDs from populated objects
+        const sectionIds = existingDocs.documentationSections?.map((ds: DocsSection) =>
+          typeof ds.documentationSection === 'string'
+            ? ds.documentationSection
+            : ds.documentationSection._id
+        ) || [];
+
+        setSelectedDocumentationSections(sectionIds);
+        setIsEditing(true);
+        setDocsExists(true);
+      } else if (docsResponse.status === 404) {
         setDocsExists(false);
       }
-    };
 
-    if (projectId) {
-      fetchData();
+      const featuresResponse = await fetch(`/api/project/${projectId}/features`);
+      if (featuresResponse.ok) {
+        const featuresData = await featuresResponse.json();
+        setFeatures(featuresData);
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      setDocsExists(false);
     }
-  }, [projectId]);
+  };
 
+  if (projectId) {
+    fetchData();
+  }
+}, [projectId]);
 
-  const handleDocumentationSectionToggle = (documentationSectionId: string) => {
-    setSelectedDocumentationSections(prev =>
-      prev.includes(documentationSectionId)
-        ? prev.filter(id => id !== documentationSectionId)
-        : [...prev, documentationSectionId]
-    );
+  // Rest of your component code remains the same...
+  const buildHierarchy = (features: Feature[]): Feature[] => {
+    return features.filter(f => !f.parent);
+  };
+
+  const getFeatureLevel = (featureId: string, level = 0): number => {
+    const feature = features.find(f => f._id === featureId);
+    if (!feature?.parent) return level;
+    return getFeatureLevel(feature.parent, level + 1);
+  };
+
+  const getParentDocumentationSection = (featureId: string): string | undefined => {
+    const feature = features.find(f => f._id === featureId);
+    if (!feature?.parent) return undefined;
+    const parentFeature = features.find(f => f._id === feature.parent);
+    return parentFeature?.documentationSection;
+  };
+
+  const renderFeatureOption = (feature: Feature, level = 0): React.ReactNode[] => {
+    const children = features.filter(f => f.parent === feature._id);
+    const isSelected = selectedDocumentationSections.includes(feature.documentationSection!);
+
+    const elements: React.ReactNode[] = [];
+
+    if (feature.documentationSection) {
+      elements.push(
+        <div
+          key={feature._id}
+          style={{
+            padding: '8px',
+            margin: '4px 0',
+            marginLeft: `${level * 20}px`,
+            border: '1px solid #ccc',
+            backgroundColor: isSelected ? '#f0f8ff' : 'white'
+          }}
+        >
+          <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <input
+              type="checkbox"
+              checked={isSelected}
+              onChange={() => handleDocumentationSectionToggle(feature)}
+            />
+            <span>{feature.title}</span>
+          </label>
+        </div>
+      );
+    }
+
+    children.forEach(child => {
+      elements.push(...renderFeatureOption(child, level + 1));
+    });
+
+    return elements;
+  };
+
+  const handleDocumentationSectionToggle = (feature: Feature) => {
+    if (!feature.documentationSection) return;
+
+    setSelectedDocumentationSections(prev => {
+      if (prev.includes(feature.documentationSection!)) {
+        return prev.filter(id => id !== feature.documentationSection);
+      } else {
+        return [...prev, feature.documentationSection!];
+      }
+    });
+  };
+
+  const buildDocumentationSections = (): DocsSection[] => {
+    return selectedDocumentationSections.map((sectionId, index) => {
+      const feature = features.find(f => f.documentationSection === sectionId);
+      if (!feature) return null;
+
+      return {
+        documentationSection: sectionId,
+        order: index,
+        level: getFeatureLevel(feature._id),
+        parentSection: getParentDocumentationSection(feature._id)
+      };
+    }).filter(Boolean) as DocsSection[];
   };
 
   const updateDocumentationSections = async () => {
     setLoading(true);
     try {
+      const documentationSections = buildDocumentationSections();
+
       const response = await fetch(`/api/project/${projectId}/docs/documentation-section`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ documentationSection: selectedDocumentationSections })
+        body: JSON.stringify({ documentationSections })
       });
 
       if (response.ok) {
-        setDocs(prev => ({ ...prev, documentationSection: selectedDocumentationSections }));
+        setDocs(prev => ({ ...prev, documentationSections }));
         alert('Docs sections updated successfully');
       }
     } catch (error) {
@@ -100,15 +197,19 @@ export default function DocsEditor() {
 
     try {
       const method = isEditing ? 'PUT' : 'POST';
+
       const response = await fetch(`/api/project/${projectId}/docs`, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...docs, project: projectId })
+        body: JSON.stringify({
+          content: docs.content,
+          project: projectId
+        })
       });
 
       if (response.ok) {
         const savedDocs = await response.json();
-        setDocs(savedDocs);
+        setDocs(prev => ({ ...prev, ...savedDocs }));
         setIsEditing(true);
         setDocsExists(true);
         alert(`Docs ${isEditing ? 'updated' : 'created'} successfully`);
@@ -120,8 +221,25 @@ export default function DocsEditor() {
     }
   };
 
+  // Drag and drop handlers remain the same...
   const handleDragStart = (documentationSectionId: string) => {
     setDraggedItem(documentationSectionId);
+  };
+
+  const canDropAtPosition = (draggedSectionId: string, targetIndex: number): boolean => {
+    const draggedFeature = features.find(f => f.documentationSection === draggedSectionId);
+    if (!draggedFeature) return false;
+
+    const draggedParentSection = getParentDocumentationSection(draggedFeature._id);
+
+    if (draggedParentSection) {
+      const parentIndex = selectedDocumentationSections.indexOf(draggedParentSection);
+      if (parentIndex === -1 || parentIndex >= targetIndex) {
+        return false;
+      }
+    }
+
+    return true;
   };
 
   const handleDrop = (targetIndex: number) => {
@@ -130,20 +248,80 @@ export default function DocsEditor() {
     const currentIndex = selectedDocumentationSections.indexOf(draggedItem);
     if (currentIndex === -1 || currentIndex === targetIndex) return;
 
+    if (!canDropAtPosition(draggedItem, targetIndex)) {
+      setDraggedItem(null);
+      return;
+    }
+
     const newOrder = [...selectedDocumentationSections];
-    newOrder.splice(currentIndex, 1);
-    newOrder.splice(targetIndex, 0, draggedItem);
-    setSelectedDocumentationSections(newOrder);
+
+    const getChildrenSections = (parentSectionId: string): string[] => {
+      return selectedDocumentationSections.filter(sectionId => {
+        const feature = features.find(f => f.documentationSection === sectionId);
+        return feature && getParentDocumentationSection(feature._id) === parentSectionId;
+      });
+    };
+
+    const childrenSections = getChildrenSections(draggedItem);
+    const itemsToMove = [draggedItem, ...childrenSections];
+    const filteredOrder = newOrder.filter(id => !itemsToMove.includes(id));
+
+    const adjustedTargetIndex = targetIndex > currentIndex
+      ? targetIndex - itemsToMove.length
+      : targetIndex;
+
+    filteredOrder.splice(adjustedTargetIndex, 0, ...itemsToMove);
+
+    setSelectedDocumentationSections(filteredOrder);
     setDraggedItem(null);
+  };
+
+  const renderSelectedFeature = (documentationSectionId: string, index: number) => {
+    const feature = features.find(f => f.documentationSection === documentationSectionId);
+    if (!feature) return null;
+
+    const level = getFeatureLevel(feature._id);
+    const isValidDropZone = !draggedItem || canDropAtPosition(draggedItem, index);
+
+    return (
+      <div
+        key={documentationSectionId}
+        draggable
+        onDragStart={() => handleDragStart(documentationSectionId)}
+        onDragOver={(e) => {
+          if (isValidDropZone) e.preventDefault();
+        }}
+        onDrop={() => handleDrop(index)}
+        style={{
+          padding: '8px',
+          margin: '4px 0',
+          marginLeft: `${level * 20}px`,
+          border: '1px solid #ccc',
+          backgroundColor: draggedItem && !isValidDropZone ? '#ffebee' : '#f0f8ff',
+          cursor: draggedItem && !isValidDropZone ? 'not-allowed' : 'move',
+          opacity: draggedItem === documentationSectionId ? 0.5 : 1
+        }}
+      >
+        <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <input
+            type="checkbox"
+            checked={true}
+            onChange={() => handleDocumentationSectionToggle(feature)}
+          />
+          <span>{feature.title}</span>
+          <span style={{ marginLeft: 'auto', fontSize: '12px', color: '#666' }}>
+            #{index + 1} (Level {level})
+          </span>
+        </label>
+      </div>
+    );
   };
 
   if (docsExists === null) {
     return <div>Loading...</div>;
   }
 
-  const availableFeatures = features.filter(feature =>
-    feature.documentationSection && !selectedDocumentationSections.includes(feature.documentationSection)
-  );
+  const rootFeatures = buildHierarchy(features);
 
   return (
     <div>
@@ -169,68 +347,16 @@ export default function DocsEditor() {
       <div>
         <h3>Select & Order Docs Sections</h3>
         <div style={{ display: 'flex', gap: '20px' }}>
-          {/* Available sections (left) */}
           <div style={{ flex: 1 }}>
             <h4>Available Sections</h4>
-            {availableFeatures.map(feature => (
-              <div
-                key={feature._id}
-                style={{
-                  padding: '8px',
-                  margin: '4px 0',
-                  border: '1px solid #ccc',
-                  backgroundColor: 'white'
-                }}
-              >
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <input
-                    type="checkbox"
-                    checked={false}
-                    onChange={() => handleDocumentationSectionToggle(feature.documentationSection!)}
-                  />
-                  <span>{feature.title}</span>
-                </label>
-              </div>
-            ))}
+            {rootFeatures.map(feature => renderFeatureOption(feature))}
           </div>
 
-          {/* Selected sections (right) */}
           <div style={{ flex: 1 }}>
             <h4>Selected Sections (Ordered)</h4>
-            {selectedDocumentationSections.map((documentationSectionId, index) => {
-              const feature = features.find(f => f.documentationSection === documentationSectionId);
-              if (!feature) return null;
-
-              return (
-                <div
-                  key={documentationSectionId}
-                  draggable
-                  onDragStart={() => handleDragStart(documentationSectionId)}
-                  onDragOver={(e) => e.preventDefault()}
-                  onDrop={() => handleDrop(index)}
-                  style={{
-                    padding: '8px',
-                    margin: '4px 0',
-                    border: '1px solid #ccc',
-                    backgroundColor: '#f0f8ff',
-                    cursor: 'move',
-                    opacity: draggedItem === documentationSectionId ? 0.5 : 1
-                  }}
-                >
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <input
-                      type="checkbox"
-                      checked={true}
-                      onChange={() => handleDocumentationSectionToggle(documentationSectionId)}
-                    />
-                    <span>{feature.title}</span>
-                    <span style={{ marginLeft: 'auto', fontSize: '12px', color: '#666' }}>
-                      #{index + 1}
-                    </span>
-                  </label>
-                </div>
-              );
-            })}
+            {selectedDocumentationSections.map((documentationSectionId, index) =>
+              renderSelectedFeature(documentationSectionId, index)
+            )}
           </div>
         </div>
 
@@ -239,10 +365,17 @@ export default function DocsEditor() {
         </button>
       </div>
 
-      {docs.documentationSection.map(value => (
-
-        <DocumentationSectionEditor key={value} projectId={projectId} sectionId={value} />
-      ))}
+      {docs.documentationSections.map(section => (
+      <DocumentationSectionEditor
+        key={typeof section.documentationSection === 'string'
+          ? section.documentationSection
+          : section.documentationSection._id}
+        projectId={projectId}
+        sectionId={typeof section.documentationSection === 'string'
+          ? section.documentationSection
+          : section.documentationSection._id}
+      />
+    ))}
     </div>
   );
 }

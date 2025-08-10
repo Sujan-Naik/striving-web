@@ -19,14 +19,16 @@ export const wikiService = {
 },
 
   async getById(id: string): Promise<IWiki | null> {
-    return await Wiki.findById(id).populate('project').populate('wikiSection');
+    return await Wiki.findById(id).populate('project').populate('wikiSections');
   },
 
   async getByProject(projectId: string): Promise<IWiki[]> {
-    return await Wiki.find({ project: projectId });
+    return await Wiki.find({ project: projectId })
+            .populate('wikiSections.wikiSection')
+;
   },
 
-  async update(id: string | Types.ObjectId, data: Partial<Pick<IWiki, 'content' | 'wikiSection'>>): Promise<IWiki | null> {
+  async update(id: string | Types.ObjectId, data: Partial<Pick<IWiki, 'content' | 'wikiSections'>>): Promise<IWiki | null> {
     return await Wiki.findByIdAndUpdate(
       id,
       { ...data, updatedAt: new Date() },

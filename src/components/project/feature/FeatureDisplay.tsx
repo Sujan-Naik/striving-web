@@ -2,6 +2,7 @@ import {useState, useEffect, JSX} from 'react';
 import DocumentationSectionDisplay from "@/components/project/docs/section/DocumentationSectionDisplay";
 import WikiSectionDisplay from "@/components/project/wiki/section/WikiSectionDisplay";
 import {HeadedTabs} from "headed-ui";
+import {Types} from "mongoose";
 
 interface Feature {
   _id: string;
@@ -13,11 +14,30 @@ interface Feature {
   pullRequestNumbers: number[];
   parent?: string;
   children: string[];
-  documentationSection?: string;
-  wikiSection?: string;
+  documentationSection?: DocumentationSection;
+  wikiSection?: WikiSection;
   createdAt: string;
   updatedAt: string;
 }
+
+interface WikiSection{
+  _id: string;
+  title: string;
+  content: string;
+  order: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface DocumentationSection{
+  _id: string;
+  title: string;
+  content: string;
+  order: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 
 interface FeatureDisplayProps {
   projectId: string;
@@ -59,8 +79,8 @@ export default function FeatureDisplay({ projectId }: FeatureDisplayProps) {
           <h3>{feature.title} {feature.children.length > 0 && '(Parent)'}</h3>
           <p>{feature.description}</p>
           <p>State: {feature.state}</p>
-          <DocumentationSectionDisplay projectId={projectId} sectionId={feature.documentationSection!}/>
-          <WikiSectionDisplay projectId={projectId} sectionId={feature.wikiSection!}/>
+          <DocumentationSectionDisplay section={feature.documentationSection!}/>
+          <WikiSectionDisplay section={feature.wikiSection!}/>
         </div>
         {children.map(child => renderFeature(child, level + 1))}
       </div>

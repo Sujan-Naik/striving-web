@@ -19,14 +19,16 @@ export const docsService = {
 },
 
   async getById(id: string): Promise<IDocs | null> {
-    return await Docs.findById(id).populate('project').populate('documentationSection');
+    return await Docs.findById(id).populate('project').populate('documentationSections');
   },
 
   async getByProject(projectId: string): Promise<IDocs[]> {
-    return await Docs.find({ project: projectId });
-  },
+  return await Docs.find({ project: projectId })
+    .populate('documentationSections.documentationSection')
+    // .populate('documentationSections.parentSection');
+},
 
-  async update(id: string | Types.ObjectId, data: Partial<Pick<IDocs, 'content' | 'documentationSection'>>): Promise<IDocs | null> {
+  async update(id: string | Types.ObjectId, data: Partial<Pick<IDocs, 'content' | 'documentationSections'>>): Promise<IDocs | null> {
     return await Docs.findByIdAndUpdate(
       id,
       { ...data, updatedAt: new Date() },

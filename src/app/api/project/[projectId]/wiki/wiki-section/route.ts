@@ -11,14 +11,13 @@ export async function PATCH(
     await dbConnect();
     const { projectId } = await params;
 
-    const { wikiSection } = await request.json();
+    const { wikiSections } = await request.json();
     const project = await projectService.getProjectById(projectId);
-    console.log(project)
     if (!project?.wiki) {
       return NextResponse.json({ error: 'Project or wiki not found' }, { status: 404 });
     }
 
-    const updatedWiki = await wikiService.update(project.wiki, { wikiSection });
+    const updatedWiki = await wikiService.update(project.wiki, { wikiSections: wikiSections });
 
     if (!updatedWiki) {
       return NextResponse.json({ error: 'Wiki not found' }, { status: 404 });

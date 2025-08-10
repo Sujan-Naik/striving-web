@@ -11,14 +11,14 @@ export async function PATCH(
     await dbConnect();
     const { projectId } = await params;
 
-    const { documentationSection } = await request.json();
+    const { documentationSections } = await request.json();
     const project = await projectService.getProjectById(projectId);
     console.log(project)
     if (!project?.docs) {
       return NextResponse.json({ error: 'Project or docs not found' }, { status: 404 });
     }
 
-    const updatedDocs = await docsService.update(project.docs, { documentationSection });
+    const updatedDocs = await docsService.update(project.docs, { documentationSections: documentationSections });
 
     if (!updatedDocs) {
       return NextResponse.json({ error: 'Docs not found' }, { status: 404 });
