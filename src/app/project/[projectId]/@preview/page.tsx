@@ -1,6 +1,6 @@
 'use client'
 import {ProjectDetail} from '@/components/project/ProjectDetail';
-import { ContributorManager } from '@/components/project/ContributorManager';
+import { ContributorManager } from '@/components/project/contributors/ContributorManager';
 import {useParams} from "next/navigation";
 
 

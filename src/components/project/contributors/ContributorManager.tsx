@@ -22,6 +22,8 @@ export function ContributorManager({ projectId }: Props) {
   const fetchContributors = async () => {
     const res = await fetch(`/api/project/${projectId}/contributors`);
     const data = await res.json();
+        console.log(data)
+
     setContributors(data);
   };
 

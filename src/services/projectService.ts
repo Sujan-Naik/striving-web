@@ -3,6 +3,7 @@ import Project from '@/models/Project';
 import { IProject } from '@/models/Project';
 import mongoose, { Types } from 'mongoose';
 import {UserServiceClass} from "@/services/userService";
+import {IUser} from "@/models/User";
 
 export class ProjectService {
 
@@ -85,7 +86,16 @@ async addWikiReference(projectId: string, wikiId: string): Promise<IProject | nu
       { new: true }
     );
   }
+
+
+
+  async getContributors(projectId: string): Promise<IUser[]> {
+    const project = await Project.findById(projectId).populate<{contributors: IUser[]}>('contributors');
+    return project?.contributors || [];
+  }
 }
+
+
 
 const projectService = new ProjectService();
 export default projectService;
