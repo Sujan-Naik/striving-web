@@ -5,37 +5,15 @@ import FeatureHierarchy from "@/components/project/feature/edit/FeatureHierarchy
 import FeatureDocumentation from "@/components/project/feature/edit/FeatureDocumentation";
 import FeatureGitIntegration from "@/components/project/feature/edit/FeatureGitIntegration";
 import FeatureBasicInfo from "@/components/project/feature/edit/FeatureBasicInfo";
-import {Feature} from "@/types/project/features";
+import {IFeature} from "@/types/project/Feature";
 
 
-interface FeatureEditorProps {
-  projectId: string;
-  featureId: string;
-}
 
-export default function FeatureEditor({ projectId, featureId }: FeatureEditorProps) {
-  const [feature, setFeature] = useState<Feature | null>(null);
-  const [formData, setFormData] = useState<Partial<Feature>>({});
-  const [loading, setLoading] = useState(true);
+export default function FeatureEditor({projectId, feature} : {projectId: string, feature: IFeature}) {
+
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-
-  useEffect(() => {
-    const fetchFeature = async () => {
-      try {
-        const response = await fetch(`/api/project/${projectId}/features/${featureId}`);
-        if (!response.ok) throw new Error('Failed to fetch feature');
-        const data = await response.json();
-        setFeature(data);
-        setFormData(data);
-      } catch (error) {
-        setError(error instanceof Error ? error.message : 'Unknown error');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchFeature();
-  }, [projectId, featureId]);
+  const featureId = feature._id
 
   const updateFeature = async (endpoint: string | null, data: any) => {
     setSaving(true);
@@ -52,8 +30,6 @@ export default function FeatureEditor({ projectId, featureId }: FeatureEditorPro
 
       if (response.ok) {
         const updated = await response.json();
-        setFeature(updated);
-        setFormData(updated);
       }
     } catch (error) {
       setError(error instanceof Error ? error.message : 'Update failed');
@@ -62,13 +38,6 @@ export default function FeatureEditor({ projectId, featureId }: FeatureEditorPro
     }
   };
 
-  const handleBulkUpdate = () => {
-    const { title, description, state } = formData;
-    updateFeature(null, { title, description, state });
-  };
-
-  if (loading) return <div>Loading...</div>;
-  if (!feature) return <div>Feature not found</div>;
 
    return (
     <div>
@@ -97,8 +66,8 @@ export default function FeatureEditor({ projectId, featureId }: FeatureEditorPro
         onUpdate={updateFeature}
       />
 
-        <DocumentationSectionEditor projectId={projectId} sectionId={feature.documentationSection!}/>
-        <WikiSectionEditor projectId={projectId} sectionId={feature.wikiSection!}/>
+        <DocumentationSectionEditor projectId={projectId} documentationSection={feature.documentationSection} />
+        <WikiSectionEditor projectId={projectId} wikiSection={feature.wikiSection} />
 
     </div>
   );

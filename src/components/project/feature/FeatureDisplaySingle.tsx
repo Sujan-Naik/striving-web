@@ -1,4 +1,4 @@
-import {Feature} from "@/types/project/Feature";
+import {IFeature} from "@/types/project/IFeature";
 import DocumentationSectionDisplay from "@/components/project/docs/section/DocumentationSectionDisplay";
 import WikiSectionDisplay from "@/components/project/wiki/section/WikiSectionDisplay";
 
@@ -7,7 +7,7 @@ export default function FeatureDisplaySingle({
   showDocumentation = true,
   showWiki = true
 }: {
-  feature: Feature;
+  feature: IFeature;
   showDocumentation?: boolean;
   showWiki?: boolean;
 }){

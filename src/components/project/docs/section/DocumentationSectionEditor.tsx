@@ -2,61 +2,28 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import {IDocumentationSection} from "@/types/project/DocumentationSection";
 
-interface DocumentationSection {
-  id: string;
-  title: string;
-  content: string;
-  order: number;
-  createdAt: string;
-  updatedAt: string;
-}
 
-interface DocumentationSectionProps {
-  projectId: string;
-  sectionId: string;
-}
-
-export default function DocumentationSectionEditor({ projectId, sectionId }: DocumentationSectionProps) {
-  const [section, setSection] = useState<DocumentationSection | null>(null);
+export default function DocumentationSectionEditor({projectId, documentationSection}: {projectId: string, documentationSection: IDocumentationSection}) {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-
-  console.log('ewrwerwerw')
-  useEffect(() => {
-    const fetchSection = async () => {
-      try {
-        const response = await fetch(`/api/project/${projectId}/documentation-sections/${sectionId}`);
-        if (!response.ok) throw new Error('Failed to fetch section');
-        const data = await response.json();
-        setSection(data);
-        setTitle(data.title);
-        setContent(data.content);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSection();
-  }, [projectId, sectionId]);
+  const [section, setSection] = useState<IDocumentationSection>(documentationSection);
 
   const handleSave = async () => {
     setSaving(true);
     try {
-      const response = await fetch(`/api/project/${projectId}/documentation-sections/${sectionId}`, {
+      const response = await fetch(`/api/project/${projectId}/documentation-sections/${section._id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title, content }),
       });
       if (!response.ok) throw new Error('Failed to save section');
       const updatedSection = await response.json();
-      setSection(updatedSection);
+      setSection(updatedSection)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save');
     } finally {
@@ -68,7 +35,7 @@ export default function DocumentationSectionEditor({ projectId, sectionId }: Doc
     if (!confirm('Are you sure you want to delete this section?')) return;
 
     try {
-      const response = await fetch(`/api/project/${projectId}/documentation-sections/${sectionId}`, {
+      const response = await fetch(`/api/project/${projectId}/documentation-sections/${section._id}`, {
         method: 'DELETE',
       });
       if (!response.ok) throw new Error('Failed to delete section');
@@ -78,9 +45,7 @@ export default function DocumentationSectionEditor({ projectId, sectionId }: Doc
     }
   };
 
-  if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
-  if (!section) return <div>Section not found</div>;
 
   return (
     <div>

@@ -1,4 +1,4 @@
-export interface WikiSection{
+export interface IWikiSection{
   _id: string;
   title: string;
   content: string;

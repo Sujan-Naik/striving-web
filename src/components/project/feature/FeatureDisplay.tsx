@@ -3,7 +3,7 @@ import DocumentationSectionDisplay from "@/components/project/docs/section/Docum
 import WikiSectionDisplay from "@/components/project/wiki/section/WikiSectionDisplay";
 import {HeadedTabs} from "headed-ui";
 import {Types} from "mongoose";
-import {Feature} from "@/types/project/Feature";
+import {IFeature} from "@/types/project/IFeature";
 import FeatureDisplaySingle from "@/components/project/feature/FeatureDisplaySingle";
 
 
@@ -12,7 +12,7 @@ interface FeatureDisplayProps {
 }
 
 export default function FeatureDisplay({ projectId }: FeatureDisplayProps) {
-  const [features, setFeatures] = useState<Feature[]>([]);
+  const [features, setFeatures] = useState<IFeature[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -33,12 +33,12 @@ export default function FeatureDisplay({ projectId }: FeatureDisplayProps) {
     fetchFeatures();
   }, [projectId]);
 
-  const buildHierarchy = (features: Feature[]): Feature[] => {
+  const buildHierarchy = (features: IFeature[]): IFeature[] => {
     const featureMap = new Map(features.map(f => [f._id, f]));
     return features.filter(f => !f.parent);
   };
 
-  const renderFeature = (feature: Feature, level = 0): JSX.Element => {
+  const renderFeature = (feature: IFeature, level = 0): JSX.Element => {
     const children = features.filter(f => f.parent === feature._id);
 
     return (

@@ -1,4 +1,4 @@
-export interface DocumentationSection{
+export interface IDocumentationSection{
   _id: string;
   title: string;
   content: string;

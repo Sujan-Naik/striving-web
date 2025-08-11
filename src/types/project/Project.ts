@@ -1,4 +1,5 @@
 import {IUser} from "@/types/project/User";
+import {IFeature} from "@/types/project/Feature";
 
 export interface Project {
   _id: string;
@@ -7,7 +8,7 @@ export interface Project {
   owner: IUser;
   contributors: IUser[];
   githubRepo: string;
-  features: string[];
+  features: IFeature[];
   wiki?: string;
   docs?: string;
   createdAt?: Date;
