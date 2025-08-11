@@ -6,10 +6,10 @@ export interface Project {
   name: string;
   description: string;
   owner: IUser;
-  contributors: IUser[];
+  members: IUser[];
   githubRepo: string;
-  features: IFeature[];
-  wiki?: string;
+  features: string[];
+  manual?: string;
   docs?: string;
   createdAt?: Date;
   updatedAt?: Date;

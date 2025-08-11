@@ -36,7 +36,7 @@ export default function FeatureHierarchy({
         setParentFeature(data);
       }
     } catch (err) {
-      console.error('Failed to fetch parent feature:', err);
+      console.error('Failed to fetch parent features:', err);
     }
   };
 

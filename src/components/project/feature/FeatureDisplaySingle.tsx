@@ -1,15 +1,15 @@
 import {IFeature} from "@/types/project/IFeature";
-import DocumentationSectionDisplay from "@/components/project/docs/section/DocumentationSectionDisplay";
-import WikiSectionDisplay from "@/components/project/wiki/section/WikiSectionDisplay";
+import DocsSectionDisplay from "@/components/project/docs/section/DocsSectionDisplay";
+import ManualSectionDisplay from "@/components/project/manual/section/ManualSectionDisplay";
 
 export default function FeatureDisplaySingle({
   feature,
-  showDocumentation = true,
-  showWiki = true
+  showDocs = true,
+  showManual = true
 }: {
   feature: IFeature;
-  showDocumentation?: boolean;
-  showWiki?: boolean;
+  showDocs?: boolean;
+  showManual?: boolean;
 }){
 
   return (
@@ -17,8 +17,8 @@ export default function FeatureDisplaySingle({
       <h3>{feature.title} {feature.children.length > 0 && '(Parent)'}</h3>
       <p>{feature.description}</p>
       <p>State: {feature.state}</p>
-      {showDocumentation && <DocumentationSectionDisplay section={feature.documentationSection!}/>}
-      {showWiki && <WikiSectionDisplay section={feature.wikiSection!}/>}
+      {showDocs && <DocsSectionDisplay section={feature.docsSection!}/>}
+      {showManual && <ManualSectionDisplay section={feature.manualSection!}/>}
     </div>
   )
 }

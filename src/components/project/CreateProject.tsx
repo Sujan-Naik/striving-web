@@ -41,6 +41,7 @@ export default function CreateProject({ onProjectCreated }: CreateProjectProps) 
         if (!response.ok) throw new Error('Failed to fetch repositories');
         const repos = await response.json();
         setRepositories(repos);
+        console.log(repos)
       } catch (err) {
         setError('Failed to load repositories');
       } finally {
@@ -50,6 +51,8 @@ export default function CreateProject({ onProjectCreated }: CreateProjectProps) 
 
     fetchRepositories();
   }, []);
+
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,7 +66,7 @@ export default function CreateProject({ onProjectCreated }: CreateProjectProps) 
         body: JSON.stringify({
           ...formData,
           owner: user._id,
-          contributors: [user._id]
+          members: [user._id]
         })
       });
 

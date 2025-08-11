@@ -15,10 +15,10 @@ export class ProjectService {
   );
 }
 
-async addWikiReference(projectId: string, wikiId: string): Promise<IProject | null> {
+async addManualReference(projectId: string, manualId: string): Promise<IProject | null> {
   return await Project.findByIdAndUpdate(
     projectId,
-    { wiki: wikiId, updatedAt: new Date() },
+    { manual: manualId, updatedAt: new Date() },
     { new: true }
   );
 }
@@ -38,14 +38,14 @@ async addWikiReference(projectId: string, wikiId: string): Promise<IProject | nu
     if (populate?.includes('owner')) {
         query = query.populate('owner', 'username');
     }
-    if (populate?.includes('contributors')) {
-        query = query.populate('contributors', 'username');
+    if (populate?.includes('members')) {
+        query = query.populate('members', 'username');
     }
     if (populate?.includes('features')) {
         query = query.populate('features');
     }
-    if (populate?.includes('wiki')) {
-        query = query.populate('wiki');
+    if (populate?.includes('manual')) {
+        query = query.populate('manual');
     }
 
     return await query;
@@ -61,14 +61,17 @@ async getProjectByName(id: string, populate?: string[]): Promise<IProject | null
     if (populate?.includes('owner')) {
         query = query.populate('owner');
     }
-    if (populate?.includes('contributors')) {
-        query = query.populate('contributors');
+    if (populate?.includes('members')) {
+        query = query.populate('members');
     }
     if (populate?.includes('features')) {
         query = query.populate('features');
     }
-    if (populate?.includes('wiki')) {
-        query = query.populate('wiki');
+    if (populate?.includes('manual')) {
+        query = query.populate('manual');
+    }
+    if (populate?.includes('docs')) {
+        query = query.populate('docs');
     }
 
     return await query;
@@ -76,11 +79,11 @@ async getProjectByName(id: string, populate?: string[]): Promise<IProject | null
 
   async getProjectsByOwner(ownerId: string): Promise<IProject[]> {
   return await Project.find({owner: ownerId})
-        .populate('contributors', 'username email');
+        .populate('members', 'username email');
   }
 
   async getProjects(): Promise<IProject[]> {
-    return await Project.find().populate('contributors', 'username').populate('owner', 'username');
+    return await Project.find().populate('members', 'username').populate('owner', 'username');
   }
 
 
@@ -97,27 +100,27 @@ async getProjectByName(id: string, populate?: string[]): Promise<IProject | null
     return !!result;
   }
 
-  async addContributor(projectId: string, contributorId: string): Promise<IProject | null> {
+  async addMember(projectId: string, contributorId: string): Promise<IProject | null> {
     return await Project.findByIdAndUpdate(
       projectId,
-      { $addToSet: { contributors: contributorId } },
+      { $addToSet: { members: contributorId } },
       { new: true }
     );
   }
 
-  async removeContributor(projectId: string, contributorId: string): Promise<IProject | null> {
+  async removeMember(projectId: string, contributorId: string): Promise<IProject | null> {
     return await Project.findByIdAndUpdate(
       projectId,
-      { $pull: { contributors: contributorId } },
+      { $pull: { members: contributorId } },
       { new: true }
     );
   }
 
 
 
-  async getContributors(projectId: string): Promise<IUser[]> {
-    const project = await Project.findById(projectId).populate<{contributors: IUser[]}>('contributors');
-    return project?.contributors || [];
+  async getMembers(projectId: string): Promise<IUser[]> {
+    const project = await Project.findById(projectId).populate<{members: IUser[]}>('members');
+    return project?.members || [];
   }
 }
 

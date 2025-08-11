@@ -25,6 +25,6 @@ export async function PATCH(
     const application = await ProjectApplicationService.updateApplicationStatus(applicationId, status);
     return NextResponse.json(application);
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to update application' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to update applications' }, { status: 500 });
   }
 }

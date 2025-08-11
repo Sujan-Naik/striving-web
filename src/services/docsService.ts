@@ -1,6 +1,6 @@
 // docsService.ts
 import Docs, { IDocs } from '@/models/Docs';
-import '@/models/DocumentationSection';
+import '@/models/DocsSection';
 import {Types} from "mongoose";
 import projectService from "@/services/projectService"; // Add this import
 
@@ -8,7 +8,7 @@ export const docsService = {
   async create(data: {
   project: string;
   content?: string;
-  documentationSection: string[];
+  docsSection: string[];
 }): Promise<IDocs> {
   const docs = await Docs.create(data);
 
@@ -19,16 +19,28 @@ export const docsService = {
 },
 
   async getById(id: string): Promise<IDocs | null> {
-    return await Docs.findById(id).populate('project').populate('documentationSections');
+    return await Docs.findById(id).populate('project').populate('docsSections');
   },
 
   async getByProject(projectId: string): Promise<IDocs[]> {
-  return await Docs.find({ project: projectId })
-    .populate('documentationSections.documentationSection')
-    // .populate('documentationSections.parentSection');
+
+    // Populate all referenced fields
+  const docs = await Docs.find({ project: projectId }).populate([
+    'project',
+    'docsSections.docsSection',
+    'docsSections',
+    'docsSections.parentSection'
+  ]);
+
+  return docs;
+
+  //
+  // return await Docs.find({ project: projectId })
+  //   .populate('docsSections.docsSection')
+    // .populate('docsSections.parentSection');
 },
 
-  async update(id: string | Types.ObjectId, data: Partial<Pick<IDocs, 'content' | 'documentationSections'>>): Promise<IDocs | null> {
+  async update(id: string | Types.ObjectId, data: Partial<Pick<IDocs, 'content' | 'docsSections'>>): Promise<IDocs | null> {
     return await Docs.findByIdAndUpdate(
       id,
       { ...data, updatedAt: new Date() },

@@ -39,7 +39,7 @@ const {user} = useUser();
   //           <h3 className="text-lg font-semibold">{project.name}</h3>
   //           <p>{project.description}</p>
   //           <span className="text-sm text-gray-600">
-  //             {project.contributors.length} contributors
+  //             {project.members.length} members
   //           </span>
   //         </Link>
   //       </div>

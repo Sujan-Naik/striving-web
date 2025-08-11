@@ -50,47 +50,47 @@ export default function FeatureCreate({ projectId, onFeatureCreated }: FeatureCr
         body: JSON.stringify(featureData)
       });
 
-      if (!featureResponse.ok) throw new Error('Failed to create feature');
+      if (!featureResponse.ok) throw new Error('Failed to create features');
 
       const feature = await featureResponse.json();
 
-      const docResponse = await fetch(`/api/project/${projectId}/documentation-sections`, {
+      const docResponse = await fetch(`/api/project/${projectId}/docs-sections`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           feature: feature._id,
           id: `doc-${feature._id}`,
-          title: `${title} Documentation`,
-          content: `Documentation for ${title}`,
+          title: `${title} Docs`,
+          content: `Docs for ${title}`,
           order: 1
         })
       });
 
-      const wikiResponse = await fetch(`/api/project/${projectId}/wiki-sections`, {
+      const manualResponse = await fetch(`/api/project/${projectId}/manual-sections`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           feature: feature._id,
-          id: `wiki-${feature._id}`,
-          title: `${title} Wiki`,
-          content: `Wiki content for ${title}`,
+          id: `manual-${feature._id}`,
+          title: `${title} Manual`,
+          content: `Manual content for ${title}`,
           order: 1
         })
       });
 
-      if (!docResponse.ok || !wikiResponse.ok) {
+      if (!docResponse.ok || !manualResponse.ok) {
         throw new Error('Failed to create sections');
       }
 
-      const documentationSection = await docResponse.json();
-      const wikiSection = await wikiResponse.json();
+      const docsSection = await docResponse.json();
+      const manualSection = await manualResponse.json();
 
       await fetch(`/api/project/${projectId}/features/${feature._id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          documentationSection: documentationSection._id,
-          wikiSection: wikiSection._id
+          docsSection: docsSection._id,
+          manualSection: manualSection._id
         })
       });
 

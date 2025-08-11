@@ -1,6 +1,6 @@
 import {useState, useEffect, JSX} from 'react';
-import DocumentationSectionDisplay from "@/components/project/docs/section/DocumentationSectionDisplay";
-import WikiSectionDisplay from "@/components/project/wiki/section/WikiSectionDisplay";
+import DocsSectionDisplay from "@/components/project/docs/section/DocsSectionDisplay";
+import ManualSectionDisplay from "@/components/project/manual/section/ManualSectionDisplay";
 import {HeadedTabs} from "headed-ui";
 import {Types} from "mongoose";
 import {IFeature} from "@/types/project/IFeature";

@@ -11,11 +11,11 @@ export function ProjectMenu() {
 
   const menuItems = [
     { href: '', text: 'Project Home', icon: FiHome },
-    { href: 'contributor', text: 'Contributors', icon: FiUsers },
-    { href: 'application', text: 'Application', icon: FiBox },
-    { href: 'docs', text: 'Documentation', icon: FiBook },
-    { href: 'feature', text: 'Features', icon: FiStar },
-    { href: 'wiki', text: 'Wiki', icon: FiFileText },
+    { href: 'members', text: 'Members', icon: FiUsers },
+    { href: 'members/applications', text: 'Applications', icon: FiBox },
+    { href: 'features', text: 'Features', icon: FiStar },
+    { href: 'features/docs', text: 'Docs', icon: FiBook },
+    { href: 'features/manual', text: 'Manual', icon: FiFileText },
   ];
 
   useEffect(() => {

@@ -13,7 +13,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     return NextResponse.json(feature, { status: 201 });
   } catch (error) {
     console.log(error)
-    return NextResponse.json({ error: 'Failed to create feature' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to create features' }, { status: 500 });
   }
 }
 

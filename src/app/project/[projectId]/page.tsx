@@ -7,7 +7,7 @@ export default function ProjectPage() {
       return (
     <div className="container mx-auto p-4">
       <ProjectMenu />
-      {/*<ContributorManager projectId={projectId} />*/}
+      {/*<MemberManager projectId={projectId} />*/}
 
     </div>
   );

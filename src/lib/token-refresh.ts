@@ -43,7 +43,7 @@ export async function refreshProviderToken(
     const response = await fetch(refreshConfig.tokenUrl, {
       method: "POST",
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
+        "Content-Type": "applications/x-www-form-urlencoded",
         Authorization: `Basic ${Buffer.from(`${refreshConfig.clientId}:${refreshConfig.clientSecret}`).toString("base64")}`,
       },
       body: new URLSearchParams({

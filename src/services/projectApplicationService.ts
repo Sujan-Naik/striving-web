@@ -30,11 +30,11 @@ export class ProjectApplicationService {
       { new: true }
     ).populate('project applicant');
 
-    // If accepted, add user to project contributors
+    // If accepted, add user to project members
     if (status === 'accepted' && application) {
       await Project.findByIdAndUpdate(
         application.project,
-        { $addToSet: { contributors: application.applicant } }
+        { $addToSet: { members: application.applicant } }
       );
     }
 

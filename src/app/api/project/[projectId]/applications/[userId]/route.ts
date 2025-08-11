@@ -20,6 +20,6 @@ export async function POST(
     if (error.code === 11000) {
       return NextResponse.json({ error: 'Already applied' }, { status: 409 });
     }
-    return NextResponse.json({ error: 'Failed to create application' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to create applications' }, { status: 500 });
   }
 }

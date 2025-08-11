@@ -15,7 +15,7 @@ export default function ProjectPage() {
           Made by {project.owner.username}
         <HeadedCarousel variant={VariantEnum.Secondary} >
             <UserProfile user={project.owner}/>
-            {project.contributors.map(value => {
+            {project.members.map(value => {
                 return <UserProfile user={value}/>
             })}
         </HeadedCarousel>

@@ -14,7 +14,7 @@ export async function GET(request: NextRequest, { params }: { params: { featureI
     }
     return NextResponse.json(feature);
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch feature' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to fetch features' }, { status: 500 });
   }
 }
 
@@ -30,7 +30,7 @@ export async function PUT(request: NextRequest, { params }: { params: { featureI
     }
     return NextResponse.json(feature);
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to update feature' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to update features' }, { status: 500 });
   }
 }
 
@@ -45,7 +45,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { featu
     }
     return NextResponse.json({ success: true });
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to delete feature' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to delete features' }, { status: 500 });
   }
 }
 
@@ -61,6 +61,6 @@ export async function PATCH(request: NextRequest, { params }: { params: { featur
     }
     return NextResponse.json(feature);
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to update feature' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to update features' }, { status: 500 });
   }
 }

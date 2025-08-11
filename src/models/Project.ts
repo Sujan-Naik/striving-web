@@ -6,10 +6,10 @@ export interface IProject extends Document {
   name: string;
   description: string;
   owner: Types.ObjectId;
-  contributors: Types.ObjectId[];
+  members: Types.ObjectId[];
   githubRepo: string; // owner/repo format
   features: Types.ObjectId[];
-  wiki: Types.ObjectId;
+  manual: Types.ObjectId;
   docs: Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
@@ -19,10 +19,10 @@ const ProjectSchema = new Schema<IProject>({
   name: { type: String, required: true, unique: true},
   description: { type: String, required: true },
   owner: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-  contributors: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+  members: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   githubRepo: { type: String, required: true }, // e.g., "username/repo-name"
   features: [{ type: Schema.Types.ObjectId, ref: 'Feature' }],
-  wiki: { type: Schema.Types.ObjectId, ref: 'Wiki' },
+  manual: { type: Schema.Types.ObjectId, ref: 'Manual' },
   docs: { type: Schema.Types.ObjectId, ref: 'Docs' },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import DocumentationSectionEditor from "@/components/project/docs/section/DocumentationSectionEditor";
-import WikiSectionEditor from "@/components/project/wiki/section/WikiSectionEditor";
+import DocsSectionEditor from "@/components/project/docs/section/DocsSectionEditor";
+import ManualSectionEditor from "@/components/project/manual/section/ManualSectionEditor";
 import FeatureHierarchy from "@/components/project/feature/edit/FeatureHierarchy";
-import FeatureDocumentation from "@/components/project/feature/edit/FeatureDocumentation";
+import FeatureDocs from "@/components/project/feature/edit/FeatureDocs";
 import FeatureGitIntegration from "@/components/project/feature/edit/FeatureGitIntegration";
 import FeatureBasicInfo from "@/components/project/feature/edit/FeatureBasicInfo";
 import {IFeature} from "@/types/project/Feature";
@@ -66,8 +66,8 @@ export default function FeatureEditor({projectId, feature} : {projectId: string,
         onUpdate={updateFeature}
       />
 
-        <DocumentationSectionEditor projectId={projectId} documentationSection={feature.documentationSection} />
-        <WikiSectionEditor projectId={projectId} wikiSection={feature.wikiSection} />
+        <DocsSectionEditor projectId={projectId} docsSection={feature.docsSection} />
+        <ManualSectionEditor projectId={projectId} manualSection={feature.manualSection} />
 
     </div>
   );

@@ -34,7 +34,7 @@ export async function POST(
     const docsData = {
       project: projectId,
       content: body.content || '',
-      documentationSection: body.documentationSections || []
+      docsSection: body.docsSections || []
     };
 
     const docs = await docsService.create(docsData);

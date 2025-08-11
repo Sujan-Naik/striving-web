@@ -1,8 +1,6 @@
 "use client";
 import { createContext, useContext, useState, useEffect } from 'react';
-import {PipelineStage} from "mongoose";
-import {Project} from "@/types/project/Project";
-
+import { Project } from "@/types/project/Project";
 
 const ProjectContext = createContext<Project | null>(null);
 
@@ -20,6 +18,7 @@ export const ProjectProvider = ({
   useEffect(() => {
     const fetchProject = async () => {
       try {
+
         const response = await fetch(`/api/project/${projectId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch project');
@@ -36,41 +35,25 @@ export const ProjectProvider = ({
     fetchProject();
   }, [projectId]);
 
-  // useEffect(() => {
-  //   if (project?.owner) {
-  //     const fetchOwner = async () => {
-  //       try {
-  //         const response = await fetch(`/api/project/user/${project.owner}`);
-  //         if (!response.ok) {
-  //           throw new Error('Failed to fetch owner');
-  //         }
-  //         const ownerData = await response.json();
-  //
-  //         setOwner(ownerData);
-  //       } catch (err) {
-  //         setError(err instanceof Error ? err.message : 'Unknown error');
-  //       }
-  //     };
-  //
-  //     fetchOwner();
-  //   }
-  // }, [project?.owner]);
-
-  if (loading) return <div>Loading...</div>;
+  // if (loading) return <div>Loading...</div>;
+  console.log('we stopped loading project')
   if (error) return <div>Error: {error}</div>;
   if (!project) return null;
 
   return (
-    <ProjectContext.Provider value={ project }>
+    <ProjectContext.Provider value={project}>
       {children}
     </ProjectContext.Provider>
   );
 };
 
-export const useProject = () => {
+export const useProject = (): Project => {
   const context = useContext(ProjectContext);
   if (context === undefined) {
     throw new Error('useProject must be used within a ProjectProvider');
+  }
+  if (context === null) {
+    throw new Error('Project is not loaded');
   }
   return context;
 };

@@ -12,8 +12,8 @@ export async function GET(request: NextRequest, { params }: { params: { projectI
   }
   try {
     const {projectId} = await params
-    // const project = await projectService.getProjectById(projectId, ['contributors', 'owner']);
-    const project = await projectService.getProjectByName(projectId, ['contributors', 'owner', 'features']);
+    // const project = await projectService.getProjectById(projectId, ['members', 'owner']);
+    const project = await projectService.getProjectByName(projectId, ['members', 'owner']);
     if (!project) {
       return NextResponse.json({ error: 'Project not found' }, { status: 404 });
     }

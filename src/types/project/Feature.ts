@@ -1,5 +1,5 @@
-import {IDocumentationSection} from "@/types/project/DocumentationSection";
-import {IWikiSection} from "@/types/project/WikiSection";
+import {IDocsSection} from "@/types/project/DocsSection";
+import {IManualSection} from "@/types/project/ManualSection";
 
 export interface IFeature {
   _id: string;
@@ -11,8 +11,8 @@ export interface IFeature {
   pullRequestNumbers: number[];
   parent?: string;
   children: string[];
-  documentationSection: IDocumentationSection;
-  wikiSection: IWikiSection;
+  docsSection: IDocsSection;
+  manualSection: IManualSection;
   createdAt: string;
   updatedAt: string;
 }

@@ -1,36 +1,36 @@
-// components/FeatureDocumentation.tsx
+// components/FeatureDocs.tsx
 import React from 'react';
 
-interface FeatureDocumentationProps {
+interface FeatureDocsProps {
   projectId: string;
-  documentationSection?: string;
-  wikiSection?: string;
+  docsSection?: string;
+  manualSection?: string;
 }
 
-export default function FeatureDocumentation({
+export default function FeatureDocs({
   projectId,
-  documentationSection,
-  wikiSection
-}: FeatureDocumentationProps) {
+  docsSection,
+  manualSection
+}: FeatureDocsProps) {
   return (
     <div>
-      <h3>Documentation</h3>
+      <h3>Docs</h3>
 
       <div>
-        <h4>Documentation Section</h4>
-        {documentationSection ? (
-          <div>Section ID: {documentationSection}</div>
+        <h4>Docs Section</h4>
+        {docsSection ? (
+          <div>Section ID: {docsSection}</div>
         ) : (
-          <button>Create Documentation Section</button>
+          <button>Create Docs Section</button>
         )}
       </div>
 
       <div>
-        <h4>Wiki Section</h4>
-        {wikiSection ? (
-          <div>Section ID: {wikiSection}</div>
+        <h4>Manual Section</h4>
+        {manualSection ? (
+          <div>Section ID: {manualSection}</div>
         ) : (
-          <button>Create Wiki Section</button>
+          <button>Create Manual Section</button>
         )}
       </div>
     </div>

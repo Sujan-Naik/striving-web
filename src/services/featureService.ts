@@ -21,8 +21,8 @@ class FeatureService {
   }
 
   async getFeaturesByProject(projectId: string): Promise<IFeature[]> {
-    // return await Feature.find({ project: projectId }).populate('assignedUsers').populate('documentationSection').populate('wikiSection');
-    return await Feature.find({ project: projectId })
+    return await Feature.find({ project: projectId }).populate('assignedUsers').populate('docsSection').populate('manualSection')
+    // return await Feature.find({ project: projectId })
   }
 
   async updateFeature(id: string, updateData: Partial<IFeature>): Promise<IFeature | null> {
@@ -34,7 +34,7 @@ class FeatureService {
       { new: true }
     )
 
-        console.log('Updated feature:', updatedFeature); // Add this
+        console.log('Updated features:', updatedFeature); // Add this
 
     if (!updatedFeature) {
       console.log(`Feature with id ${id} not found`);
@@ -43,7 +43,7 @@ class FeatureService {
 
     return updatedFeature;
   } catch (error) {
-    console.error('Error updating feature:', error);
+    console.error('Error updating features:', error);
     throw error;
   }
 }

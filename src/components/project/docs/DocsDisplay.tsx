@@ -2,41 +2,22 @@
 
 import {useState, useEffect, JSX} from 'react';
 import { useProject } from "@/context/ProjectContext";
-import DocumentationSectionDisplay from "@/components/project/docs/section/DocumentationSectionDisplay";
+import DocsSectionDisplay from "@/components/project/docs/section/DocsSectionDisplay";
 import { HeadedTabs } from "headed-ui";
+import {IDocs, IDocsSectionOrder} from "@/types/project/Docs";
 
-interface IDocsSection {
-  documentationSection: documentationSection;
-  order: number;
-  level: number;
-  parentSection?: string;
-}
-
-export interface documentationSection {
-  _id: string;
-  title: string;
-  content: string;
-  order: number;
-}
-
-interface DocumentationData {
-  _id?: string;
-  content: string;
-  documentationSections: IDocsSection[];
-}
-
-interface SectionNode extends IDocsSection {
+interface SectionNode extends IDocsSectionOrder {
   children: SectionNode[];
 }
 
 export default function DocsDisplay() {
   const  project  = useProject()!;
   const projectId = project?._id;
-  const [documentation, setDocumentation] = useState<DocumentationData | null>(null);
+  const [docs, setDocs] = useState<IDocs | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchDocumentation = async () => {
+    const fetchDocs = async () => {
       if (!projectId) {
         setLoading(false);
         return;
@@ -46,25 +27,25 @@ export default function DocsDisplay() {
         const response = await fetch(`/api/project/${projectId}/docs`);
         if (response.ok) {
           const data = await response.json();
-          setDocumentation(data);
+          setDocs(data);
         }
       } catch (error) {
-        console.error('Error fetching documentation:', error);
+        console.error('Error fetching docs:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchDocumentation();
+    fetchDocs();
   }, [projectId]);
 
-  const buildSectionTree = (sections: IDocsSection[]): SectionNode[] => {
+  const buildSectionTree = (sections: IDocsSectionOrder[]): SectionNode[] => {
     const sorted = sections.sort((a, b) => a.order - b.order);
     const sectionMap = new Map<string, SectionNode>();
 
     // Initialize all sections as nodes
     sorted.forEach(section => {
-      sectionMap.set(section.documentationSection._id, {
+      sectionMap.set(section.docsSection._id, {
         ...section,
         children: []
       });
@@ -74,10 +55,10 @@ export default function DocsDisplay() {
 
     // Build the tree structure
     sorted.forEach(section => {
-      const node = sectionMap.get(section.documentationSection._id)!;
+      const node = sectionMap.get(section.docsSection._id)!;
 
       if (section.parentSection) {
-        const parent = sectionMap.get(section.parentSection);
+        const parent = sectionMap.get(section.parentSection._id);
         if (parent) {
           parent.children.push(node);
         } else {
@@ -92,33 +73,33 @@ export default function DocsDisplay() {
   };
 
   const renderSectionNode = (node: SectionNode): JSX.Element => (
-    <div key={node.documentationSection._id} style={{ marginLeft: `${node.level * 20}px` }}>
-      <DocumentationSectionDisplay section={node.documentationSection} />
+    <div key={node.docsSection._id} style={{ marginLeft: `${node.level * 20}px` }}>
+      <DocsSectionDisplay section={node.docsSection} />
       {node.children.map(child => renderSectionNode(child))}
     </div>
   );
 
   const renderTabContent = (rootNode: SectionNode): JSX.Element => (
-    <div key={rootNode.documentationSection._id}>
+    <div key={rootNode.docsSection._id}>
       {rootNode.children.map(child => renderSectionNode(child))}
     </div>
   );
 
   if (loading) return <div>Loading...</div>;
-  if (!documentation) return <div>No documentation found</div>;
+  if (!docs) return <div>No docs found</div>;
 
-  const sectionTree = buildSectionTree(documentation.documentationSections);
+  const sectionTree = buildSectionTree(docs.docsSections);
   const topLevelSections = sectionTree.filter(node => node.level === 0);
-  const tabTitles = topLevelSections.map(section => section.documentationSection.title);
+  const tabTitles = topLevelSections.map(section => section.docsSection.title);
 
   return (
     <div>
-      <div style={{ whiteSpace: 'pre-wrap' }}>{documentation.content}</div>
+      <div style={{ whiteSpace: 'pre-wrap' }}>{docs.content}</div>
 
       <HeadedTabs tabs={tabTitles}>
         {topLevelSections.map(section =>
             <div>
-              <p> {section.documentationSection.content} </p>
+              <p> {section.docsSection.content} </p>
               {renderTabContent(section)}
         </div>
         )}

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { documentationSectionService } from '@/services/documentationSectionService';
+import { docsSectionService } from '@/services/docsSectionService';
 import  projectService  from '@/services/projectService';
 
 
@@ -9,6 +9,6 @@ export async function GET(
 ) {
         const {featureId} = await params;
 
-  const sections = await documentationSectionService.findByFeature(featureId);
+  const sections = await docsSectionService.findByFeature(featureId);
   return NextResponse.json(sections);
 }

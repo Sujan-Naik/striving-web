@@ -8,8 +8,8 @@ export default function ProjectBadge({ project }: { project: Project }) {
           <p>{project.name}</p>
           <p>Owned by: {project.owner.username}</p>
           <p>{project.description}</p>
-          {project.contributors.map((contributor, index) => (
-            <p key={index}>{contributor.username}</p>
+          {project.members.map((member, index) => (
+            <p key={index}>{member.username}</p>
           ))}
           <p>Github: {project.githubRepo}</p>
           {project.createdAt && <p>Created at: {String(project.createdAt)}</p>}
