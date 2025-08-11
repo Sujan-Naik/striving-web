@@ -1,6 +1,6 @@
 :root {
 
-  background-color: #1e1e1e;
+  background-color: #252526;
   color: #cccccc;
   --highlight: #007acc;
   --base-background: #252526;
@@ -28,7 +28,6 @@
   --tab-height: 50px;
   --link-color: #4fc3f7;
   --link-icon-size: 4px;
-
 
   --disabled: #6c757d;
   --border-radius-large: 16px;
