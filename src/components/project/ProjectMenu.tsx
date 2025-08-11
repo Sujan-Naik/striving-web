@@ -1,7 +1,7 @@
 'use client';
 import { useProject } from "@/context/ProjectContext";
 import { HeadedLink, VariantEnum } from "headed-ui";
-import { FiUsers, FiBox, FiBook, FiStar, FiFileText } from "react-icons/fi";
+import {FiUsers, FiBox, FiBook, FiStar, FiFileText, FiHome} from "react-icons/fi";
 import { useState, useEffect, useRef } from "react";
 
 export function ProjectMenu() {
@@ -10,6 +10,7 @@ export function ProjectMenu() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const menuItems = [
+    { href: '', text: 'Project Home', icon: FiHome },
     { href: 'contributor', text: 'Contributors', icon: FiUsers },
     { href: 'application', text: 'Application', icon: FiBox },
     { href: 'docs', text: 'Documentation', icon: FiBook },

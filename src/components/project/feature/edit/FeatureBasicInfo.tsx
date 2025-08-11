@@ -1,6 +1,6 @@
 // components/FeatureBasicInfo.tsx
 import React, { useState } from 'react';
-import { Feature } from '@/types/features';
+import { Feature } from '@/types/project/features';
 
 interface FeatureBasicInfoProps {
   feature: Feature;

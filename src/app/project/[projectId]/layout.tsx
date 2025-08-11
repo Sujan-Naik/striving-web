@@ -1,67 +1,97 @@
 'use client'
-import { useSession } from "next-auth/react";
-import { UserProvider, useUser } from "@/context/UserContext";
-import React from "react";
+import {useSession} from "next-auth/react";
+import {useUser} from "@/context/UserContext";
+import React, {useState} from "react";
 import {ProjectProvider, useProject} from "@/context/ProjectContext";
 import {ProjectMenu} from "@/components/project/ProjectMenu";
+import {HeadedCard, HeadedSwitch, VariantEnum} from "headed-ui";
 
 function LayoutContent({ editor, preview }: {editor: React.ReactNode, preview: React.ReactNode }) {
-const project  = useProject();
-const {user} = useUser();
+  const project = useProject();
+  const {user} = useUser();
+  const [showEditor, setShowEditor] = useState(true);
+  const [showPreview, setShowPreview] = useState(true);
 
-if (!project) return <div>No project found</div>;
+  if (!project) return <div>No project found</div>;
 
-if (project.owner._id === user?._id) {
-return (
-  <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-    <div style={{ flexShrink: 0 }}>
-      <ProjectMenu></ProjectMenu>
-    </div>
-    <div style={{ display: 'flex', flex: 1 }}>
-      <div style={{ width: '50%', borderRight: '1px solid #ccc', display: 'flex', justifyContent: 'center' }}>
-        {editor}
-      </div>
-      <div style={{ width: '50%', display: 'flex', justifyContent: 'center' }}>
-        {preview}
-      </div>
-    </div>
-  </div>
-);
-}
+  const isOwner = project.owner._id === user?._id;
 
-return (
-  <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-    <div style={{ flexShrink: 0 }}>
-    </div>
-    <div style={{ flex: 1, display: 'flex' }}>
-        <ProjectMenu></ProjectMenu>
-      <div style={{ width: '50%' }}>
-        {preview}
+  if (isOwner) {
+    const bothVisible = showEditor && showPreview;
+
+    return (
+      <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ flexShrink: 0 }}>
+          <ProjectMenu/>
+        </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'row' }}>
+                      <HeadedCard variant={VariantEnum.Outline} width={'50%'} style={{display: 'flex', justifyContent: 'center'}}>
+                            <HeadedSwitch checked={showEditor} onChange={setShowEditor} variant={VariantEnum.Secondary}/>
+                      </HeadedCard>
+                      <HeadedCard variant={VariantEnum.Outline} width={'50%'} style={{display: 'flex', justifyContent: 'center'}}>
+                        <HeadedSwitch checked={showPreview} onChange={setShowPreview} variant={VariantEnum.Secondary}/>
+                      </HeadedCard>
+                  </div>
+
+        <div style={{ display: 'flex', flex: 1 }}>
+          {showEditor && (
+            <div style={{
+              width: bothVisible ? '50%' : '100%',
+              borderRight: bothVisible ? '1px solid #ccc' : 'none',
+              display: 'flex',
+              justifyContent: 'center'
+            }}>
+              {editor}
+            </div>
+          )}
+
+          {showPreview && (
+            <div style={{
+              width: bothVisible ? '50%' : '100%',
+              display: 'flex',
+              justifyContent: 'center'
+            }}>
+              {preview}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ flexShrink: 0 }}>
+      </div>
+      <div style={{ flex: 1, display: 'flex' }}>
+        <ProjectMenu />
+        <div style={{ width: '50%' }}>
+          {preview}
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
 }
 
 export default function Layout({
-// children,
-editor,
-preview,
-params
+  editor,
+  preview,
+  params
 }: {
-children: React.ReactNode;
-editor: React.ReactNode;
-preview: React.ReactNode;
-params: Promise<{ projectId: string }>;
+  children: React.ReactNode;
+  editor: React.ReactNode;
+  preview: React.ReactNode;
+  params: Promise<{ projectId: string }>;
 }) {
-const { data: session, status } = useSession();
-const { projectId } = React.use(params);
+  const { data: session, status } = useSession();
+  const { projectId } = React.use(params);
 
-if (status === "loading") return <div>Loading...</div>;
+  if (status === "loading") return <div>Loading...</div>;
 
-return (
-  <ProjectProvider projectId={projectId}>
-    <LayoutContent  editor={editor} preview={preview}/>
-  </ProjectProvider>
-);
+  return (
+    <ProjectProvider projectId={projectId}>
+      <LayoutContent editor={editor} preview={preview}/>
+    </ProjectProvider>
+  );
 }

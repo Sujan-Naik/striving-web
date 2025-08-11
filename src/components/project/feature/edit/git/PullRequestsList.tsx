@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { GitPullRequest } from '@/types/features';
+import { GitPullRequest } from '@/types/project/features';
 
 interface PullRequestsListProps {
   projectId: string;

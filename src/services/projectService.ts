@@ -59,10 +59,10 @@ async getProjectByName(id: string, populate?: string[]): Promise<IProject | null
     let query = Project.findOne({name: id});
 
     if (populate?.includes('owner')) {
-        query = query.populate('owner', 'username');
+        query = query.populate('owner');
     }
     if (populate?.includes('contributors')) {
-        query = query.populate('contributors', 'username');
+        query = query.populate('contributors');
     }
     if (populate?.includes('features')) {
         query = query.populate('features');

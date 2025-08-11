@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { GitCommit } from '@/types/features';
+import { GitCommit } from '@/types/project/features';
 
 interface CommitsListProps {
   projectId: string;

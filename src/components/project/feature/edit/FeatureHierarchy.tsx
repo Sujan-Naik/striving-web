@@ -1,6 +1,6 @@
 // components/FeatureHierarchy.tsx
 import React, { useState, useEffect } from 'react';
-import {Feature} from "@/types/features";
+import {Feature} from "@/types/project/features";
 
 interface FeatureHierarchyProps {
   projectId: string;

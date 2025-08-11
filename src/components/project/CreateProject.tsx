@@ -62,7 +62,8 @@ export default function CreateProject({ onProjectCreated }: CreateProjectProps) 
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
-          owner: user._id
+          owner: user._id,
+          contributors: [user._id]
         })
       });
 

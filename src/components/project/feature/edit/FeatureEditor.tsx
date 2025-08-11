@@ -5,7 +5,7 @@ import FeatureHierarchy from "@/components/project/feature/edit/FeatureHierarchy
 import FeatureDocumentation from "@/components/project/feature/edit/FeatureDocumentation";
 import FeatureGitIntegration from "@/components/project/feature/edit/FeatureGitIntegration";
 import FeatureBasicInfo from "@/components/project/feature/edit/FeatureBasicInfo";
-import {Feature} from "@/types/features";
+import {Feature} from "@/types/project/features";
 
 
 interface FeatureEditorProps {
