@@ -14,7 +14,6 @@ const project = useProject()!;
 const projectId = project._id;
 
 const [docs, setDocs] = useState<IDocs>(useDocs().docs);
-console.log(docs)
 const [features, setFeatures] = useState<IFeature[]>(useFeatures());
 const [selectedDocsSections, setSelectedDocsSections] = useState<string[]>(docs.docsSections.map(value => value.docsSection._id));
 const [loading, setLoading] = useState(false);
@@ -129,17 +128,24 @@ const findInsertionIndex = (currentSections: string[], newFeature: IFeature): nu
   const newParentId = newParentSection?._id || null;
 
   // If it's a root level item, find the last root level item and insert after it
-  if (newLevel === 0) {
-    let lastRootIndex = -1;
-    for (let i = currentSections.length - 1; i >= 0; i--) {
-      const feature = features.find(f => f.docsSection._id === currentSections[i]);
-      if (feature && getFeatureLevel(feature._id) === 0) {
-        lastRootIndex = i;
-        break;
+ if (newLevel === 0) {
+  // Find the last root item and its children, then insert after
+  let insertAfterIndex = 0;
+  for (let i = 0; i < currentSections.length; i++) {
+    const feature = features.find(f => f.docsSection._id === currentSections[i]);
+    if (feature && getFeatureLevel(feature._id) === 0) {
+      // Find end of this root's children
+      let j = i + 1;
+      while (j < currentSections.length) {
+        const childFeature = features.find(f => f.docsSection._id === currentSections[j]);
+        if (!childFeature || getFeatureLevel(childFeature._id) === 0) break;
+        j++;
       }
+      insertAfterIndex = j;
     }
-    return lastRootIndex + 1;
   }
+  return insertAfterIndex;
+}
 
   // For non-root items, find the correct position within their parent's children
   if (newParentId) {

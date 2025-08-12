@@ -3,7 +3,7 @@ import {HeadedCard, HeadedLink, VariantEnum} from "headed-ui";
 
 export default function ProjectBadge({ project }: { project: Project }) {
   return (
-      <HeadedLink variant={VariantEnum.Outline} href={`/project/${project.name}`}>
+      <HeadedLink variant={VariantEnum.Outline} href={`/projects/${project.name}`}>
         <HeadedCard variant={VariantEnum.Primary}>
           <p>{project.name}</p>
           <p>Owned by: {project.owner.username}</p>

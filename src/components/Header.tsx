@@ -19,7 +19,7 @@ export default function Header() {
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/dashboard", label: "Dashboard" },
-    { href: "/project", label: "Projects" },
+    { href: "/projects", label: "Projects" },
     { href: "/calendar", label: "Calendar" },
     { href: "/github", label: "GitHub" },
     { href: "/github/projects", label: "Github Projects" },

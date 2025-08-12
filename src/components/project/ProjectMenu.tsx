@@ -49,7 +49,7 @@ export function ProjectMenu() {
         <HeadedLink
           key={href}
           variant={VariantEnum.Outline}
-          href={`/project/${project!.name}/${href}`}
+          href={`/projects/${project!.name}/${href}`}
         >
           {useIcons ? <Icon /> : text}
         </HeadedLink>
