@@ -17,7 +17,6 @@ const [docs, setDocs] = useState<IDocs>(useDocs().docs);
 const [features, setFeatures] = useState<IFeature[]>(useFeatures());
 const [selectedDocsSections, setSelectedDocsSections] = useState<string[]>(docs.docsSections.map(value => value.docsSection._id));
 const [loading, setLoading] = useState(false);
-const [isEditing, setIsEditing] = useState(false);
 const [docsExists, setDocsExists] = useState<boolean>(true);
 const [draggedItem, setDraggedItem] = useState<string | null>(null);
 
@@ -228,10 +227,9 @@ const handleSubmit = async (e: React.FormEvent) => {
   setLoading(true);
 
   try {
-    const method = isEditing ? 'PUT' : 'POST';
 
     const response = await fetch(`/api/project/${projectId}/docs`, {
-      method,
+      method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         content: docs.content,
@@ -242,9 +240,8 @@ const handleSubmit = async (e: React.FormEvent) => {
     if (response.ok) {
       const savedDocs = await response.json();
       setDocs(prev => ({ ...prev, ...savedDocs }));
-      setIsEditing(true);
       setDocsExists(true);
-      alert(`Docs ${isEditing ? 'updated' : 'created'} successfully`);
+      alert(`Docs updated successfully`);
     }
   } catch (error) {
     console.error('Error saving docs:', error);
@@ -356,7 +353,7 @@ return (
         rows={15}
       />
       <button type="submit" disabled={loading}>
-        {loading ? 'Saving...' : isEditing ? 'Update Docs' : 'Create Docs'}
+        {'Update Docs'}
       </button>
     </form>
 

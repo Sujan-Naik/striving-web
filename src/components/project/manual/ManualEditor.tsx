@@ -17,7 +17,6 @@ const [manual, setManual] = useState<IManual>(useManual().manual);
 const [features, setFeatures] = useState<IFeature[]>(useFeatures());
 const [selectedManualSections, setSelectedManualSections] = useState<string[]>(manual.manualSections.map(value => value.manualSection._id));
 const [loading, setLoading] = useState(false);
-const [isEditing, setIsEditing] = useState(false);
 const [manualExists, setManualExists] = useState<boolean>(true);
 const [draggedItem, setDraggedItem] = useState<string | null>(null);
 
@@ -228,10 +227,8 @@ const handleSubmit = async (e: React.FormEvent) => {
   setLoading(true);
 
   try {
-    const method = isEditing ? 'PUT' : 'POST';
-
     const response = await fetch(`/api/project/${projectId}/manual`, {
-      method,
+      method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         content: manual.content,
@@ -242,9 +239,8 @@ const handleSubmit = async (e: React.FormEvent) => {
     if (response.ok) {
       const savedManual = await response.json();
       setManual(prev => ({ ...prev, ...savedManual }));
-      setIsEditing(true);
       setManualExists(true);
-      alert(`Manual ${isEditing ? 'updated' : 'created'} successfully`);
+      alert(`Manual updated successfully`);
     }
   } catch (error) {
     console.error('Error saving manual:', error);
@@ -356,7 +352,7 @@ return (
         rows={15}
       />
       <button type="submit" disabled={loading}>
-        {loading ? 'Saving...' : isEditing ? 'Update Manual' : 'Create Manual'}
+        {'Update Manual'}
       </button>
     </form>
 
