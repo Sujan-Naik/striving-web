@@ -23,15 +23,15 @@ export default function FeatureGitIntegration({
     const project = useProject()!;
     const githubRepo = project.githubRepo!
   return (
-    <div>
+    <div className={"center-column"} style={{width: '100%'}}>
       <h3>Git Integration</h3>
-      <CommitsList
-          githubRepo={githubRepo}
-        projectId={projectId}
-        featureId={featureId}
-        commitShas={commitShas}
-        onUpdate={onUpdate}
-      />
+      {/*<CommitsList*/}
+      {/*    githubRepo={githubRepo}*/}
+      {/*  projectId={projectId}*/}
+      {/*  featureId={featureId}*/}
+      {/*  commitShas={commitShas}*/}
+      {/*  onUpdate={onUpdate}*/}
+      {/*/>*/}
       <PullRequestsList
           githubRepo={githubRepo}
         projectId={projectId}

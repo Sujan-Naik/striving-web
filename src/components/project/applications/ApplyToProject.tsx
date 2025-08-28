@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import {useUser} from "@/context/UserContext";
+import {HeadedButton, HeadedTextArea, VariantEnum} from "headed-ui";
 
 interface ApplyToProjectProps {
   projectId: string;
@@ -42,15 +43,15 @@ export default function ApplyToProject({ projectId, hasApplied, onApplicationSub
 
   return (
     <form onSubmit={handleSubmit}>
-      <textarea
+      <HeadedTextArea width={"100%"} variant={VariantEnum.Outline}
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         placeholder="Why do you want to contribute?"
         rows={3}
       />
-      <button type="submit" disabled={loading}>
+      <HeadedButton variant={VariantEnum.Outline} type="submit" disabled={loading}>
         {loading ? 'Applying...' : 'Apply to Project'}
-      </button>
+      </HeadedButton>
     </form>
   );
 }

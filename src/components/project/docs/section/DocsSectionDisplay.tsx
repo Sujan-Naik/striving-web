@@ -8,8 +8,9 @@ interface Props {
 }
 
 export default function DocsSectionDisplay({ section }: Props) {
+
   return (
-    <div>
+    <div className={"center-column"}>
       <h1>{section.title}</h1>
       <div>{section.content}</div>
     </div>

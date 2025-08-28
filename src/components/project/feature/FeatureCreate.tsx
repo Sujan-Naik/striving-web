@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import {HeadedButton, HeadedInput, HeadedTextArea, VariantEnum} from "headed-ui";
 
 interface Feature {
   _id: string;
@@ -106,28 +107,24 @@ export default function FeatureCreate({ projectId, onFeatureCreated }: FeatureCr
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className={"center-column"}>
       <h3>Create Feature</h3>
       {error && <div>Error: {error}</div>}
 
-      <div>
-        <input
+        <HeadedInput width={"100%"} variant={VariantEnum.Outline}
           type="text"
           placeholder="Feature title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
         />
-      </div>
 
-      <div>
-        <textarea
+        <HeadedTextArea width={"100%"} variant={VariantEnum.Outline}
           placeholder="Feature description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           required
         />
-      </div>
 
       <div>
         <select value={parentId} onChange={(e) => setParentId(e.target.value)}>
@@ -140,9 +137,9 @@ export default function FeatureCreate({ projectId, onFeatureCreated }: FeatureCr
         </select>
       </div>
 
-      <button type="submit" disabled={loading}>
+      <HeadedButton variant={VariantEnum.Outline} type="submit" disabled={loading}>
         {loading ? 'Creating...' : 'Create Feature'}
-      </button>
+      </HeadedButton>
     </form>
   );
 }

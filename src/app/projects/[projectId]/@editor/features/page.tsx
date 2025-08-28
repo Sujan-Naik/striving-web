@@ -21,10 +21,9 @@ export default function Page(){
 
   const renderFeatureEditor = (feature: IFeature, level = 0) => {
     const children = features.filter(f => f.parent === feature._id);
-    console.log(children)
     if (children) {
       return (
-          <div key={feature._id} style={{marginLeft: `${level * 20}px`}}>
+          <div  key={feature._id} style={{marginLeft: `${level * 20}px`}}>
             <FeatureEditor projectId={projectId} feature={feature}/>
             <HeadedAccordion>
               {children.map(child =>
@@ -42,7 +41,7 @@ export default function Page(){
   const rootFeatures = buildHierarchy(features);
 
   return (
-    <div>
+    <div style={{width: '100%'}}>
       <FeatureCreate projectId={projectId}/>
       <HeadedTabs tabs={rootFeatures.map(value => value.title)} >
 

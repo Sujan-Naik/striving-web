@@ -1,10 +1,11 @@
 // components/FeatureBasicInfo.tsx
 import React, { useState } from 'react';
-import { Feature } from '@/types/project/features';
+import { IFeature } from '@/types/project/Feature';
+import {HeadedButton, HeadedInput, HeadedTextArea, VariantEnum} from "headed-ui";
 
 interface FeatureBasicInfoProps {
-  feature: Feature;
-  onUpdate: (data: Partial<Feature>) => void;
+  feature: IFeature;
+  onUpdate: (data: Partial<IFeature>) => void;
   saving: boolean;
 }
 
@@ -16,15 +17,15 @@ export default function FeatureBasicInfo({ feature, onUpdate, saving }: FeatureB
   });
 
   return (
-    <div>
+    <div className={"center-column"} style={{width: '100%'}}>
       <h3>Basic Information</h3>
-      <input
+      <HeadedInput width={"100%"} variant={VariantEnum.Outline}
         value={formData.title}
         onChange={(e) => setFormData({...formData, title: e.target.value})}
         disabled={saving}
         placeholder="Feature title"
       />
-      <textarea
+      <HeadedTextArea width={"100%"} variant={VariantEnum.Outline}
         value={formData.description}
         onChange={(e) => setFormData({...formData, description: e.target.value})}
         disabled={saving}
@@ -33,7 +34,7 @@ export default function FeatureBasicInfo({ feature, onUpdate, saving }: FeatureB
       <select
         value={formData.state}
         onChange={(e) => {
-          const newState = e.target.value as Feature['state'];
+          const newState = e.target.value as IFeature['state'];
           setFormData({...formData, state: newState});
           onUpdate({ state: newState });
         }}
@@ -43,9 +44,9 @@ export default function FeatureBasicInfo({ feature, onUpdate, saving }: FeatureB
         <option value="IN_PROGRESS">In Progress</option>
         <option value="COMPLETED">Completed</option>
       </select>
-      <button onClick={() => onUpdate(formData)} disabled={saving}>
+      <HeadedButton variant={VariantEnum.Outline} onClick={() => onUpdate(formData)} disabled={saving}>
         Update Basic Info
-      </button>
+      </HeadedButton>
     </div>
   );
 }

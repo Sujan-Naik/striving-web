@@ -94,7 +94,7 @@ export default function DocsDisplay() {
 
   return (
     <div>
-      <div style={{ whiteSpace: 'pre-wrap' }}>{docs.content}</div>
+      <div className={"center-column"} style={{ whiteSpace: 'pre-wrap' }}>{docs.content}</div>
 
       <HeadedTabs tabs={tabTitles}>
         {topLevelSections.map(section =>

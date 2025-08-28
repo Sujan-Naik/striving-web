@@ -14,10 +14,9 @@ export async function POST(request: Request) {
     codebase = []
   } = await request.json();
 
+
   const client = new BedrockRuntimeClient({region: "us-east-1"});
   const modelId = "us.anthropic.claude-sonnet-4-20250514-v1:0";
-
-
 
 
   let systemPrompt = `You are a code assistant analyzing the ${owner}/${repo} repository (branch: ${branch}).

@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import {HeadedButton, VariantEnum} from "headed-ui";
 
 interface Member {
   _id: string;
@@ -51,28 +52,28 @@ export function MemberManager({ projectId }: Props) {
       <h2 className="text-xl font-semibold mb-4">Members</h2>
 
       {/*<div className="mb-4">*/}
-      {/*  <input*/}
+      {/*  <HeadedInput width={"100%"} variant={VariantEnum.Outline}*/}
       {/*    type="text"*/}
       {/*    placeholder="Member ID"*/}
       {/*    value={newMemberId}*/}
       {/*    onChange={(e) => setNewMemberId(e.target.value)}*/}
       {/*    className="border p-2 mr-2"*/}
       {/*  />*/}
-      {/*  <button onClick={addMember} className="bg-blue-500 text-white px-4 py-2">*/}
+      {/*  <HeadedButton variant={VariantEnum.Outline} onClick={addMember} className="bg-blue-500 text-white px-4 py-2">*/}
       {/*    Add*/}
-      {/*  </button>*/}
+      {/*  </HeadedButton>*/}
       {/*</div>*/}
 
       <div className="space-y-2">
         {members.map(member => (
           <div key={member._id} className="flex justify-between items-center border p-2">
             <span>{member.username} ({member.email})</span>
-            <button
+            <HeadedButton variant={VariantEnum.Outline}
               onClick={() => removeMember(member._id)}
               className="bg-red-500 text-white px-2 py-1 text-sm"
             >
               Remove
-            </button>
+            </HeadedButton>
           </div>
         ))}
       </div>

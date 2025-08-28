@@ -57,7 +57,7 @@ export default function PullRequestsList({
       {selectedPRs.map(pr => (
         <div key={pr.number}>
           <span>#{pr.number}: {pr.title} ({pr.state})</span>
-          <button onClick={() => handleRemovePR(pr.number)}>Remove</button>
+          <HeadedButton variant={VariantEnum.Outline} onClick={() => handleRemovePR(pr.number)}>Remove</HeadedButton>
         </div>
       ))}
 

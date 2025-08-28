@@ -8,6 +8,7 @@ import {IDocsSectionOrder, IDocs} from "@/types/project/Docs";
 import {IFeature} from "@/types/project/Feature";
 import {useDocs} from "@/context/DocsContext";
 import {useFeatures} from "@/context/FeatureContext";
+import {HeadedButton, HeadedInput, HeadedTextArea, VariantEnum} from "headed-ui";
 
 export default function DocsEditor() {
 const project = useProject()!;
@@ -54,7 +55,7 @@ return (
         }}
       >
         <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <input
+          <HeadedInput width={"100%"} variant={VariantEnum.Outline}
             type="checkbox"
             checked={isSelected}
             onChange={() => handleDocsSectionToggle(feature)}
@@ -317,7 +318,7 @@ return (
     }}
   >
     <label>
-      <input
+      <HeadedInput width={"100%"} variant={VariantEnum.Outline}
         type="checkbox"
         checked
         onChange={() => handleDocsSectionToggle(feature)}
@@ -346,15 +347,15 @@ return (
     )}
 
     <form onSubmit={handleSubmit}>
-      <textarea
+      <HeadedTextArea width={"100%"} variant={VariantEnum.Outline}
         placeholder="Docs Content"
         value={docs.content}
         onChange={(e) => setDocs({ ...docs, content: e.target.value })}
         rows={15}
       />
-      <button type="submit" disabled={loading}>
+      <HeadedButton variant={VariantEnum.Outline} type="submit" disabled={loading}>
         {'Update Docs'}
-      </button>
+      </HeadedButton>
     </form>
 
     <div>
@@ -373,9 +374,9 @@ return (
         </div>
       </div>
 
-      <button onClick={updateDocsSections} disabled={loading}>
+      <HeadedButton variant={VariantEnum.Outline} onClick={updateDocsSections} disabled={loading}>
         Update Docs Sections
-      </button>
+      </HeadedButton>
     </div>
 
     {docs.docsSections.map(section => (

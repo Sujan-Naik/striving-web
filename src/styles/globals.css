@@ -96,3 +96,10 @@ kbd {
   border-radius: 3px;
   border: 1px solid var(--border-color);
 }
+
+.center-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}

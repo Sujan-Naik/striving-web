@@ -8,6 +8,7 @@ import {IManualSectionOrder, IManual} from "@/types/project/Manual";
 import {IFeature} from "@/types/project/Feature";
 import {useManual} from "@/context/ManualContext";
 import {useFeatures} from "@/context/FeatureContext";
+import {HeadedButton, HeadedInput, HeadedTextArea, VariantEnum} from "headed-ui";
 
 export default function ManualEditor() {
 const project = useProject()!;
@@ -54,7 +55,7 @@ return (
         }}
       >
         <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <input
+          <HeadedInput width={"100%"} variant={VariantEnum.Outline}
             type="checkbox"
             checked={isSelected}
             onChange={() => handleManualSectionToggle(feature)}
@@ -316,7 +317,7 @@ return (
     }}
   >
     <label>
-      <input
+      <HeadedInput width={"100%"} variant={VariantEnum.Outline}
         type="checkbox"
         checked
         onChange={() => handleManualSectionToggle(feature)}
@@ -345,15 +346,15 @@ return (
     )}
 
     <form onSubmit={handleSubmit}>
-      <textarea
+      <HeadedTextArea width={"100%"} variant={VariantEnum.Outline}
         placeholder="Manual Content"
         value={manual.content}
         onChange={(e) => setManual({ ...manual, content: e.target.value })}
         rows={15}
       />
-      <button type="submit" disabled={loading}>
+      <HeadedButton variant={VariantEnum.Outline} type="submit" disabled={loading}>
         {'Update Manual'}
-      </button>
+      </HeadedButton>
     </form>
 
     <div>
@@ -372,9 +373,9 @@ return (
         </div>
       </div>
 
-      <button onClick={updateManualSections} disabled={loading}>
+      <HeadedButton variant={VariantEnum.Outline} onClick={updateManualSections} disabled={loading}>
         Update Manual Sections
-      </button>
+      </HeadedButton>
     </div>
 
     {manual.manualSections.map(section => (

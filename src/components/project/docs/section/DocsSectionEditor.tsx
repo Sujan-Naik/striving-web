@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {IDocsSection} from "@/types/project/DocsSection";
+import {HeadedButton, HeadedInput, HeadedTextArea, VariantEnum} from "headed-ui";
 
 
 export default function DocsSectionEditor({projectId, docsSection}: {projectId: string, docsSection: IDocsSection}) {
@@ -48,24 +49,24 @@ export default function DocsSectionEditor({projectId, docsSection}: {projectId: 
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div>
-      <input
+    <div className={"center-column"}>
+      <HeadedInput width={"100%"} variant={VariantEnum.Outline}
         type="text"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         placeholder="Section title"
       />
-      <textarea
+      <HeadedTextArea width={"100%"} variant={VariantEnum.Outline}
         value={content}
         onChange={(e) => setContent(e.target.value)}
         placeholder="Section content"
         rows={10}
       />
       <div>
-        <button onClick={handleSave} disabled={saving}>
+        <HeadedButton variant={VariantEnum.Outline} onClick={handleSave} disabled={saving}>
           {saving ? 'Saving...' : 'Save'}
-        </button>
-        <button onClick={handleDelete}>Delete</button>
+        </HeadedButton>
+        <HeadedButton variant={VariantEnum.Outline} onClick={handleDelete}>Delete</HeadedButton>
       </div>
     </div>
   );

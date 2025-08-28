@@ -1,6 +1,7 @@
 // components/FeatureHierarchy.tsx
 import React, { useState, useEffect } from 'react';
-import {Feature} from "@/types/project/features";
+import {IFeature} from "@/types/project/Feature";
+import {HeadedButton, HeadedInput, VariantEnum} from "headed-ui";
 
 interface FeatureHierarchyProps {
   projectId: string;
@@ -17,8 +18,8 @@ export default function FeatureHierarchy({
   children,
   onUpdate
 }: FeatureHierarchyProps) {
-  const [parentFeature, setParentFeature] = useState<Feature | null>(null);
-  const [childFeatures, setChildFeatures] = useState<Feature[]>([]);
+  const [parentFeature, setParentFeature] = useState<IFeature | null>(null);
+  const [childFeatures, setChildFeatures] = useState<IFeature[]>([]);
 
   useEffect(() => {
     if (parent) fetchParentFeature();
@@ -60,9 +61,9 @@ export default function FeatureHierarchy({
         <div>
           <h4>Parent Feature</h4>
           <span>{parentFeature.title}</span>
-          <button onClick={() => onUpdate('parent/remove', {})}>
+          <HeadedButton variant={VariantEnum.Outline} onClick={() => onUpdate('parent/remove', {})}>
             Remove Parent
-          </button>
+          </HeadedButton>
         </div>
       )}
 
@@ -71,12 +72,12 @@ export default function FeatureHierarchy({
         {childFeatures.map(child => (
           <div key={child._id}>
             <span>{child.title}</span>
-            <button onClick={() => onUpdate('children/remove', { childId: child._id })}>
+            <HeadedButton variant={VariantEnum.Outline} onClick={() => onUpdate('children/remove', { childId: child._id })}>
               Remove
-            </button>
+            </HeadedButton>
           </div>
         ))}
-        <input
+        <HeadedInput width={"100%"} variant={VariantEnum.Outline}
           placeholder="Add child feature ID"
           onKeyPress={(e) => {
             if (e.key === 'Enter') {

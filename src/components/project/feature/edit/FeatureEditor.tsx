@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState} from 'react';
 import DocsSectionEditor from "@/components/project/docs/section/DocsSectionEditor";
 import ManualSectionEditor from "@/components/project/manual/section/ManualSectionEditor";
 import FeatureHierarchy from "@/components/project/feature/edit/FeatureHierarchy";
-import FeatureDocs from "@/components/project/feature/edit/FeatureDocs";
 import FeatureGitIntegration from "@/components/project/feature/edit/FeatureGitIntegration";
 import FeatureBasicInfo from "@/components/project/feature/edit/FeatureBasicInfo";
 import {IFeature} from "@/types/project/Feature";
-
+import {HeadedCard, VariantEnum} from "headed-ui";
 
 
 export default function FeatureEditor({projectId, feature} : {projectId: string, feature: IFeature}) {
@@ -40,7 +39,7 @@ export default function FeatureEditor({projectId, feature} : {projectId: string,
 
 
    return (
-    <div>
+    <HeadedCard variant={VariantEnum.Outline} width={"100%"} className={"center-column"}>
       <h2>Edit Feature: {feature.title}</h2>
       {error && <div style={{color: 'red', marginBottom: '1rem'}}>{error}</div>}
 
@@ -69,6 +68,6 @@ export default function FeatureEditor({projectId, feature} : {projectId: string,
         <DocsSectionEditor projectId={projectId} docsSection={feature.docsSection} />
         <ManualSectionEditor projectId={projectId} manualSection={feature.manualSection} />
 
-    </div>
+    </HeadedCard>
   );
 }

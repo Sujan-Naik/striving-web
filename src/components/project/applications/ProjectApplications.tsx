@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import {HeadedButton, VariantEnum} from "headed-ui";
 
 interface Application {
   _id: string;
@@ -70,12 +71,12 @@ export default function ProjectApplications({ projectId }: ProjectApplicationsPr
           </div>
           {app.status === 'pending' && (
             <div style={{ marginTop: '0.5rem' }}>
-              <button onClick={() => handleStatusUpdate(app._id, 'accepted')}>
+              <HeadedButton variant={VariantEnum.Outline} onClick={() => handleStatusUpdate(app._id, 'accepted')}>
                 Accept
-              </button>
-              <button onClick={() => handleStatusUpdate(app._id, 'rejected')}>
+              </HeadedButton>
+              <HeadedButton variant={VariantEnum.Outline} onClick={() => handleStatusUpdate(app._id, 'rejected')}>
                 Reject
-              </button>
+              </HeadedButton>
             </div>
           )}
         </div>

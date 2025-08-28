@@ -1,5 +1,6 @@
 // components/FeatureDocs.tsx
 import React from 'react';
+import {HeadedButton, VariantEnum} from "headed-ui";
 
 interface FeatureDocsProps {
   projectId: string;
@@ -21,7 +22,7 @@ export default function FeatureDocs({
         {docsSection ? (
           <div>Section ID: {docsSection}</div>
         ) : (
-          <button>Create Docs Section</button>
+          <HeadedButton variant={VariantEnum.Outline}>Create Docs Section</HeadedButton>
         )}
       </div>
 
@@ -30,7 +31,7 @@ export default function FeatureDocs({
         {manualSection ? (
           <div>Section ID: {manualSection}</div>
         ) : (
-          <button>Create Manual Section</button>
+          <HeadedButton variant={VariantEnum.Outline}>Create Manual Section</HeadedButton>
         )}
       </div>
     </div>

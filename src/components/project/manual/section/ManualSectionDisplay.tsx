@@ -9,7 +9,7 @@ interface Props {
 
 export default function ManualSectionDisplay({ section }: Props) {
   return (
-    <div>
+    <div className={"center-column"}>
       <h1>{section.title}</h1>
       <div>{section.content}</div>
     </div>

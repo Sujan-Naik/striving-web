@@ -107,7 +107,7 @@ export default function CreateProject({ onProjectCreated }: CreateProjectProps) 
   return (
     <form onSubmit={handleSubmit}>
       <div>
-        <HeadedInput
+        <HeadedInput width={"100%"}
           name="name"
           placeholder="Project name"
           value={formData.name}
@@ -118,7 +118,7 @@ export default function CreateProject({ onProjectCreated }: CreateProjectProps) 
       </div>
 
       <div>
-        <HeadedTextArea
+        <HeadedTextArea width={"100%"}
             variant={VariantEnum.Outline}
           name="description"
           placeholder="Project description"

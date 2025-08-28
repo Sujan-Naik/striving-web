@@ -15,7 +15,7 @@
     "@neondatabase/serverless": "^1.0.1",
     "colorthief": "^2.6.0",
     "drizzle-orm": "^0.44.3",
-    "headed-ui": "^0.1.0",
+    "headed-ui": "^0.1.12",
     "lucide-react": "^0.526.0",
     "mongodb": "^6.18.0",
     "mongoose": "^8.17.0",

@@ -20,7 +20,7 @@ export function GmailDashboard() {
         {/* Mail List */}
         <div className="lg:col-span-2">
           <div className="mb-4 flex items-center gap-4">
-            <HeadedInput
+            <HeadedInput width={"100%"}
                 variant={VariantEnum.Secondary}
                 style={{backgroundColor: "var(--background-primary)", color: "var(--foreground-primary)"}}
               type="number"

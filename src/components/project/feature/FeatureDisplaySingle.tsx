@@ -1,4 +1,4 @@
-import {IFeature} from "@/types/project/IFeature";
+import {IFeature} from "@/types/project/Feature";
 import DocsSectionDisplay from "@/components/project/docs/section/DocsSectionDisplay";
 import ManualSectionDisplay from "@/components/project/manual/section/ManualSectionDisplay";
 

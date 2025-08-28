@@ -95,7 +95,7 @@ export default function ManualDisplay() {
 
   return (
     <div>
-      <div style={{ whiteSpace: 'pre-wrap' }}>{manual.content}</div>
+      <div className={"center-column"} style={{ whiteSpace: 'pre-wrap' }}>{manual.content}</div>
 
       <HeadedTabs tabs={tabTitles}>
         {topLevelSections.map(section =>

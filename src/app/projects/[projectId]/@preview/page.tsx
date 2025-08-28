@@ -1,9 +1,8 @@
 'use client'
 import {useProject} from "@/context/ProjectContext";
-import {HeadedCarousel, HeadedLink, HeadedTextAnim, TextAnimationType, VariantEnum} from "headed-ui";
+import {HeadedCarousel, HeadedLink, HeadedTextAnim, TextAnimationType, VariantEnum, HeadedInput} from "headed-ui";
 import {FaGithub} from "react-icons/fa";
 import UserProfile from "@/components/project/user/UserProfile";
-
 
 export default function ProjectPage() {
     const project = useProject()!;

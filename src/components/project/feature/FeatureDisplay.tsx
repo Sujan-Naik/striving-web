@@ -3,7 +3,7 @@ import DocsSectionDisplay from "@/components/project/docs/section/DocsSectionDis
 import ManualSectionDisplay from "@/components/project/manual/section/ManualSectionDisplay";
 import {HeadedTabs} from "headed-ui";
 import {Types} from "mongoose";
-import {IFeature} from "@/types/project/IFeature";
+import {IFeature} from "@/types/project/Feature";
 import FeatureDisplaySingle from "@/components/project/feature/FeatureDisplaySingle";
 
 
