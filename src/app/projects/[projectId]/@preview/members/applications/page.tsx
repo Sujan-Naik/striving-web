@@ -10,13 +10,14 @@ export default function Page() {
   const [hasApplied, setHasApplied] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  if (project.owner === user!._id){
+  if (project.owner._id == user?._id){
+    console.log('test')
     return <div>
       You can't apply as you own this project
     </div>
   }
   useEffect(() => {
-    if (!project?._id || !user?._id) return;
+    if (!project?._id || !user) return;
 
     const checkApplication = async () => {
       try {
@@ -33,7 +34,7 @@ export default function Page() {
     };
 
     checkApplication();
-  }, [project?._id, user?._id]);
+  }, [project?._id, user]);
 
   const handleApplicationSubmit = () => {
     setHasApplied(true);
