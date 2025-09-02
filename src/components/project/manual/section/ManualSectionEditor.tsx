@@ -49,7 +49,7 @@ export default function ManualSectionEditor({projectId, manualSection}: {project
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className={"center-column"}>
+    <div className={"center-column"} style={{width: "100%"}}>
       <HeadedInput width={"100%"} variant={VariantEnum.Outline}
         type="text"
         value={title}

@@ -1,8 +1,7 @@
 import React, {useState} from 'react';
 import DocsSectionEditor from "@/components/project/docs/section/DocsSectionEditor";
 import ManualSectionEditor from "@/components/project/manual/section/ManualSectionEditor";
-import FeatureHierarchy from "@/components/project/feature/edit/FeatureHierarchy";
-import FeatureGitIntegration from "@/components/project/feature/edit/FeatureGitIntegration";
+
 import FeatureBasicInfo from "@/components/project/feature/edit/FeatureBasicInfo";
 import {IFeature} from "@/types/project/Feature";
 import {HeadedCard, VariantEnum} from "headed-ui";
@@ -49,21 +48,21 @@ export default function FeatureEditor({projectId, feature} : {projectId: string,
         saving={saving}
       />
 
-      <FeatureGitIntegration
-        projectId={projectId}
-        featureId={featureId}
-        commitShas={feature.commitShas}
-        pullRequestNumbers={feature.pullRequestNumbers}
-        onUpdate={updateFeature}
-      />
+      {/*<FeatureGitIntegration*/}
+      {/*  projectId={projectId}*/}
+      {/*  featureId={featureId}*/}
+      {/*  commitShas={feature.commitShas}*/}
+      {/*  pullRequestNumbers={feature.pullRequestNumbers}*/}
+      {/*  onUpdate={updateFeature}*/}
+      {/*/>*/}
 
-      <FeatureHierarchy
-        projectId={projectId}
-        featureId={featureId}
-        parent={feature.parent}
-        children={feature.children}
-        onUpdate={updateFeature}
-      />
+      {/*<FeatureHierarchy*/}
+      {/*  projectId={projectId}*/}
+      {/*  featureId={featureId}*/}
+      {/*  parent={feature.parent}*/}
+      {/*  children={feature.children}*/}
+      {/*  onUpdate={updateFeature}*/}
+      {/*/>*/}
 
         <DocsSectionEditor projectId={projectId} docsSection={feature.docsSection} />
         <ManualSectionEditor projectId={projectId} manualSection={feature.manualSection} />
