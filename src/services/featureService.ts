@@ -23,16 +23,6 @@ class FeatureService {
   }
 
   async getFeaturesByProject(projectId: string): Promise<IFeature[]> {
-    // console.log(Feature.find({ project: projectId }))
-    try {
-      const features = await Feature.find({ project: projectId })
-        .populate('assignedUsers')
-        .populate('docsSection')
-        .populate('manualSection');
-      // console.log(features);
-    } catch (error) {
-      console.error('Population error:', error);
-    }
     return await Feature.find({ project: projectId }).populate('assignedUsers').populate('docsSection').populate('manualSection')
     // return await Feature.find({ project: projectId })
   }

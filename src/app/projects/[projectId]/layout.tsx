@@ -20,7 +20,7 @@ function LayoutContent({ editor, preview }: {editor: React.ReactNode, preview: R
     const bothVisible = showEditor && showPreview;
 
     return (
-      <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ height: '90vh', display: 'flex', flexDirection: 'column' }}>
         <div style={{ flexShrink: 0 }}>
           <ProjectMenu/>
         </div>
@@ -40,7 +40,9 @@ function LayoutContent({ editor, preview }: {editor: React.ReactNode, preview: R
               width: bothVisible ? '50%' : '100%',
               borderRight: bothVisible ? '1px solid #ccc' : 'none',
               display: 'flex',
-              justifyContent: 'center'
+              justifyContent: 'center',
+                overflowY: 'auto',
+                height: '90vh'
             }}>
               {editor}
             </div>
@@ -50,7 +52,9 @@ function LayoutContent({ editor, preview }: {editor: React.ReactNode, preview: R
             <div style={{
               width: bothVisible ? '50%' : '100%',
               display: 'flex',
-              justifyContent: 'center'
+              justifyContent: 'center',
+                overflowY: 'auto',
+                height: '90vh'
             }}>
               {preview}
             </div>

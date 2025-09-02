@@ -56,14 +56,6 @@ export default function FeatureEditor({projectId, feature} : {projectId: string,
       {/*  onUpdate={updateFeature}*/}
       {/*/>*/}
 
-      {/*<FeatureHierarchy*/}
-      {/*  projectId={projectId}*/}
-      {/*  featureId={featureId}*/}
-      {/*  parent={feature.parent}*/}
-      {/*  children={feature.children}*/}
-      {/*  onUpdate={updateFeature}*/}
-      {/*/>*/}
-
         <DocsSectionEditor projectId={projectId} docsSection={feature.docsSection} />
         <ManualSectionEditor projectId={projectId} manualSection={feature.manualSection} />
 

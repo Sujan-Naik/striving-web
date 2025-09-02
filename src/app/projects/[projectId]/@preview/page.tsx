@@ -6,18 +6,20 @@ import UserProfile from "@/components/project/user/UserProfile";
 
 export default function ProjectPage() {
     const project = useProject()!;
-    console.log(project.owner)
       return (
     <div className="container mx-auto p-4">
       <HeadedTextAnim animation={TextAnimationType.SLIDE_UP} delay={500}>{project.name}</HeadedTextAnim>
+        <HeadedTextAnim animation={TextAnimationType.SLIDE_UP} delay={1000} >{project.description}</HeadedTextAnim>
         <HeadedLink variant={VariantEnum.Outline} href={`https://github.com/${project.githubRepo}`}><FaGithub/></HeadedLink>
           Made by {project.owner.username}
-        <HeadedCarousel variant={VariantEnum.Secondary} >
             <UserProfile user={project.owner}/>
-            {project.members.map(value => {
+        {project.members.length > 1 &&
+                <HeadedCarousel variant={VariantEnum.Secondary} >
+            {project.members.filter(value => value==project.owner).map(value => {
                 return <UserProfile user={value}/>
             })}
-        </HeadedCarousel>
+            </HeadedCarousel>
+        }
     </div>
   );
 }
