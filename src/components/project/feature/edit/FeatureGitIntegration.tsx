@@ -1,6 +1,5 @@
 // components/FeatureGitIntegration.tsx
 import React from 'react';
-import CommitsList from './git/CommitsList';
 import PullRequestsList from './git/PullRequestsList';
 import {useProject} from "@/context/ProjectContext";
 

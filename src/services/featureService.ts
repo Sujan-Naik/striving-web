@@ -2,6 +2,8 @@ import Feature, { IFeature } from '@/models/Feature';
 import { Types } from 'mongoose';
 import Project from "@/models/Project";
 import {ProjectService} from "@/services/projectService";
+import DocsSection from '@/models/DocsSection'
+import ManualSection from '@/models/ManualSection'
 
 class FeatureService {
   async createFeature(featureData: Partial<IFeature>): Promise<IFeature> {
@@ -21,6 +23,16 @@ class FeatureService {
   }
 
   async getFeaturesByProject(projectId: string): Promise<IFeature[]> {
+    // console.log(Feature.find({ project: projectId }))
+    try {
+      const features = await Feature.find({ project: projectId })
+        .populate('assignedUsers')
+        .populate('docsSection')
+        .populate('manualSection');
+      // console.log(features);
+    } catch (error) {
+      console.error('Population error:', error);
+    }
     return await Feature.find({ project: projectId }).populate('assignedUsers').populate('docsSection').populate('manualSection')
     // return await Feature.find({ project: projectId })
   }

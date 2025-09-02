@@ -7,7 +7,9 @@ import {useParams} from "next/navigation";
 export default function ProjectPage() {
       return (
     <div className="container mx-auto p-4">
-      Editor
+      <p> This is an editor section for Project owners. </p>
+
+        <p>  Navigate to other project pages to make modifications. </p>
       {/*<MemberManager projectId={projectId} />*/}
     </div>
   );

@@ -1,6 +1,8 @@
 // Feature.ts
 import { Schema, model, Document, Types } from 'mongoose';
 import {createModel} from "@/lib/utils/createModel";
+import DocsSection from "@/models/DocsSection";
+import ManualSection from "@/models/ManualSection";
 
 enum FeatureState {
   PLANNED = 'planned',
@@ -36,8 +38,8 @@ const FeatureSchema = new Schema<IFeature>({
   pullRequestNumbers: [Number],
   parent: { type: Schema.Types.ObjectId, ref: 'Feature' },
   children: [{ type: Schema.Types.ObjectId, ref: 'Feature' }],
-  docsSection: { type: Schema.Types.ObjectId, ref: 'DocsSection' },
-  manualSection: { type: Schema.Types.ObjectId, ref: 'ManualSection' },
+  docsSection: { type: Schema.Types.ObjectId, ref: DocsSection },
+  manualSection: { type: Schema.Types.ObjectId, ref: ManualSection },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });

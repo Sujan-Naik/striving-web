@@ -6,6 +6,7 @@ export default function Page(){
     const project = useProject()!
 
     return <div>
+        <p>Review Project Applications here</p>
         <ProjectApplications projectId={project._id}/>
     </div>
 }
