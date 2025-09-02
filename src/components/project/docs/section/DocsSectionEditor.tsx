@@ -54,12 +54,12 @@ export default function DocsSectionEditor({projectId, docsSection}: {projectId: 
         type="text"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        placeholder="Section title"
+        placeholder={docsSection.title}
       />
       <HeadedTextArea width={"100%"} variant={VariantEnum.Outline}
         value={content}
         onChange={(e) => setContent(e.target.value)}
-        placeholder="Section content"
+        placeholder={docsSection.content}
         rows={10}
       />
       <div>

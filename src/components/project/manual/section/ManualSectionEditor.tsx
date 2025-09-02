@@ -54,12 +54,12 @@ export default function ManualSectionEditor({projectId, manualSection}: {project
         type="text"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        placeholder="Section title"
+        placeholder={manualSection.title}
       />
       <HeadedTextArea width={"100%"} variant={VariantEnum.Outline}
         value={content}
         onChange={(e) => setContent(e.target.value)}
-        placeholder="Section content"
+        placeholder={manualSection.content}
         rows={10}
       />
       <div>

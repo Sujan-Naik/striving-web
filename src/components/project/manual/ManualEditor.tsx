@@ -9,6 +9,7 @@ import {IFeature} from "@/types/project/Feature";
 import {useManual} from "@/context/ManualContext";
 import {useFeatures} from "@/context/FeatureContext";
 import {HeadedButton, HeadedInput, HeadedTextArea, VariantEnum} from "headed-ui";
+import DocsSectionEditor from "@/components/project/docs/section/DocsSectionEditor";
 
 export default function ManualEditor() {
 const project = useProject()!;
@@ -294,7 +295,7 @@ const handleDrop = (targetIndex: number) => {
 
 
 
-const renderSelectedFeature = (manualSectionId: string, index: number) => {
+const renderSelectedFeature = (manualSectionId: string, index: number, editor: boolean) => {
 const feature = features.find(f => f.manualSection._id === manualSectionId);
 if (!feature) return null;
 
@@ -317,15 +318,27 @@ return (
     }}
   >
     <label>
-      <HeadedInput width={"100%"} variant={VariantEnum.Outline}
-        type="checkbox"
-        checked
-        onChange={() => handleManualSectionToggle(feature)}
-      />
-      <span>{feature.title}</span>
-      <span className="feature-meta">
-        #{index + 1} (Level {level})
-      </span>
+                  {!editor &&
+    <div>
+          <HeadedInput width={"100%"} variant={VariantEnum.Outline}
+            type="checkbox"
+            checked
+            onChange={() => handleManualSectionToggle(feature)}
+          />
+          <span>{feature.title}</span>
+          <span className="feature-meta">
+            #{index + 1} (Level {level})
+          </span>
+      </div>
+        }
+
+        {editor &&
+      <ManualSectionEditor
+          key={feature.manualSection._id}
+          projectId={projectId}
+          manualSection={feature.manualSection}
+        />
+      }
     </label>
   </div>
 );
@@ -368,7 +381,7 @@ return (
         <div style={{ flex: 1 }}>
           <h4>Selected Sections (Ordered)</h4>
           {selectedManualSections.map((manualSectionId, index) =>
-            renderSelectedFeature(manualSectionId, index)
+            renderSelectedFeature(manualSectionId, index, false)
           )}
         </div>
       </div>
@@ -378,13 +391,9 @@ return (
       </HeadedButton>
     </div>
 
-    {manual.manualSections.map(section => (
-      <ManualSectionEditor
-        key={section.manualSection._id}
-        projectId={projectId}
-        manualSection={section.manualSection}
-      />
-    ))}
+    {selectedManualSections.map((manualSectionId, index) =>
+            renderSelectedFeature(manualSectionId, index, true)
+          )}
   </div>
 );
 }

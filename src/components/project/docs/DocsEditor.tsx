@@ -1,14 +1,14 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useProject } from "@/context/ProjectContext";
+import React, {useState} from 'react';
+import {useProject} from "@/context/ProjectContext";
 import DocsSectionEditor from './section/DocsSectionEditor';
 import {IDocsSection} from "@/types/project/DocsSection";
-import {IDocsSectionOrder, IDocs} from "@/types/project/Docs";
+import {IDocs, IDocsSectionOrder} from "@/types/project/Docs";
 import {IFeature} from "@/types/project/Feature";
 import {useDocs} from "@/context/DocsContext";
 import {useFeatures} from "@/context/FeatureContext";
-import {HeadedButton, HeadedInput, HeadedTextArea, VariantEnum} from "headed-ui";
+import {HeadedButton, HeadedCard, HeadedCarousel, HeadedInput, HeadedTextArea, VariantEnum} from "headed-ui";
 
 export default function DocsEditor() {
 const project = useProject()!;
@@ -295,7 +295,7 @@ const handleDrop = (targetIndex: number) => {
 
 
 
-const renderSelectedFeature = (docsSectionId: string, index: number) => {
+const renderSelectedFeature = (docsSectionId: string, index: number, editor: boolean) => {
 const feature = features.find(f => f.docsSection._id === docsSectionId);
 if (!feature) return null;
 
@@ -318,6 +318,8 @@ return (
     }}
   >
     <label>
+            {!editor &&
+      <div>
       <HeadedInput width={"100%"} variant={VariantEnum.Outline}
         type="checkbox"
         checked
@@ -327,7 +329,20 @@ return (
       <span className="feature-meta">
         #{index + 1} (Level {level})
       </span>
+        </div>
+      }
+      {editor &&
+      <DocsSectionEditor
+          key={feature.docsSection._id}
+          projectId={projectId}
+          docsSection={feature.docsSection}
+        />
+      }
+
+
+
     </label>
+
   </div>
 );
 };
@@ -369,7 +384,7 @@ return (
         <div style={{ flex: 1 }}>
           <h4>Selected Sections (Ordered)</h4>
           {selectedDocsSections.map((docsSectionId, index) =>
-            renderSelectedFeature(docsSectionId, index)
+            renderSelectedFeature(docsSectionId, index, false)
           )}
         </div>
       </div>
@@ -379,13 +394,11 @@ return (
       </HeadedButton>
     </div>
 
-    {docs.docsSections.map(section => (
-      <DocsSectionEditor
-        key={section.docsSection._id}
-        projectId={projectId}
-        docsSection={section.docsSection}
-      />
-    ))}
+
+    {selectedDocsSections.map((docsSectionId, index) =>
+            renderSelectedFeature(docsSectionId, index, true)
+          )}
+
   </div>
 );
 }
