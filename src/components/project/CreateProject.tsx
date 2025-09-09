@@ -78,13 +78,13 @@ export default function CreateProject({ onProjectCreated }: CreateProjectProps) 
       await fetch(`/api/project/${project._id}/docs`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: 'Explain the purpose of this project', project: project._id })
+        body: JSON.stringify({ content: 'Documentation preface', project: project._id })
       });
 
       await fetch(`/api/project/${project._id}/manual`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: 'Explain the purpose of this project', project: project._id })
+        body: JSON.stringify({ content: 'Manual preface', project: project._id })
       });
 
 

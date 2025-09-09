@@ -51,7 +51,7 @@ return (
           margin: '4px 0',
           marginLeft: `${level * 20}px`,
           border: '1px solid #ccc',
-          backgroundColor: isSelected ? '#f0f8ff' : 'white'
+          backgroundColor: isSelected ? 'var(--highlight)' : 'var(--hover)'
         }}
       >
         <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
