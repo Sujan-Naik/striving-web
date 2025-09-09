@@ -21,6 +21,7 @@ const [loading, setLoading] = useState(false);
 const [docsExists, setDocsExists] = useState<boolean>(true);
 const [draggedItem, setDraggedItem] = useState<string | null>(null);
 
+
 const buildHierarchy = (features: IFeature[]): IFeature[] => {
   return features.filter(f => !f.parent);
 };
@@ -329,7 +330,6 @@ if (editor) {
       <div
           key={docsSectionId}
       >
-        {index}
         <label>
           <DocsSectionEditor
               key={feature.docsSection._id}
@@ -360,9 +360,6 @@ else {
         onChange={() => handleDocsSectionToggle(feature)}
       />
       <span>{feature.title}</span>
-      <span className="feature-meta">
-        #{index + 1} (Level {level})
-      </span>
         </div>
   )
   }
@@ -384,19 +381,19 @@ return (
       </div>
     )}
 
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className={'center-column'}>
       <HeadedTextArea width={"100%"} variant={VariantEnum.Outline}
         value={docs.content}
         onChange={(e) => setDocs({ ...docs, content: e.target.value })}
         rows={15}
-                      markdown={false}
+                      markdown={true}
       />
       <HeadedButton variant={VariantEnum.Outline} type="submit" disabled={loading}>
         {'Update Docs'}
       </HeadedButton>
     </form>
 
-    <div>
+    <div className={'center-column'}>
       <h3>Select & Order Docs Sections</h3>
       <div style={{ display: 'flex', gap: '20px' }}>
         <div style={{ flex: 1 }}>
@@ -416,7 +413,6 @@ return (
         Update Docs Sections
       </HeadedButton>
     </div>
-
 
             <HeadedCarousel variant={VariantEnum.Outline}>
               {selectedDocsSections.map( (docsSection, index) => {

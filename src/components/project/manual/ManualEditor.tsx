@@ -8,7 +8,7 @@ import {IManualSectionOrder, IManual} from "@/types/project/Manual";
 import {IFeature} from "@/types/project/Feature";
 import {useManual} from "@/context/ManualContext";
 import {useFeatures} from "@/context/FeatureContext";
-import {HeadedButton, HeadedInput, HeadedTextArea, VariantEnum} from "headed-ui";
+import {HeadedButton, HeadedCarousel, HeadedInput, HeadedTextArea, VariantEnum} from "headed-ui";
 import DocsSectionEditor from "@/components/project/docs/section/DocsSectionEditor";
 
 export default function ManualEditor() {
@@ -381,7 +381,7 @@ return (
       </div>
     )}
 
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className={'center-column'}>
       <HeadedTextArea width={"100%"} variant={VariantEnum.Outline}
         placeholder="Manual Content"
         value={manual.content}
@@ -394,7 +394,7 @@ return (
       </HeadedButton>
     </form>
 
-    <div>
+    <div className={'center-column'}>
       <h3>Select & Order Manual Sections</h3>
       <div style={{ display: 'flex', gap: '20px' }}>
         <div style={{ flex: 1 }}>
@@ -415,9 +415,12 @@ return (
       </HeadedButton>
     </div>
 
+                <HeadedCarousel variant={VariantEnum.Outline}>
+
     {selectedManualSections.map((manualSectionId, index) =>
             renderSelectedFeature(manualSectionId, index, true)
           )}
+                </HeadedCarousel>
   </div>
 );
 }
