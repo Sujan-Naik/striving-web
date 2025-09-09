@@ -287,7 +287,27 @@ const handleDrop = (targetIndex: number) => {
   const newOrder = [...selectedManualSections];
   const [movedItem] = newOrder.splice(currentIndex, 1);
   const adjustedTargetIndex = targetIndex > currentIndex ? targetIndex - 1 : targetIndex;
+
+  // Get all children of the moved item
+  const movedFeature = features.find(f => f.manualSection._id === movedItem);
+  const childSections = movedFeature ? getChildSections(movedFeature._id) : [];
+
+  // Remove all children from their current positions
+  const childrenToMove = childSections.filter(childId => newOrder.includes(childId));
+  childrenToMove.forEach(childId => {
+    const childIndex = newOrder.indexOf(childId);
+    if (childIndex !== -1) {
+      newOrder.splice(childIndex, 1);
+    }
+  });
+
+  // Insert the moved item at the target position
   newOrder.splice(adjustedTargetIndex, 0, movedItem);
+
+  // Insert all children immediately after the moved item
+  childrenToMove.forEach((childId, index) => {
+    newOrder.splice(adjustedTargetIndex + 1 + index, 0, childId);
+  });
 
   setSelectedManualSections(newOrder);
   setDraggedItem(null);
@@ -303,46 +323,49 @@ const level = getFeatureLevel(feature._id);
 const isValidDropZone = !draggedItem || canDropAtPosition(draggedItem, index);
 const isDragging = draggedItem === manualSectionId;
 
-console.log(manualSectionId)
-return (
-  <div
-    key={manualSectionId}
-    draggable
-    onDragStart={() => handleDragStart(manualSectionId)}
-    onDragOver={(e) => isValidDropZone && e.preventDefault()}
-    onDrop={() => handleDrop(index)}
-    className={`feature-item ${!isValidDropZone ? 'invalid-drop' : ''} ${isDragging ? 'dragging' : ''}`}
-    style={{
-      marginLeft: `${level * 20}px`,
-      opacity: isDragging ? 0.5 : 1
-    }}
-  >
-    <label>
-                  {!editor &&
-    <div>
-          <HeadedInput width={"100%"} variant={VariantEnum.Outline}
-            type="checkbox"
-            checked
-            onChange={() => handleManualSectionToggle(feature)}
-          />
-          <span>{feature.title}</span>
-          <span className="feature-meta">
-            #{index + 1} (Level {level})
-          </span>
-      </div>
-        }
+if (editor) {
+  return (
 
-        {editor &&
-      <ManualSectionEditor
-          key={feature.manualSection._id}
-          projectId={projectId}
-          manualSection={feature.manualSection}
-        />
-      }
-    </label>
-  </div>
-);
-};
+      <div
+          key={manualSectionId}
+      >
+        <label>
+          <ManualSectionEditor
+              key={feature.manualSection._id}
+              projectId={projectId}
+              manualSection={feature.manualSection}
+          />
+        </label>
+      </div>
+  )
+}
+else {
+  return (
+      <div
+          key={manualSectionId}
+          draggable
+          onDragStart={() => handleDragStart(manualSectionId)}
+          onDragOver={(e) => isValidDropZone && e.preventDefault()}
+          onDrop={() => handleDrop(index)}
+          className={`feature-item ${!isValidDropZone ? 'invalid-drop' : ''} ${isDragging ? 'dragging' : ''}`}
+          style={{
+            marginLeft: `${level * 20}px`,
+            opacity: isDragging ? 0.5 : 1
+          }}
+      >
+      <HeadedInput width={"100%"} variant={VariantEnum.Outline}
+        type="checkbox"
+        checked
+        onChange={() => handleManualSectionToggle(feature)}
+      />
+      <span>{feature.title}</span>
+      <span className="feature-meta">
+        #{index + 1} (Level {level})
+      </span>
+        </div>
+  )
+  }
+}
 
 if (manualExists === null) {
   // return <div>Loading...</div>;

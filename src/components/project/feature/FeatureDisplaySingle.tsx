@@ -1,6 +1,7 @@
 import {IFeature} from "@/types/project/Feature";
 import DocsSectionDisplay from "@/components/project/docs/section/DocsSectionDisplay";
 import ManualSectionDisplay from "@/components/project/manual/section/ManualSectionDisplay";
+import ReactMarkdown from "react-markdown";
 
 export default function FeatureDisplaySingle({
   feature,
@@ -15,7 +16,7 @@ export default function FeatureDisplaySingle({
   return (
     <div style={{ border: '1px solid #ccc', padding: '1rem' }}>
       <h3>{feature.title} {feature.children.length > 0 && '(Parent)'}</h3>
-      <p>{feature.description}</p>
+      <ReactMarkdown>{feature.description}</ReactMarkdown>
       <p>State: {feature.state}</p>
       {showDocs && <DocsSectionDisplay section={feature.docsSection!}/>}
       {showManual && <ManualSectionDisplay section={feature.manualSection!}/>}

@@ -7,8 +7,8 @@ import {HeadedButton, HeadedInput, HeadedTextArea, VariantEnum} from "headed-ui"
 
 
 export default function DocsSectionEditor({projectId, docsSection}: {projectId: string, docsSection: IDocsSection}) {
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
+  const [title, setTitle] = useState(docsSection.title);
+  const [content, setContent] = useState(docsSection.content);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -54,12 +54,10 @@ export default function DocsSectionEditor({projectId, docsSection}: {projectId: 
         type="text"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        placeholder={docsSection.title}
       />
       <HeadedTextArea width={"100%"} variant={VariantEnum.Outline}
         value={content}
         onChange={(e) => setContent(e.target.value)}
-        placeholder={docsSection.content}
         rows={10}
       />
       <div>

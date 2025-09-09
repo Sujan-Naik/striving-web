@@ -7,8 +7,8 @@ import {HeadedButton, HeadedInput, HeadedTextArea, VariantEnum} from "headed-ui"
 
 
 export default function ManualSectionEditor({projectId, manualSection}: {projectId: string, manualSection: IManualSection}) {
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
+  const [title, setTitle] = useState(manualSection.title);
+  const [content, setContent] = useState(manualSection.content);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -54,12 +54,10 @@ export default function ManualSectionEditor({projectId, manualSection}: {project
         type="text"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        placeholder={manualSection.title}
       />
       <HeadedTextArea width={"100%"} variant={VariantEnum.Outline}
         value={content}
         onChange={(e) => setContent(e.target.value)}
-        placeholder={manualSection.content}
         rows={10}
       />
       <div>

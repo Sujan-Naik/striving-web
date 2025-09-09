@@ -6,6 +6,7 @@ import ManualSectionDisplay from "@/components/project/manual/section/ManualSect
 import { HeadedTabs } from "headed-ui";
 import {IManual, IManualSectionOrder} from "@/types/project/Manual";
 import {useManual} from "@/context/ManualContext";
+import ReactMarkdown from "react-markdown";
 
 interface SectionNode extends IManualSectionOrder {
   children: SectionNode[];
@@ -100,7 +101,7 @@ export default function ManualDisplay() {
       <HeadedTabs tabs={tabTitles}>
         {topLevelSections.map(section =>
             <div>
-              <p> {section.manualSection.content} </p>
+              <ReactMarkdown>{section.manualSection.content}</ReactMarkdown>
               {renderTabContent(section)}
         </div>
         )}

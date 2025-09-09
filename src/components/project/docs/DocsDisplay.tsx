@@ -5,6 +5,7 @@ import { useProject } from "@/context/ProjectContext";
 import DocsSectionDisplay from "@/components/project/docs/section/DocsSectionDisplay";
 import { HeadedTabs } from "headed-ui";
 import {IDocs, IDocsSectionOrder} from "@/types/project/Docs";
+import ReactMarkdown from "react-markdown";
 
 interface SectionNode extends IDocsSectionOrder {
   children: SectionNode[];
@@ -99,7 +100,7 @@ export default function DocsDisplay() {
       <HeadedTabs tabs={tabTitles}>
         {topLevelSections.map(section =>
             <div>
-              <p> {section.docsSection.content} </p>
+              <ReactMarkdown>{section.docsSection.content}</ReactMarkdown>
               {renderTabContent(section)}
         </div>
         )}

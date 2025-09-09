@@ -33,6 +33,10 @@
   --border-radius-large: 16px;
 }
 
+textarea {
+    user-select: text;
+    pointer-events: auto;
+}
 
 * {
   /*margin: 0;*/
