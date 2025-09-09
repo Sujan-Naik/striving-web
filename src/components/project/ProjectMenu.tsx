@@ -12,7 +12,7 @@ export function ProjectMenu() {
   const menuItems = [
     { href: '', text: 'Project Home', icon: FiHome },
     { href: 'members', text: 'Members', icon: FiUsers },
-    { href: 'members/applications', text: 'Applications', icon: FiBox },
+    // { href: 'members/applications', text: 'Applications', icon: FiBox },
     { href: 'features', text: 'Features', icon: FiStar },
     { href: 'features/docs', text: 'Docs', icon: FiBook },
     { href: 'features/manual', text: 'Manual', icon: FiFileText },

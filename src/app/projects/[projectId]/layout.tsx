@@ -1,6 +1,6 @@
 'use client'
 import {useSession} from "next-auth/react";
-import {useUser} from "@/context/UserContext";
+import {UserProvider, useUser} from "@/context/UserContext";
 import React, {useState} from "react";
 import {ProjectProvider, useProject} from "@/context/ProjectContext";
 import {ProjectMenu} from "@/components/project/ProjectMenu";
@@ -8,6 +8,7 @@ import {HeadedCard, HeadedSwitch, VariantEnum} from "headed-ui";
 
 function LayoutContent({ editor, preview }: {editor: React.ReactNode, preview: React.ReactNode }) {
   const project = useProject();
+
   const {user} = useUser();
   const [showEditor, setShowEditor] = useState(true);
   const [showPreview, setShowPreview] = useState(true);
@@ -88,14 +89,36 @@ export default function Layout({
   preview: React.ReactNode;
   params: Promise<{ projectId: string }>;
 }) {
-  const { data: session, status } = useSession();
-  const { projectId } = React.use(params);
+    const { data: session, status } = useSession();
+
+    const { projectId } = React.use(params);
 
   if (status === "loading") return <div>Loading...</div>;
+  if (!session?.user?.name) {
+      return (
+
+        <ProjectProvider projectId={projectId}>
+            <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+              <div style={{ flexShrink: 0 }}>
+              </div>
+              <div style={{ flex: 1, display: 'flex' }}>
+                <ProjectMenu />
+                <div style={{ width: '50%' }}>
+                  {preview}
+                </div>
+              </div>
+            </div>
+          );
+        </ProjectProvider>
+  );
+  }
+
 
   return (
-    <ProjectProvider projectId={projectId}>
-      <LayoutContent editor={editor} preview={preview}/>
-    </ProjectProvider>
+          <UserProvider username={session.user.name}>
+        <ProjectProvider projectId={projectId}>
+          <LayoutContent editor={editor} preview={preview}/>
+        </ProjectProvider>
+          </UserProvider>
   );
 }
