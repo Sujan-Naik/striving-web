@@ -329,6 +329,7 @@ if (editor) {
       <div
           key={docsSectionId}
       >
+        {index}
         <label>
           <DocsSectionEditor
               key={feature.docsSection._id}
@@ -417,10 +418,12 @@ return (
     </div>
 
 
-    {selectedDocsSections.map((docsSectionId, index) =>
-            renderSelectedFeature(docsSectionId, index, true)
-          )}
+            <HeadedCarousel variant={VariantEnum.Outline}>
+              {selectedDocsSections.map( (docsSection, index) => {
+                return renderSelectedFeature(docsSection, index, true)
+              })}
 
+  </HeadedCarousel>
   </div>
 );
 }

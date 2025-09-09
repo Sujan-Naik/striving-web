@@ -1,8 +1,5 @@
-import {useState, useEffect, JSX} from 'react';
-import DocsSectionDisplay from "@/components/project/docs/section/DocsSectionDisplay";
-import ManualSectionDisplay from "@/components/project/manual/section/ManualSectionDisplay";
-import {HeadedTabs} from "headed-ui";
-import {Types} from "mongoose";
+import {JSX, useEffect, useState} from 'react';
+import {HeadedCarousel, HeadedTabs, VariantEnum} from "headed-ui";
 import {IFeature} from "@/types/project/Feature";
 import FeatureDisplaySingle from "@/components/project/feature/FeatureDisplaySingle";
 

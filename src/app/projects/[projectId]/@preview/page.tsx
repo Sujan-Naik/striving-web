@@ -3,13 +3,16 @@ import {useProject} from "@/context/ProjectContext";
 import {HeadedCarousel, HeadedLink, HeadedTextAnim, TextAnimationType, VariantEnum, HeadedInput} from "headed-ui";
 import {FaGithub} from "react-icons/fa";
 import UserProfile from "@/components/project/user/UserProfile";
+import ReactMarkdown from "react-markdown";
 
 export default function ProjectPage() {
     const project = useProject()!;
       return (
     <div className="container mx-auto p-4">
       <HeadedTextAnim animation={TextAnimationType.SLIDE_UP} delay={500}>{project.name}</HeadedTextAnim>
-        <HeadedTextAnim animation={TextAnimationType.SLIDE_UP} delay={1000} >{project.description}</HeadedTextAnim>
+        {/*<HeadedTextAnim animation={TextAnimationType.SLIDE_UP} delay={1000}>*/}
+            <ReactMarkdown>{project.description}</ReactMarkdown>
+        {/*</HeadedTextAnim>*/}
         <HeadedLink variant={VariantEnum.Outline} href={`https://github.com/${project.githubRepo}`}><FaGithub/></HeadedLink>
           Made by {project.owner.username}
             <UserProfile user={project.owner}/>

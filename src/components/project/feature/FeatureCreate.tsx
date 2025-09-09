@@ -118,7 +118,7 @@ export default function FeatureCreate({ projectId, onFeatureCreated }: FeatureCr
           onChange={(e) => setTitle(e.target.value)}
           required
         />
-
+        <h4>Feature Description</h4>
         <HeadedTextArea width={"100%"} variant={VariantEnum.Outline}
           placeholder="Feature description"
           value={description}
