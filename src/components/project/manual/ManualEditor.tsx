@@ -386,6 +386,7 @@ return (
         placeholder="Manual Content"
         value={manual.content}
         onChange={(e) => setManual({ ...manual, content: e.target.value })}
+                      markdown={true}
         rows={15}
       />
       <HeadedButton variant={VariantEnum.Outline} type="submit" disabled={loading}>

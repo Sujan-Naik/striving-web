@@ -125,6 +125,7 @@ export default function CreateProject({ onProjectCreated }: CreateProjectProps) 
           value={formData.description}
           onChange={handleChange}
           required
+                        markdown={false}
         />
       </div>
 

@@ -30,6 +30,7 @@ export default function FeatureBasicInfo({ feature, onUpdate, saving }: FeatureB
         onChange={(e) => setFormData({...formData, description: e.target.value})}
         disabled={saving}
         placeholder="Feature description"
+                      markdown={true}
       />
       <select
         value={formData.state}

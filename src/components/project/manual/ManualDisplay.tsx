@@ -96,7 +96,9 @@ export default function ManualDisplay() {
 
   return (
     <div>
-      <div className={"center-column"} style={{ whiteSpace: 'pre-wrap' }}>{manual.content}</div>
+      <div className={"center-column"} style={{ whiteSpace: 'pre-wrap' }}>
+        <ReactMarkdown>{manual.content}</ReactMarkdown>
+      </div>
 
       <HeadedTabs tabs={tabTitles}>
         {topLevelSections.map(section =>

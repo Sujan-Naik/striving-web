@@ -388,6 +388,7 @@ return (
         value={docs.content}
         onChange={(e) => setDocs({ ...docs, content: e.target.value })}
         rows={15}
+                      markdown={false}
       />
       <HeadedButton variant={VariantEnum.Outline} type="submit" disabled={loading}>
         {'Update Docs'}

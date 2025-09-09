@@ -49,6 +49,10 @@ html, body {
 
 }
 
+img{
+  height: auto;
+  width: 100%;
+}
 .chat-container {
   display: flex;
   flex-direction: column-reverse;

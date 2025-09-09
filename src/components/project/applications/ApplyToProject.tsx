@@ -48,6 +48,7 @@ export default function ApplyToProject({ projectId, hasApplied, onApplicationSub
         onChange={(e) => setMessage(e.target.value)}
         placeholder="Why do you want to contribute?"
         rows={3}
+                      markdown={false}
       />
       <HeadedButton variant={VariantEnum.Outline} type="submit" disabled={loading}>
         {loading ? 'Applying...' : 'Apply to Project'}

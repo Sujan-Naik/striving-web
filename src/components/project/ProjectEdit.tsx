@@ -48,6 +48,7 @@ export function ProjectEdit() {
             onChange={(e) => setDescription(e.target.value)}
             className="border p-2 w-full h-24"
                           placeholder={project.description}
+                          markdown={false}
           />
         </div>
 

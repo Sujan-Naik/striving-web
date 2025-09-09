@@ -124,6 +124,7 @@ export default function FeatureCreate({ projectId, onFeatureCreated }: FeatureCr
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           required
+                        markdown={true}
         />
 
       <div>
