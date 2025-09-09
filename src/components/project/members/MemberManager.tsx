@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import {HeadedButton, VariantEnum} from "headed-ui";
+import {useProject} from "@/context/ProjectContext";
 
 interface Member {
   _id: string;
@@ -15,7 +16,8 @@ interface Props {
 export function MemberManager({ projectId }: Props) {
   const [members, setMembers] = useState<Member[]>([]);
   const [newMemberId, setNewMemberId] = useState('');
-
+  const project = useProject();
+  const owner = project.owner;
   useEffect(() => {
     fetchMembers();
   }, [projectId]);
@@ -68,12 +70,14 @@ export function MemberManager({ projectId }: Props) {
         {members.map(member => (
           <div key={member._id} className="flex justify-between items-center border p-2">
             <span>{member.username} ({member.email})</span>
+            {member._id != owner._id &&
             <HeadedButton variant={VariantEnum.Outline}
               onClick={() => removeMember(member._id)}
               className="bg-red-500 text-white px-2 py-1 text-sm"
             >
               Remove
             </HeadedButton>
+            }
           </div>
         ))}
       </div>
