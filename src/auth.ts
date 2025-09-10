@@ -6,6 +6,10 @@ import Google from "@auth/core/providers/google";
 import Spotify from "@auth/core/providers/spotify";
 import {DrizzleAdapter} from "@auth/drizzle-adapter";
 import {db} from "@/lib/db";
+import {getUserAccounts} from "@/lib/accounts";
+import userService from "@/services/userService";
+import {githubApi} from "@/lib/api-client";
+import dbConnect from "@/lib/mongodb";
 
 const providers: Provider[] = [
   // Credentials({
@@ -23,9 +27,17 @@ const providers: Provider[] = [
     clientId: process.env.AUTH_GITHUB_ID,
     clientSecret: process.env.AUTH_GITHUB_SECRET,
     allowDangerousEmailAccountLinking: true,
+    profile(profile){
+      return {
+        id: profile.id.toString(),
+        name: profile.login,
+        email: profile.email,
+        image: profile.avatar_url
+      }
+    },
     authorization: {
       params: {
-        scope: 'repo project',
+        scope: 'repo project user:email',
       },
     },
   }),
@@ -37,7 +49,11 @@ const providers: Provider[] = [
       params: {
         access_type: "offline",
         prompt: "consent",
-        scope: 'openid profile email https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/gmail.readonly', // your scopes here
+        scope: 'openid profile https://www.googleapis.com/auth/calendar.app.created ' +
+            'https://www.googleapis.com/auth/calendar.events.freebusy ' +
+            'https://www.googleapis.com/auth/calendar.events.public.readonly ' +
+            'https://www.googleapis.com/auth/calendar.settings.readonly ' +
+            'https://www.googleapis.com/auth/calendar.calendarlist.readonly '
       },
     },
   }),
@@ -61,7 +77,52 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     signIn: "/login",
     signOut: "sign-out",
     error: "/error",
-  }
+  },
+  callbacks: {
+
+    signIn: async ({ user, account}) => {
+
+      if (!account?.provider){
+        return false;
+      }
+
+      if (!account?.access_token) {
+            return false;
+      }
+
+      switch(account.provider) {
+        case("github"):
+        {
+
+          // const username = await fetch('https://api.github.com/user', {
+          //   headers: { 'Authorization': `Bearer ${account.access_token}` }
+          // }).then(res => res.json()).then(data => data.login);
+          //
+          if (!user.name){
+            return false;
+          }
+
+          // initially user.name is the github username (the actual one not the display)
+          // username is a display name for Mongodb and githubId is the github name
+          await dbConnect()
+          try {
+              await userService.createUser({
+                username: user.name,
+              githubId: user.name,
+              email: user.email!,
+              avatarUrl: user.image!,
+            });
+              return true;
+          }
+          catch (e){
+            return false;
+          }
+
+        }
+      }
+      return true;
+    },
+  },
 
 
 //   callbacks: {

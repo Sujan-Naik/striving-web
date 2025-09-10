@@ -39,7 +39,7 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 
 To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Next.js Docs](https://nextjs.org/docs) - learn about Next.js features and API.
 - [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
@@ -48,4 +48,15 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Check out our [Next.js deployment docs](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+
+I'm developing an application in typescript and Next.js for open source project creation basically which integrates with github.
+
+I have User.ts 
+Project.ts is a project model - which has a user and a linked github and members. It contains features and also a manual.
+Feature.ts describes what goes into a project. It can be assigned to multiple users. A feature also has commits, and states to represent how far they are into implementation or even if they're scrapped. As well as pull requests references. 
+Manual.ts is used as a storage space for all the information in the project. It contains a Docs.ts for developer focused docs but otherwise stores user-focused information and all of the features that went in to the project.
+
+Can you provide me mongodb mongoose models for all of these. I don't want to duplicate github functionality i just want to have references to them
+

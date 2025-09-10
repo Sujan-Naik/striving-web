@@ -17,7 +17,6 @@ export async function GET(request: NextRequest) {
     if (!owner) {
 
       const result = await githubApi.getAuthUserRepos(params)
-
       if (!result.success) {
         return Response.json({ error: result.error }, { status: result.status || 500 })
       }

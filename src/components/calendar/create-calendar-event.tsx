@@ -8,14 +8,19 @@ import React, { useState, useEffect } from 'react';
 export default function CreateCalendarEvent({
   onCreate,
   defaultDate,
-}: { onCreate: () => void; defaultDate?: Date }) {
+  calendarId
+}: {
+  onCreate: () => void;
+  defaultDate?: Date;
+  calendarId: string;
+}) {
   const initialDate = defaultDate || new Date();
 
   const [formData, setFormData] = useState<EventProps>({
     name: '',
     description: '',
     date: initialDate,
-    endDate: new Date(initialDate.getTime() + 3600 * 1000), // +1 hour
+    endDate: new Date(initialDate.getTime() + 3600 * 1000),
     eventId: '',
   });
 
@@ -29,7 +34,6 @@ export default function CreateCalendarEvent({
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   };
 
-  // If defaultDate prop changes, update the formData accordingly
   useEffect(() => {
     if (defaultDate) {
       setFormData((prev) => ({
@@ -40,11 +44,19 @@ export default function CreateCalendarEvent({
     }
   }, [defaultDate]);
 
-  const handleCreate = async () => {
-    // ... your create logic
-    await handleCreateEvent(formData);
-    onCreate();
-  };
+ const handleCreate = async () => {
+  const response = await fetch(`/api/google/calendar/events?calendarId=${calendarId}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(formData)
+  })
+
+  if (response.ok) {
+    onCreate()
+  }
+}
 
   return (
     <div>
@@ -70,7 +82,7 @@ export default function CreateCalendarEvent({
         value={getInputValue(formData.endDate!)}
         onChange={(e) => setFormData({ ...formData, endDate: new Date(e.target.value) })}
       />
-      <button onClick={handleCreate} disabled={false /* your loading check */}>
+      <button onClick={handleCreate} disabled={false}>
         Create Event
       </button>
     </div>

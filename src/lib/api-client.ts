@@ -240,6 +240,23 @@ export const googleApi = {
 
     getCalendars: () => callProviderApi("google", "https://www.googleapis.com/calendar/v3/users/me/calendarList"),
 
+    createCalendar: (params: {
+      summary: string,
+      description?: string
+    }) => {
+      if (!params?.summary) {
+        throw new Error("summary is required");
+      }
+
+      return callProviderApi("google", "https://www.googleapis.com/calendar/v3/calendars", {
+        method: "POST",
+        body: JSON.stringify({
+          summary: params.summary,
+          description: params.description
+        })
+      });
+    },
+
   },
 }
 

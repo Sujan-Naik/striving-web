@@ -2,8 +2,8 @@ import {redirect} from "next/navigation"
 import {auth, providerMap, signIn} from "@/auth"
 import {AuthError} from "next-auth"
 import {getUserAccounts} from "@/lib/accounts"
-import {HeadedButton, HeadedLink, VariantEnum} from "headed-ui"
-import {isTokenExpired} from "@/lib/utils/token" // Import the utility function
+import {isTokenExpired} from "@/lib/utils/token"
+import Link from "next/link"; // Import the utility function
 
 const SIGNIN_ERROR_URL = "/error"
 
@@ -24,9 +24,9 @@ export default async function SignInPage(props: {
     <div className="flex flex-col gap-2">
       {session && (
         <div className="mb-4 p-4 rounded">
-          <HeadedLink variant={VariantEnum.Primary} href={"/"}>
+          <Link href={"/"}>
             Main Page
-          </HeadedLink>
+          </Link>
           <p>Signed in as {session.user?.email}</p>
           <p>Connected providers: {connectedAccounts.map((acc) => acc.provider).join(", ")}</p>
           <details>
@@ -60,9 +60,9 @@ export default async function SignInPage(props: {
               }
             }}
           >
-            <HeadedButton variant={VariantEnum.Primary} type="submit">
+            <button type="submit">
               <span>{isTrulyConnected ? `✓ ${provider.name} Connected` : `Connect ${provider.name}`}</span>
-            </HeadedButton>
+            </button>
           </form>
         )
       })}

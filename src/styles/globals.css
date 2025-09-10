@@ -1,6 +1,6 @@
 :root {
 
-  background-color: #1e1e1e;
+  background-color: #252526;
   color: #cccccc;
   --highlight: #007acc;
   --base-background: #252526;
@@ -29,11 +29,14 @@
   --link-color: #4fc3f7;
   --link-icon-size: 4px;
 
-
   --disabled: #6c757d;
   --border-radius-large: 16px;
 }
 
+textarea {
+    user-select: text;
+    pointer-events: auto;
+}
 
 * {
   /*margin: 0;*/
@@ -46,6 +49,10 @@ html, body {
 
 }
 
+img{
+  height: auto;
+  width: 100%;
+}
 .chat-container {
   display: flex;
   flex-direction: column-reverse;
@@ -96,4 +103,11 @@ kbd {
   padding: 2px 6px;
   border-radius: 3px;
   border: 1px solid var(--border-color);
+}
+
+.center-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
