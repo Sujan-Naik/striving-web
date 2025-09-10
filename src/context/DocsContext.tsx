@@ -9,9 +9,11 @@ const DocsContext = createContext<{
 
 export const DocsProvider = ({
   children,
-  projectId,
+  docsId,
+    projectId
 }: {
   children: React.ReactNode;
+  docsId: string;
   projectId: string;
 }) => {
   const [docs, setDocs] = useState<IDocs | null>(null);
@@ -22,19 +24,9 @@ export const DocsProvider = ({
     const fetchDocs = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/project/${projectId}/docs`);
+        const response = await fetch(`/api/project/${projectId}/docs/${docsId}`);
         if (!response.ok) {
                     throw new Error('Failed to fetch docs');
-
-          // await fetch(`/api/project/${projectId}/docs`, {
-          //   method: 'POST',
-          //   headers: { 'Content-Type': 'application/json' },
-          //   body: JSON.stringify({
-          //     content: '',
-          //     project: projectId
-          //   })
-          // });
-
 
         }
         const docsData = await response.json();

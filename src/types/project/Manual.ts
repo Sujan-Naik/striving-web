@@ -8,6 +8,7 @@ export interface IManualSectionOrder {
 }
 
 export interface IManual {
+  _id: string;
   project: string;
   content: string;
   manualSections: IManualSectionOrder[];

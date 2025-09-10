@@ -66,7 +66,9 @@ export default function CreateProject({ onProjectCreated }: CreateProjectProps) 
         body: JSON.stringify({
           ...formData,
           owner: user._id,
-          members: [user._id]
+          members: [user._id],
+          docs: [],
+          manual: []
         })
       });
 
@@ -74,19 +76,6 @@ export default function CreateProject({ onProjectCreated }: CreateProjectProps) 
 
 
       const project = await response.json();
-
-      await fetch(`/api/project/${project._id}/docs`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: 'Documentation preface', project: project._id })
-      });
-
-      await fetch(`/api/project/${project._id}/manual`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: 'Manual preface', project: project._id })
-      });
-
 
       onProjectCreated?.(project);
       setFormData({ name: '', description: '', githubRepo: '' });

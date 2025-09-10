@@ -9,23 +9,25 @@ const ManualContext = createContext<{
 
 export const ManualProvider = ({
   children,
-  projectId,
+  manualId,
+    projectId
 }: {
   children: React.ReactNode;
+  manualId: string;
   projectId: string;
 }) => {
   const [manual, setManual] = useState<IManual | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-
   useEffect(() => {
     const fetchManual = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/project/${projectId}/manual`);
+        const response = await fetch(`/api/project/${projectId}/manual/${manualId}`);
         if (!response.ok) {
-          throw new Error('Failed to fetch manual');
+                    throw new Error('Failed to fetch manual');
+
         }
         const manualData = await response.json();
         setManual(manualData);
@@ -43,7 +45,6 @@ export const ManualProvider = ({
 
   if (error) return <div>Error: {error}</div>;
   if (!manual) return <div>No manual found</div>;
-  console.log(manual)
   return (
     <ManualContext.Provider value={{ manual, setManual }}>
       {children}

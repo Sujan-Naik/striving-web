@@ -21,11 +21,15 @@ export const ProjectProvider = ({
 
         const response = await fetch(`/api/project/${projectId}`);
         if (!response.ok) {
-          throw new Error('Failed to fetch project');
+          const json = await response.json()
+          console.log(json.error)
+
+          throw new Error(json.error || 'Failed to fetch project');
         }
         const projectData = await response.json();
         setProject(projectData);
       } catch (err) {
+
         setError(err instanceof Error ? err.message : 'Unknown error');
       } finally {
         setLoading(false);
@@ -36,7 +40,6 @@ export const ProjectProvider = ({
   }, [projectId]);
 
   // if (loading) return <div>Loading...</div>;
-  console.log('we stopped loading project')
   if (error) return <div>Error: {error}</div>;
   if (!project) return null;
 

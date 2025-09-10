@@ -8,6 +8,7 @@ export interface IDocsSectionOrder {
 }
 
 export interface IDocs {
+  _id: string;
   project: string;
   content: string;
   docsSections: IDocsSectionOrder[];

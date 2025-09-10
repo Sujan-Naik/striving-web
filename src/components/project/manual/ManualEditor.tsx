@@ -2,14 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { useProject } from "@/context/ProjectContext";
-import ManualSectionEditor from './section/ManualSectionEditor';
 import {IManualSection} from "@/types/project/ManualSection";
 import {IManualSectionOrder, IManual} from "@/types/project/Manual";
 import {IFeature} from "@/types/project/Feature";
 import {useManual} from "@/context/ManualContext";
 import {useFeatures} from "@/context/FeatureContext";
 import {HeadedButton, HeadedCarousel, HeadedInput, HeadedTextArea, VariantEnum} from "headed-ui";
-import DocsSectionEditor from "@/components/project/docs/section/DocsSectionEditor";
+import ManualSectionEditor from "@/components/project/manual/section/ManualSectionEditor";
 
 export default function ManualEditor() {
 const project = useProject()!;

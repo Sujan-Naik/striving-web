@@ -1,8 +1,21 @@
-import DocsEditor from "@/components/project/docs/DocsEditor";
+import {useProject} from "@/context/ProjectContext";
+import DocsList from "@/components/project/docs/DocsList";
+import DocsCreate from "@/components/project/docs/DocsCreate";
 
 export default function Page(){
 
-    return (<div>
-        <DocsEditor/>
-    </div>)
+
+    // await fetch(`/api/project/${project._id}/docs`, {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify({ content: 'Documentation preface', project: project._id })
+    //   });
+
+    // console.log(project.docs)
+
+    return <div>
+        <DocsCreate/>
+                <DocsList/>
+
+    </div>
 }

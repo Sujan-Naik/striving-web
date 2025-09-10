@@ -7,7 +7,7 @@ export default function ProjectsPage() {
         {/*<h1>*/}
         {/*    Create a new project*/}
         {/*</h1>*/}
-        {/*<CreateProject />*/}
+        <CreateProject />
       <h1 className="text-2xl font-bold mb-4">Projects</h1>
       <ProjectList />
     </div>

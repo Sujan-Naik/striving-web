@@ -4,13 +4,16 @@ import { IProject } from '@/models/Project';
 import mongoose, { Types } from 'mongoose';
 import {UserServiceClass} from "@/services/userService";
 import {IUser} from "@/models/User";
+import {IManual} from '@/models/Manual'
+import {IDocs} from '@/models/Docs'
+
 
 export class ProjectService {
 
-  async addDocsReference(projectId: string, docsId: string): Promise<IProject | null> {
+ async addDocsReference(projectId: string, docsId: string): Promise<IProject | null> {
   return await Project.findByIdAndUpdate(
     projectId,
-    { docs: docsId, updatedAt: new Date() },
+    { $addToSet: { docs: docsId }, updatedAt: new Date() },
     { new: true }
   );
 }
@@ -18,10 +21,28 @@ export class ProjectService {
 async addManualReference(projectId: string, manualId: string): Promise<IProject | null> {
   return await Project.findByIdAndUpdate(
     projectId,
-    { manual: manualId, updatedAt: new Date() },
+    { $addToSet: { manual: manualId }, updatedAt: new Date() },
     { new: true }
   );
 }
+
+async removeDocsReference(projectId: string, docsId: string): Promise<IProject | null> {
+  return await Project.findByIdAndUpdate(
+    projectId,
+    { $pull: { docs: docsId }, updatedAt: new Date() },
+    { new: true }
+  );
+}
+
+async removeManualReference(projectId: string, manualId: string): Promise<IProject | null> {
+  return await Project.findByIdAndUpdate(
+    projectId,
+    { $pull: { manual: manualId }, updatedAt: new Date() },
+    { new: true }
+  );
+}
+
+
 
   async createProject(projectData: Partial<IProject>): Promise<IProject> {
     const project = new Project(projectData);
@@ -48,33 +69,44 @@ async addManualReference(projectId: string, manualId: string): Promise<IProject 
         query = query.populate('manual');
     }
 
+    if (populate?.includes('docs')) {
+        query = query.populate<{}>('docs');
+    }
+
     return await query;
 }
 
 async getProjectByName(id: string, populate?: string[]): Promise<IProject | null> {
-    // if (!mongoose.Types.ObjectId.isValid(id)) {
-    //     return null;
-    // }
+    try {
+        if (!id?.trim()) {
+            return null;
+        }
 
-    let query = Project.findOne({name: id});
+        let query = Project.findOne({name: id});
 
-    if (populate?.includes('owner')) {
-        query = query.populate('owner');
-    }
-    if (populate?.includes('members')) {
-        query = query.populate('members');
-    }
-    if (populate?.includes('features')) {
-        query = query.populate('features');
-    }
-    if (populate?.includes('manual')) {
-        query = query.populate('manual');
-    }
-    if (populate?.includes('docs')) {
-        query = query.populate('docs');
-    }
+        if (populate?.includes('owner')) {
+            query = query.populate('owner');
+        }
+        if (populate?.includes('members')) {
+            query = query.populate('members');
+        }
+        if (populate?.includes('features')) {
+            query = query.populate('features');
+        }
+        if (populate?.includes('manual')) {
+            // @ts-ignore
+            query = query.populate<{manual: IManual[]}>('manual');
+        }
+        if (populate?.includes('docs')) {
+            // @ts-ignore
+            query = query.populate<{docs: IDocs[]}>('docs');
+        }
 
-    return await query;
+        return await query;
+    } catch (error) {
+        console.error('Error fetching project by name:', error);
+        return null;
+    }
 }
 
   async getProjectsByOwner(ownerId: string): Promise<IProject[]> {
