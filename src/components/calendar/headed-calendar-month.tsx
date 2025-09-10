@@ -78,7 +78,7 @@ export const HeadedCalendarMonth: React.FC<CalendarProps> = ({variant, year, mon
     return (
         <>
             {isModalOpen &&  <HeadedModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={"Create Event"} variant={VariantEnum.Primary}>
-                <CreateCalendarEvent onCreate={changeCallback} defaultDate={selectedDate}></CreateCalendarEvent>
+                <CreateCalendarEvent onCreate={changeCallback} defaultDate={selectedDate} calendarId={calendarId}></CreateCalendarEvent>
             </HeadedModal> }
 
         <div style={{display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '8px'}}>

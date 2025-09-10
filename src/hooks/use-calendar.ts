@@ -13,8 +13,14 @@ export function useCalendar(calendarId: string) {
     setLoading(true)
     setError(null)
 
+    if (!calendarId) {
+        setError("No CalendarID")
+        return
+      }
+
     try {
-      const response = await fetch(`/api/google/calendar/events?calendarId=${calendarId}`)
+      const encodedId = encodeURIComponent(calendarId).replace('#', '%23');
+      const response = await fetch(`/api/google/calendar/events?calendarId=${encodeURIComponent(encodedId)}`)
 
       if (!response.ok) {
         const errorData = await response.json()
@@ -33,7 +39,7 @@ export function useCalendar(calendarId: string) {
         endDate: new Date(item.end.dateTime || item.end.date),
         eventId: item.id
       }))
-
+      console.log(fetchedEvents)
       setEvents(fetchedEvents)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unknown error occurred")

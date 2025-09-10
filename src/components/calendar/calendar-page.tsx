@@ -6,16 +6,38 @@ import {AlertCircle, Calendar, RefreshCw} from "lucide-react"
 import {useState} from "react";
 import CreateCalendarEvent from "@/components/calendar/create-calendar-event";
 import {HeadedCalendar} from "@/components/calendar/headed-calendar";
+import {CalendarSelector} from "@/components/calendar/calendar-selector";
+import {CalendarCreator} from "@/components/calendar/calendar-creator";
 
 export default function CalendarPage() {
-    const calendarId = "primary";
-  const { events, loading, error, refetch } = useCalendar(calendarId)
+    const [calendarId, setCalendarId] = useState<string>('');
+
+    const { events, loading, error, refetch } = useCalendar(calendarId)
     // console.log(events);
 
     const [dialogOpen, setDialog] = useState(false)
+
+    const handleCalendarSelect = (calendarId: string) => {
+        setCalendarId(calendarId)
+        refetch()
+  }
+    if (!calendarId){
+        return (
+            <div>
+            <CalendarCreator/>
+            <CalendarSelector onCalendarSelect={handleCalendarSelect}/>
+            </div>
+        )
+    }
+
+
   if (error) {
     return (
       <div className="container mx-auto p-6">
+                      <CalendarCreator/>
+
+                      <CalendarSelector onCalendarSelect={handleCalendarSelect}/>
+
         <HeadedDialog title={"Error Fetching Calendar"} isOpen={dialogOpen} onClick={() => setDialog(false)} variant={VariantEnum.Outline} >
           <AlertCircle className="h-4 w-4" />
           <p>{error}</p>
@@ -30,6 +52,9 @@ export default function CalendarPage() {
 
   return (
     <div className="container mx-auto p-6">
+                              <CalendarCreator/>
+                    <CalendarSelector onCalendarSelect={handleCalendarSelect}/>
+
         <div className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-bold flex items-center gap-2">
           <Calendar className="h-8 w-8" />

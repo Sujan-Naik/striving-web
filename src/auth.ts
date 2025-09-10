@@ -52,7 +52,8 @@ const providers: Provider[] = [
         scope: 'openid profile https://www.googleapis.com/auth/calendar.app.created ' +
             'https://www.googleapis.com/auth/calendar.events.freebusy ' +
             'https://www.googleapis.com/auth/calendar.events.public.readonly ' +
-            'https://www.googleapis.com/auth/calendar.settings.readonly '
+            'https://www.googleapis.com/auth/calendar.settings.readonly ' +
+            'https://www.googleapis.com/auth/calendar.calendarlist.readonly '
       },
     },
   }),
