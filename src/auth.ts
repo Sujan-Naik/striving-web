@@ -12,17 +12,6 @@ import {githubApi} from "@/lib/api-client";
 import dbConnect from "@/lib/mongodb";
 
 const providers: Provider[] = [
-  // Credentials({
-  //   credentials: { password: { label: "Password", type: "password" } },
-  //   authorize(c) {
-  //     if (c.password !== "password") return null
-  //     return {
-  //       id: "test",
-  //       name: "Test User",
-  //       email: "test@example.com",
-  //     }
-  //   },
-  // }),
   GitHub({
     clientId: process.env.AUTH_GITHUB_ID,
     clientSecret: process.env.AUTH_GITHUB_SECRET,
@@ -38,22 +27,6 @@ const providers: Provider[] = [
     authorization: {
       params: {
         scope: 'repo project user:email',
-      },
-    },
-  }),
-  Google({
-    clientId: process.env.AUTH_GOOGLE_ID,
-    clientSecret: process.env.AUTH_GOOGLE_SECRET,
-    allowDangerousEmailAccountLinking: true,
-    authorization: {
-      params: {
-        access_type: "offline",
-        prompt: "consent",
-        scope: 'openid profile https://www.googleapis.com/auth/calendar.app.created ' +
-            'https://www.googleapis.com/auth/calendar.events.freebusy ' +
-            'https://www.googleapis.com/auth/calendar.events.public.readonly ' +
-            'https://www.googleapis.com/auth/calendar.settings.readonly ' +
-            'https://www.googleapis.com/auth/calendar.calendarlist.readonly '
       },
     },
   }),
@@ -93,11 +66,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       switch(account.provider) {
         case("github"):
         {
-
-          // const username = await fetch('https://api.github.com/user', {
-          //   headers: { 'Authorization': `Bearer ${account.access_token}` }
-          // }).then(res => res.json()).then(data => data.login);
-          //
           if (!user.name){
             return false;
           }
@@ -123,59 +91,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return true;
     },
   },
-
-
-//   callbacks: {
-//     authorized: async ({ auth }) => {
-//       // Logged in users are authenticated, otherwise redirect to login page
-//       return !!auth
-//     },
-//      jwt: async ({ token, account }) => {
-//   if (account) {
-//     // Initialize providers object if it doesn't exist
-//     if (!token.providers) {
-//       token.providers = {};
-//     }
-//
-//     // Only add tokens if they exist
-//     // if (account.access_token && account.refresh_token && account.expires_at) {
-//     //   console.log('token stored');
-//     //   token.providers[account.provider] = {
-//     //     accessToken: account.access_token,
-//     //     refreshToken: account.refresh_token,
-//     //     expiresAt: account.expires_at,
-//     //   };
-//     // }
-//
-//      if (account.access_token) {
-//       console.log('token stored');
-//       token.providers[account.provider] = {
-//         accessToken: account.access_token,
-//       };
-//     }
-//   }
-//   return token;
-// },
-//     session: async ({ session, token }) => {
-//   if (token?.providers) {
-//     session.user = {
-//       ...session.user,
-//       providers: token.providers,
-//     };
-//   }
-//
-//   console.log(session)
-//   return session;
-// },
-//
-//     signIn: async ({ user, account, profile }) => {
-//     // This is REQUIRED for account linking to work
-//       return true
-//   },
-
-  // }
-
-
 })
 
 
