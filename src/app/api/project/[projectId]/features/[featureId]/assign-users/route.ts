@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import featureService from '@/services/featureService';
 import dbConnect from "@/lib/mongodb";
 
 import featureService from "@/services/featureService";
