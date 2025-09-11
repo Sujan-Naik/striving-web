@@ -17,12 +17,6 @@ interface Repository {
 export default function CreateProject({ onProjectCreated }: CreateProjectProps) {
   const {user} = useUser();
 
-  if (!user){
-    return (<div>
-      User not logged in
-    </div>)
-  }
-
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -65,8 +59,8 @@ export default function CreateProject({ onProjectCreated }: CreateProjectProps) 
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
-          owner: user._id,
-          members: [user._id],
+          owner: user!._id,
+          members: [user!._id],
           docs: [],
           manual: []
         })

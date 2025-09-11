@@ -45,7 +45,7 @@ function MobileHeader() {
                 fontSize: '0.9rem',
                 margin: '0 0 0.25rem 0'
               }}>
-                Constantly and Endlessly Striving
+                FOSS Documentation and User Manuals
               </p>
               <small style={{ color: 'var(--foreground-tertiary)' }}>
                 Made by Sujan Naik
@@ -91,13 +91,7 @@ function PCHeader() {
 
   const navLinks = [
     { href: "/", label: "Home" },
-    { href: "/dashboard", label: "Dashboard" },
     { href: "/projects", label: "Projects" },
-    { href: "/calendar", label: "Calendar" },
-    { href: "/github", label: "GitHub" },
-    { href: "/github/projects", label: "Github Projects" },
-    { href: "/gmail", label: "Gmail" },
-    { href: "/llm", label: "LLM" },
     { href: "/login", label: "Authenticate" },
     { href: "/sign-out", label: "Sign Out" }
   ];
@@ -137,7 +131,7 @@ function PCHeader() {
               opacity: isHovered ? 1 : 0,
               transition: 'opacity 0.3s ease'
             }}>
-              Constantly and Endlessly Striving
+              FOSS Documentation and User Manuals
             </p>
             <small style={{
               color: 'var(--foreground-tertiary)',

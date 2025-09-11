@@ -4,8 +4,8 @@ import { IProject } from '@/models/Project';
 import mongoose, { Types } from 'mongoose';
 import {UserServiceClass} from "@/services/userService";
 import {IUser} from "@/models/User";
-import {IManual} from '@/models/Manual'
-import {IDocs} from '@/models/Docs'
+import Manual from '@/models/Manual'
+import Docs from '@/models/Docs'
 
 
 export class ProjectService {
@@ -81,7 +81,7 @@ async getProjectByName(id: string, populate?: string[]): Promise<IProject | null
         if (!id?.trim()) {
             return null;
         }
-
+console.log('Existing models:', mongoose.models);
         let query = Project.findOne({name: id});
 
         if (populate?.includes('owner')) {
@@ -95,11 +95,17 @@ async getProjectByName(id: string, populate?: string[]): Promise<IProject | null
         }
         if (populate?.includes('manual')) {
             // @ts-ignore
-            query = query.populate<{manual: IManual[]}>('manual');
+            // query = query.populate<{manual: IManual[]}>('manual');
+            Manual();
+                        query = query.populate('manual');
+
         }
         if (populate?.includes('docs')) {
             // @ts-ignore
-            query = query.populate<{docs: IDocs[]}>('docs');
+            // query = query.populate<{docs: IDocs[]}>('docs');
+            Docs();
+                                    query = query.populate('docs');
+
         }
 
         return await query;

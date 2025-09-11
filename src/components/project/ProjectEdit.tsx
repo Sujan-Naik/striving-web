@@ -31,7 +31,7 @@ export function ProjectEdit() {
     <div className={"center-column"}>
       <h2 className="text-xl font-semibold mb-4">Edit Project</h2>
 
-      <div className="space-y-4">
+      <div className="space-y-4 center-column">
         <div>
           <label className="block mb-2">Name</label>
           <HeadedInput variant={VariantEnum.Primary}
