@@ -1,10 +1,15 @@
 import NextAuth from "next-auth"
 import GitHub from "next-auth/providers/github"
+import Credentials from "next-auth/providers/credentials"
 import type { Provider } from "next-auth/providers"
+import Google from "@auth/core/providers/google";
+import Spotify from "@auth/core/providers/spotify";
 import {DrizzleAdapter} from "@auth/drizzle-adapter";
 import {db} from "@/lib/db";
+import {getUserAccounts} from "@/lib/accounts";
 import userService from "@/services/userService";
-// import dbConnect from "@/lib/mongodb";
+import {githubApi} from "@/lib/api-client";
+import dbConnect from "@/lib/mongodb";
 
 const providers: Provider[] = [
   GitHub({
@@ -58,30 +63,40 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             return false;
       }
 
-      switch(account.provider) {
-        case("github"):
-        {
-          if (!user.name){
+      switch (account.provider) {
+        case "github": {
+          if (!user.name || !user.email || !user.image) {
             return false;
           }
 
-          // initially user.name is the github username (the actual one not the display)
-          // username is a display name for Mongodb and githubId is the github name
-          const { default: dbConnect } = await import('@/lib/mongodb');
-          await dbConnect()
+          // Prepare the payload
+          const payload = {
+            name: user.name,
+            email: user.email,
+            avatarUrl: user.image,
+          };
+
           try {
-              await userService.createUser({
-                username: user.name,
-              githubId: user.name,
-              email: user.email!,
-              avatarUrl: user.image!,
+            // Send POST request to your API endpoint
+            const response = await fetch(`${process.env.NEXTAUTH_URL}/api/project/user`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(payload),
             });
+
+            if (response.ok) {
               return true;
-          }
-          catch (e){
+            } else {
+              // Optionally handle different error statuses
+              console.error('Failed to create user:', await response.json());
+              return false;
+            }
+          } catch (error) {
+            console.error('Error during user creation:', error);
             return false;
           }
-
         }
       }
       return true;
