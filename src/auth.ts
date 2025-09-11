@@ -1,15 +1,10 @@
 import NextAuth from "next-auth"
 import GitHub from "next-auth/providers/github"
-import Credentials from "next-auth/providers/credentials"
 import type { Provider } from "next-auth/providers"
-import Google from "@auth/core/providers/google";
-import Spotify from "@auth/core/providers/spotify";
 import {DrizzleAdapter} from "@auth/drizzle-adapter";
 import {db} from "@/lib/db";
-import {getUserAccounts} from "@/lib/accounts";
 import userService from "@/services/userService";
-import {githubApi} from "@/lib/api-client";
-import dbConnect from "@/lib/mongodb";
+// import dbConnect from "@/lib/mongodb";
 
 const providers: Provider[] = [
   GitHub({
@@ -72,6 +67,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
           // initially user.name is the github username (the actual one not the display)
           // username is a display name for Mongodb and githubId is the github name
+          const { default: dbConnect } = await import('@/lib/mongodb');
           await dbConnect()
           try {
               await userService.createUser({

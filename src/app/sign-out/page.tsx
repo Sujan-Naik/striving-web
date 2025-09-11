@@ -1,5 +1,5 @@
-import { signOut } from "@/auth"
-import {HeadedButton, VariantEnum} from "headed-ui";
+import { signOut } from "@/auth";
+//import {HeadedButton, VariantEnum} from "headed-ui";
 
 export default function SignOutPage() {
   return (
@@ -11,7 +11,8 @@ export default function SignOutPage() {
           await signOut()
         }}
       >
-          <HeadedButton variant={VariantEnum.Primary} type="submit">Sign out</HeadedButton>
+          {/*<HeadedButton variant={VariantEnum.Primary} type="submit">Sign out</HeadedButton>*/}
+          <button type="submit">Sign out</button>
       </form>
     </div>
   )
