@@ -6,7 +6,6 @@ export default function Page(){
     const project = useProject()!;
 
   const projectId = project._id
-    return (<div>
-        <FeatureDisplay projectId={projectId}/>
-    </div>)
+    return (
+        <FeatureDisplay projectId={projectId}/>)
 }

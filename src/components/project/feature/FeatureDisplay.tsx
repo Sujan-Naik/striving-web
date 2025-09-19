@@ -52,12 +52,12 @@ export default function FeatureDisplay({ projectId }: FeatureDisplayProps) {
   const rootFeatures = buildHierarchy(features);
 
   return (
-    <div className={'center-column'}>
+    <>
       <h1>Features</h1>
             <HeadedTabs tabs={rootFeatures.map(value => value.title)} >
 
       {rootFeatures.map(feature => renderFeature(feature))}
             </HeadedTabs>
-    </div>
+    </>
   );
 }

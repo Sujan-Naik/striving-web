@@ -38,12 +38,13 @@ function LayoutContent({ editor, preview }: {editor: React.ReactNode, preview: R
         <div style={{ display: 'flex', flex: 1 }}>
           {showEditor && (
             <div style={{
-              width: bothVisible ? '50%' : '100%',
+              width: bothVisible ? '50vw' : '100%',
               borderRight: bothVisible ? '1px solid #ccc' : 'none',
               display: 'flex',
               justifyContent: 'center',
                 overflowY: 'auto',
-                height: '90vh'
+                height: '90vh',
+                padding: '5px'
             }}>
               {editor}
             </div>
@@ -51,11 +52,12 @@ function LayoutContent({ editor, preview }: {editor: React.ReactNode, preview: R
 
           {showPreview && (
             <div style={{
-              width: bothVisible ? '50%' : '100%',
+              width: bothVisible ? '50vw' : '100%',
               display: 'flex',
               justifyContent: 'center',
                 overflowY: 'auto',
-                height: '90vh'
+                height: '90vh',
+                padding: '5px'
             }}>
               {preview}
             </div>

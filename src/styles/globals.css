@@ -51,7 +51,7 @@ html, body {
 
 img{
   height: auto;
-  width: 100%;
+  width: auto;
 }
 .chat-container {
   display: flex;
