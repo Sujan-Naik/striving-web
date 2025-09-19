@@ -6,6 +6,8 @@ import DocsSectionDisplay from "@/components/project/docs/section/DocsSectionDis
 import { HeadedTabs } from "headed-ui";
 import {IDocs, IDocsSectionOrder} from "@/types/project/Docs";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+
 
 interface SectionNode extends IDocsSectionOrder {
   children: SectionNode[];
@@ -96,13 +98,13 @@ export default function DocsDisplay() {
   return (
     <div>
       <div className={"center-column"} style={{ whiteSpace: 'pre-wrap' }}>
-        <ReactMarkdown>{docs.content}</ReactMarkdown>
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>{docs.content}</ReactMarkdown>
       </div>
 
       <HeadedTabs tabs={tabTitles}>
         {topLevelSections.map(section =>
             <div>
-              <ReactMarkdown>{section.docsSection.content}</ReactMarkdown>
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{section.docsSection.content}</ReactMarkdown>
               {renderTabContent(section)}
         </div>
         )}

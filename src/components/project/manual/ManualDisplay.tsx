@@ -7,6 +7,7 @@ import { HeadedTabs } from "headed-ui";
 import {IManual, IManualSectionOrder} from "@/types/project/Manual";
 import {useManual} from "@/context/ManualContext";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface SectionNode extends IManualSectionOrder {
   children: SectionNode[];
@@ -97,13 +98,13 @@ export default function ManualDisplay() {
   return (
     <div>
       <div className={"center-column"} style={{ whiteSpace: 'pre-wrap' }}>
-        <ReactMarkdown>{manual.content}</ReactMarkdown>
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>{manual.content}</ReactMarkdown>
       </div>
 
       <HeadedTabs tabs={tabTitles}>
         {topLevelSections.map(section =>
             <div>
-              <ReactMarkdown>{section.manualSection.content}</ReactMarkdown>
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{section.manualSection.content}</ReactMarkdown>
               {renderTabContent(section)}
         </div>
         )}
