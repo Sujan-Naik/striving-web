@@ -1,10 +1,10 @@
 import {IManualSection} from "@/types/project/ManualSection";
 
 export interface IManualSectionOrder {
-  manualSection: string;
+  manualSection: IManualSection;
   order: number;
   level: number;
-  parentSection?: string;
+  parentSection?: IManualSection;
 }
 
 export interface IManual {

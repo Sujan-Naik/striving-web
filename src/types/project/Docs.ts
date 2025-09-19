@@ -1,10 +1,10 @@
 import {IDocsSection} from "@/types/project/DocsSection";
 
 export interface IDocsSectionOrder {
-  docsSection: string;
+  docsSection: IDocsSection;
   order: number;
   level: number;
-  parentSection?: string;
+  parentSection?: IDocsSection;
 }
 
 export interface IDocs {

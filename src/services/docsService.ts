@@ -19,7 +19,7 @@ export const docsService = {
 },
 
   async getById(id: string): Promise<IDocs | null> {
-    return await Docs.findById(id).populate('project').populate('docsSections');
+    return await Docs.findById(id).populate('project').populate('docsSections').populate('docsSections.docsSection').populate('docsSections.parentSection');
   },
 
   async getByProject(projectId: string): Promise<IDocs[]> {

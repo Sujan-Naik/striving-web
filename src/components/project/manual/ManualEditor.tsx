@@ -16,7 +16,7 @@ const projectId = project._id;
 
 const [manual, setManual] = useState<IManual>(useManual().manual);
 const [features, setFeatures] = useState<IFeature[]>(useFeatures());
-const [selectedManualSections, setSelectedManualSections] = useState<string[]>(manual.manualSections.map(value => value.manualSection));
+const [selectedManualSections, setSelectedManualSections] = useState<string[]>(manual.manualSections.map(value => value.manualSection._id));
 const [loading, setLoading] = useState(false);
 const [manualExists, setManualExists] = useState<boolean>(true);
 const [draggedItem, setDraggedItem] = useState<string | null>(null);
@@ -193,10 +193,10 @@ return selectedManualSections.map((sectionId, index) => {
   const parentSection = getParentManualSection(feature._id);
 
   return {
-    manualSection: feature.manualSection._id,
+    manualSection: feature.manualSection,
     order: index,
     level: getFeatureLevel(feature._id),
-    parentSection: parentSection?._id || undefined
+    parentSection: parentSection || undefined
   };
 });
 };

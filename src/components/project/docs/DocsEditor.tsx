@@ -16,7 +16,7 @@ const projectId = project._id;
 
 const [docs, setDocs] = useState<IDocs>(useDocs().docs);
 const [features, setFeatures] = useState<IFeature[]>(useFeatures());
-const [selectedDocsSections, setSelectedDocsSections] = useState<string[]>(docs.docsSections.map(value => value.docsSection));
+const [selectedDocsSections, setSelectedDocsSections] = useState<string[]>(docs.docsSections.map(value => value.docsSection._id));
 const [loading, setLoading] = useState(false);
 const [docsExists, setDocsExists] = useState<boolean>(true);
 const [draggedItem, setDraggedItem] = useState<string | null>(null);
@@ -194,10 +194,10 @@ return selectedDocsSections.map((sectionId, index) => {
   const parentSection = getParentDocsSection(feature._id);
 
   return {
-    docsSection: feature.docsSection._id,
+    docsSection: feature.docsSection,
     order: index,
     level: getFeatureLevel(feature._id),
-    parentSection: parentSection?._id || undefined
+    parentSection: parentSection || undefined
   };
 });
 };
@@ -206,6 +206,7 @@ const updateDocsSections = async () => {
   setLoading(true);
   try {
     const docsSections = buildDocsSections();
+
     const response = await fetch(`/api/project/${projectId}/docs/${docs._id}/docs-section`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
