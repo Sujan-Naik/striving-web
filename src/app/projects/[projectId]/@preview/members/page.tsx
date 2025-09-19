@@ -6,6 +6,6 @@ export default function Page(){
         const project = useProject()!;
 
     return (<div>
-        <MemberDisplay projectId={project._id} />
+        <MemberDisplay/>
     </div>)
 }

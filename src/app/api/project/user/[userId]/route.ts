@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import userService from '@/services/userService';
 import dbConnect from "@/lib/mongodb";
 
-export async function GET(request: NextRequest, { params }: { params: { userId: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ userId: string }> }) {
   try {
     await dbConnect();
     const {userId} = await params;
@@ -16,11 +16,12 @@ export async function GET(request: NextRequest, { params }: { params: { userId: 
   }
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { userId: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ userId: string }> }) {
   try {
       await dbConnect()
     const updates = await request.json();
-    const user = await userService.updateUser(params.userId, updates);
+      const {userId} = await params
+    const user = await userService.updateUser(userId, updates);
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
@@ -30,10 +31,11 @@ export async function PUT(request: NextRequest, { params }: { params: { userId: 
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { userId: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ userId: string }> }) {
   try {
       await dbConnect()
-    const user = await userService.deleteUser(params.userId);
+    const {userId} =  await params;
+    const user = await userService.deleteUser(userId);
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }

@@ -6,7 +6,7 @@ import {Types} from "mongoose";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { projectId: string } }
+  { params }: { params: Promise<{ projectId: string }> }
 ) {
   try {
     await dbConnect();
@@ -24,7 +24,7 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { projectId: string } }
+  { params }: { params: Promise<{ projectId: string }> }
 ) {
   try {
     await dbConnect();
@@ -46,7 +46,7 @@ export async function POST(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { projectId: string } }
+  { params }: { params: Promise<{ projectId: string }> }
 ) {
   try {
     await dbConnect();

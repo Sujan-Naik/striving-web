@@ -4,7 +4,7 @@ import dbConnect from "@/lib/mongodb";
 import featureService from "@/services/featureService";
 
 
-export async function GET(request: NextRequest, { params }: { params: { featureId: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ featureId: string }> }) {
   try {
       await dbConnect()
     const {featureId} = await params;
@@ -18,7 +18,7 @@ export async function GET(request: NextRequest, { params }: { params: { featureI
   }
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { featureId: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ featureId: string }> }) {
   try {
       await dbConnect()
     const updateData = await request.json();
@@ -34,7 +34,7 @@ export async function PUT(request: NextRequest, { params }: { params: { featureI
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { featureId: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ featureId: string }> }) {
   try {
       await dbConnect()
         const {featureId} = await params;
@@ -49,7 +49,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { featu
   }
 }
 
-export async function PATCH(request: NextRequest, { params }: { params: { featureId: string } }) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ featureId: string }> }) {
   try {
     await dbConnect()
     const updateData = await request.json();

@@ -4,7 +4,7 @@ import  projectService  from '@/services/projectService';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { projectId: string } }
+  { params }: { params: Promise<{ projectId: string }> }
 ) {
 
   const data = await request.json();
@@ -16,7 +16,7 @@ export async function POST(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { projectId: string } }
+  { params }: { params: Promise<{ projectId: string }> }
 ) {
   try {
     const { docsSections } = await request.json();

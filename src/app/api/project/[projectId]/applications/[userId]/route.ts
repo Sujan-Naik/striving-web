@@ -3,7 +3,7 @@ import {ProjectApplicationService} from "@/services/projectApplicationService";
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { projectId: string, userId: string } }
+  { params }: { params: Promise<{ projectId: string, userId: string }> }
 ) {
   try {
 

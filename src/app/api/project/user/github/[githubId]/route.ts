@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import userService from '@/services/userService';
 import dbConnect from "@/lib/mongodb";
 
-export async function GET(request: NextRequest, { params }: { params: { githubId: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ githubId: string }> }) {
   try {
       await dbConnect()
 

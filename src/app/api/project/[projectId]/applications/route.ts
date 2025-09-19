@@ -3,7 +3,7 @@ import { ProjectApplicationService } from '@/services/projectApplicationService'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { projectId: string } }
+  { params }: { params: Promise<{ projectId: string }> }
 ) {
   try {
       const {projectId} = await params;
@@ -18,7 +18,7 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { projectId: string } }
+  { params }: { params: Promise<{ projectId: string }> }
 ) {
   try {
     const { applicationId, status } = await request.json();

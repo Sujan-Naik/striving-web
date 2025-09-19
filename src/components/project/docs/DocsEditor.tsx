@@ -206,6 +206,7 @@ const updateDocsSections = async () => {
   setLoading(true);
   try {
     const docsSections = buildDocsSections();
+
     const response = await fetch(`/api/project/${projectId}/docs/docs-section`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },

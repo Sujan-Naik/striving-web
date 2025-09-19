@@ -1,7 +1,7 @@
 // app/api/github/pull-requests/route.ts
 import { NextRequest } from 'next/server';
 
-export async function GET(request: NextRequest, params : {githubUsername: string, repoId: string}) {
+export async function GET(request: NextRequest, {params} : {params: Promise<{githubUsername: string, repoId: string}> }) {
   const {githubUsername, repoId} = await params;
 
    const mockPRs = Array.from({ length: 5 }, (_, i) => ({

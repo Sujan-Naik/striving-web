@@ -7,11 +7,14 @@ import Link from "next/link"; // Import the utility function
 
 const SIGNIN_ERROR_URL = "/error"
 
-export default async function SignInPage(props: {
-  searchParams: { callbackUrl: string | undefined }
-}) {
-  const searchParams = await Promise.resolve(props.searchParams)
-  const callbackUrl = searchParams?.callbackUrl ?? "/login"
+interface SignInPageProps {
+  searchParams: {
+    callbackUrl?: string;
+  };
+}
+
+export default async function SignInPage({ searchParams }: { searchParams: Promise<{ callbackUrl?: string }> }) {
+  const {callbackUrl} = await searchParams;
   const session = await auth()
 
   // Get user's connected accounts if signed in

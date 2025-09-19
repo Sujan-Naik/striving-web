@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from "@/lib/mongodb";
 import featureService from "@/services/featureService";
 
-export async function DELETE(request: NextRequest, { params }: { params: { featureId: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ featureId: string }> }) {
   try {
     await dbConnect();
     const { commitSha } = await request.json();

@@ -3,7 +3,7 @@ import {githubApi} from "@/lib/api-client";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { repoName: string } }
+  { params }: { params: Promise<{ repoName: string }> }
 ) {
   try {
     const { searchParams } = new URL(request.url)

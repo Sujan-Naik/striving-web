@@ -3,7 +3,7 @@ import dbConnect from "@/lib/mongodb";
 import projectService from "@/services/projectService";
 import {manualService} from "@/services/manualService";
 
-export async function GET(request: NextRequest, { params }: { params: { projectId: string, manualId: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ projectId: string, manualId: string }> }) {
   try {
     await dbConnect()
 

@@ -5,7 +5,7 @@ import  projectService  from '@/services/projectService';
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { projectId: string } }
+  { params }: { params: Promise<{ projectId: string }> }
 ) {
 
   const {projectId} = await params;

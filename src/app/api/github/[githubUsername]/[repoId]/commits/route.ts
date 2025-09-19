@@ -1,6 +1,11 @@
 import {NextRequest, NextResponse} from 'next/server';
 
-export async function GET(request: NextRequest, params: { githubUsername: string, repoId: string }) {
+
+export async function GET(
+  request: NextRequest,
+  { params }: { params:  Promise<{ githubUsername: string; repoId: string }> }
+) {
+
   const { githubUsername, repoId } = await params;
 
   const mockCommits = Array.from({ length: 5 }, (_, i) => {

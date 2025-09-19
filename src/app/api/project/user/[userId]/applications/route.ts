@@ -5,12 +5,12 @@ import  dbconnect  from '@/lib/mongodb';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { userId: string } }
+  { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
     await dbconnect();
-
-    const applications = await ProjectApplicationService.getApplicationsByUser(params.userId);
+    const {userId} = await params
+    const applications = await ProjectApplicationService.getApplicationsByUser(userId);
 
     return NextResponse.json(applications);
   } catch (error) {

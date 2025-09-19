@@ -16,9 +16,19 @@ const errorMap = {
   ),
 }
 
+import React, { Suspense } from 'react';
+
 export default function AuthErrorPage() {
-  const search = useSearchParams()
-  const error = search.get("error") as Error
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <AuthErrorContent />
+    </Suspense>
+  );
+}
+
+function AuthErrorContent() {
+  const search = useSearchParams();
+  const error = search.get("error") as Error;
 
   return (
     <div className="flex h-screen w-full flex-col items-center justify-center">
@@ -34,5 +44,5 @@ export default function AuthErrorPage() {
         </div>
       </a>
     </div>
-  )
+  );
 }

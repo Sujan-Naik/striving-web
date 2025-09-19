@@ -3,7 +3,7 @@ import dbConnect from "@/lib/mongodb";
 import projectService from "@/services/projectService";
 import {docsService} from "@/services/docsService";
 
-export async function GET(request: NextRequest, { params }: { params: { projectId: string, docsId: string } }) {
+export async function GET(request: NextRequest, { params }: {params: Promise< { projectId: string, docsId: string } >}) {
   try {
     await dbConnect()
 

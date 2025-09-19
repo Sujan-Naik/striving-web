@@ -4,7 +4,7 @@ import  projectService  from '@/services/projectService';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { projectId: string; sectionId: string } }
+  { params }: { params: Promise<{ projectId: string; sectionId: string }> }
 ) {
   const {projectId, sectionId} = await params;
   const project = await projectService.getProjectById(projectId);
@@ -14,7 +14,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { projectId: string; sectionId: string } }
+  { params }: { params: Promise<{ projectId: string; sectionId: string }> }
 ) {
   const {projectId, sectionId} = await params;
 
@@ -27,7 +27,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { projectId: string; sectionId: string } }
+  { params }: { params: Promise<{ projectId: string; sectionId: string }> }
 ) {
   const {projectId, sectionId} = await params;
 

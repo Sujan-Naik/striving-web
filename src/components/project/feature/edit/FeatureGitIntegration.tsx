@@ -1,6 +1,6 @@
 // components/FeatureGitIntegration.tsx
 import React from 'react';
-import PullRequestsList from './git/PullRequestsList';
+// import PullRequestsList from '@/components/project/feature/edit/git/PullRequestsList';
 import {useProject} from "@/context/ProjectContext";
 
 interface FeatureGitIntegrationProps {
@@ -31,13 +31,13 @@ export default function FeatureGitIntegration({
       {/*  commitShas={commitShas}*/}
       {/*  onUpdate={onUpdate}*/}
       {/*/>*/}
-      <PullRequestsList
-          githubRepo={githubRepo}
-        projectId={projectId}
-        featureId={featureId}
-        pullRequestNumbers={pullRequestNumbers}
-        onUpdate={onUpdate}
-      />
+      {/*<PullRequestsList*/}
+      {/*    githubRepo={githubRepo}*/}
+      {/*  projectId={projectId}*/}
+      {/*  featureId={featureId}*/}
+      {/*  pullRequestNumbers={pullRequestNumbers}*/}
+      {/*  onUpdate={onUpdate}*/}
+      {/*/>*/}
     </div>
   );
 }

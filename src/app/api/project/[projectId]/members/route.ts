@@ -3,7 +3,7 @@ import projectService from '@/services/projectService';
 import dbConnect from "@/lib/mongodb";
 
 
-export async function POST(request: NextRequest, { params }: { params: { projectId: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ projectId: string }> }) {
   try {
       await dbConnect()
     const { contributorId } = await request.json();
@@ -18,7 +18,7 @@ export async function POST(request: NextRequest, { params }: { params: { project
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { projectId: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ projectId: string }> }) {
   try {
       await dbConnect()
     const {projectId} = await params;
@@ -36,7 +36,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { proje
 }
 
 
-export async function GET(request: NextRequest, { params }: { params: { projectId: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ projectId: string }> }) {
   try {
       await dbConnect()
     const {projectId} = await params;

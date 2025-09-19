@@ -5,11 +5,11 @@ import projectService from "@/services/projectService";
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { projectId: string } }
+  { params }: { params: Promise<{ projectId: string, manualId: string}> }
 ) {
   try {
     await dbConnect();
-    const { projectId } = await params;
+    const { projectId, manualId } = await params;
 
     const { manualSections } = await request.json();
     const project = await projectService.getProjectById(projectId);
@@ -19,7 +19,7 @@ export async function PATCH(
     }
 
     // console.log(manualSections)
-    const updatedManual = await manualService.update(project.manual, { manualSections: manualSections });
+    const updatedManual = await manualService.update(manualId, { manualSections: manualSections });
     console.log(updatedManual)
     if (!updatedManual) {
       return NextResponse.json({ error: 'Manual not found' }, { status: 404 });

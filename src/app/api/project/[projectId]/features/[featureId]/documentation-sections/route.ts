@@ -5,7 +5,7 @@ import  projectService  from '@/services/projectService';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: {featureId: string } }
+  { params }: { params: Promise<{featureId: string }> }
 ) {
         const {featureId} = await params;
 

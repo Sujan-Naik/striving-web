@@ -3,7 +3,7 @@ import projectService from '@/services/projectService';
 import dbConnect from "@/lib/mongodb";
 
 
-export async function GET(request: NextRequest, { params }: { params: { projectId: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ projectId: string }> }) {
   try {
     await dbConnect()
 
@@ -23,11 +23,12 @@ export async function GET(request: NextRequest, { params }: { params: { projectI
   }
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { projectId: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ projectId: string }> }) {
   try {
       await dbConnect()
     const updates = await request.json();
-    const project = await projectService.updateProject(params.projectId, updates);
+      const {projectId} = await params;
+    const project = await projectService.updateProject(projectId, updates);
     if (!project) {
       return NextResponse.json({ error: 'Project not found' }, { status: 404 });
     }
@@ -37,10 +38,11 @@ export async function PUT(request: NextRequest, { params }: { params: { projectI
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { projectId: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ projectId: string }> }) {
   try {
       await dbConnect()
-    const deleted = await projectService.deleteProject(params.projectId);
+    const {projectId} = await params;
+    const deleted = await projectService.deleteProject(projectId);
     if (!deleted) {
       return NextResponse.json({ error: 'Project not found' }, { status: 404 });
     }
