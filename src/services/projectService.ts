@@ -4,6 +4,7 @@ import { IProject } from '@/models/Project';
 import mongoose, { Types } from 'mongoose';
 import {UserServiceClass} from "@/services/userService";
 import {IUser} from "@/models/User";
+import User from "@/models/User";
 import Manual from '@/models/Manual'
 import Docs from '@/models/Docs'
 
@@ -121,6 +122,7 @@ console.log('Existing models:', mongoose.models);
   }
 
   async getProjects(): Promise<IProject[]> {
+      new User();
     return await Project.find().populate('members', 'username').populate('owner', 'username');
   }
 

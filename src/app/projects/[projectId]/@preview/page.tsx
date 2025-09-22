@@ -10,7 +10,7 @@ import remarkGfm from "remark-gfm";
 export default function ProjectPage() {
     const project = useProject()!;
       return (
-    <div className="container mx-auto p-4">
+    <>
       <HeadedTextAnim animation={TextAnimationType.SLIDE_UP} delay={500}>{project.name}</HeadedTextAnim>
         {/*<HeadedTextAnim animation={TextAnimationType.SLIDE_UP} delay={1000}>*/}
             <ReactMarkdown remarkPlugins={[remarkGfm]}>{project.description}</ReactMarkdown>
@@ -25,6 +25,6 @@ export default function ProjectPage() {
             })}
             </HeadedCarousel>
         }
-    </div>
+    </>
   );
 }

@@ -33,6 +33,11 @@
   --border-radius-large: 16px;
 }
 
+div {
+  display: inline-block;
+  overflow-x: hidden;
+}
+
 textarea {
     user-select: text;
     pointer-events: auto;
@@ -51,7 +56,10 @@ html, body {
 
 img{
   height: auto;
-  width: auto;
+  max-width: 100%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 .chat-container {
   display: flex;
@@ -110,4 +118,31 @@ kbd {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  text-align: center;
+}
+
+/* Table Borders */
+th, td {
+  padding: 12px 15px;
+  border: 1px solid var(--border-color);
+}
+
+th {
+  background-color: var(--background-primary);
+  font-weight: bold;
+}
+
+tr:nth-child(even) {
+  background-color: var(--background-secondary);
+}
+
+tr:hover {
+  background-color: var(--background-tertiary);
+  transition: background-color 0.2s ease;
 }

@@ -21,7 +21,7 @@ function LayoutContent({ editor, preview }: {editor: React.ReactNode, preview: R
     const bothVisible = showEditor && showPreview;
 
     return (
-      <div style={{ height: '90vh', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
         <div style={{ flexShrink: 0 }}>
           <ProjectMenu/>
         </div>
@@ -43,8 +43,11 @@ function LayoutContent({ editor, preview }: {editor: React.ReactNode, preview: R
               display: 'flex',
               justifyContent: 'center',
                 overflowY: 'auto',
-                height: '90vh',
-                padding: '5px'
+                maxWidth: '100%',
+                flexWrap: 'wrap',
+                height: '100%',
+                padding: '5px',
+                overscrollBehaviorY: 'contain'
             }}>
               {editor}
             </div>
@@ -56,8 +59,11 @@ function LayoutContent({ editor, preview }: {editor: React.ReactNode, preview: R
               display: 'flex',
               justifyContent: 'center',
                 overflowY: 'auto',
-                height: '90vh',
-                padding: '5px'
+                maxWidth: '100%',
+                flexWrap: 'wrap',
+                height: '100%',
+                padding: '5px',
+                overscrollBehaviorY: 'contain'
             }}>
               {preview}
             </div>
@@ -68,7 +74,7 @@ function LayoutContent({ editor, preview }: {editor: React.ReactNode, preview: R
   }
 
   return (
-    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', overscrollBehaviorY: 'contain' }}>
       <div style={{ flexShrink: 0 }}>
       </div>
       <div style={{ flex: 1, display: 'flex' }}>
@@ -114,7 +120,6 @@ export default function Layout({
         </ProjectProvider>
   );
   }
-
 
   return (
           <UserProvider username={session.user.name}>

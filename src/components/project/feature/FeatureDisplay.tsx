@@ -39,7 +39,7 @@ export default function FeatureDisplay({ projectId }: FeatureDisplayProps) {
     const children = features.filter(f => f.parent === feature._id);
 
     return (
-      <div key={feature._id} style={{ marginLeft: `${level * 20}px`, marginBottom: '1rem' }}>
+      <div key={feature._id} style={{ marginLeft: `${level * 20}px`, marginBottom: '1rem'}} >
         <FeatureDisplaySingle feature={feature}/>
         {children.map(child => renderFeature(child, level + 1))}
       </div>
