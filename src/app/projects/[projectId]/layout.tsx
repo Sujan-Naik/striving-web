@@ -25,14 +25,33 @@ function LayoutContent({ editor, preview }: {editor: React.ReactNode, preview: R
         <div style={{ flexShrink: 0 }}>
           <ProjectMenu/>
         </div>
+                  <div style={{ display: 'flex', flexDirection: 'row', width: '100vw' }}>
+                      {showEditor && showPreview &&
+                          <>
+                                  <HeadedCard variant={VariantEnum.Outline} width={'50%'} style={{display: 'flex', justifyContent: 'center'}}>
+                                        <HeadedSwitch checked={showEditor} onChange={setShowEditor} variant={VariantEnum.Secondary}/>
+                                  </HeadedCard>
+                                  <HeadedCard variant={VariantEnum.Outline} width={'50%'} style={{display: 'flex', justifyContent: 'center'}}>
+                                    <HeadedSwitch checked={showPreview} onChange={setShowPreview} variant={VariantEnum.Secondary}/>
+                                  </HeadedCard>
+                                  </>
+                      }
+                      {showEditor && !showPreview &&
+                          <div style={{display: 'flex', justifyContent: 'end', width: '100%'}}>
+                                  <HeadedCard variant={VariantEnum.Outline} width={'50%'} style={{display: 'flex', justifyContent: 'center'}}>
+                                    <HeadedSwitch checked={showPreview} onChange={setShowPreview} variant={VariantEnum.Secondary}/>
+                                  </HeadedCard>
+                                  </div>
 
-                  <div style={{ display: 'flex', flexDirection: 'row' }}>
-                      <HeadedCard variant={VariantEnum.Outline} width={'50%'} style={{display: 'flex', justifyContent: 'center'}}>
-                            <HeadedSwitch checked={showEditor} onChange={setShowEditor} variant={VariantEnum.Secondary}/>
-                      </HeadedCard>
-                      <HeadedCard variant={VariantEnum.Outline} width={'50%'} style={{display: 'flex', justifyContent: 'center'}}>
-                        <HeadedSwitch checked={showPreview} onChange={setShowPreview} variant={VariantEnum.Secondary}/>
-                      </HeadedCard>
+                      }
+
+                      {!showEditor && showPreview &&
+                          <>
+                                  <HeadedCard variant={VariantEnum.Outline} width={'50%'} style={{display: 'flex', justifyContent: 'center'}}>
+                                        <HeadedSwitch checked={showEditor} onChange={setShowEditor} variant={VariantEnum.Secondary}/>
+                                  </HeadedCard>
+                                  </>
+                      }
                   </div>
 
         <div style={{ display: 'flex', flex: 1 }}>
