@@ -3,6 +3,7 @@ import DocsSectionDisplay from "@/components/project/docs/section/DocsSectionDis
 import ManualSectionDisplay from "@/components/project/manual/section/ManualSectionDisplay";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import {HeadedTabs} from "headed-ui";
 
 
 export default function FeatureDisplaySingle({
@@ -15,13 +16,25 @@ export default function FeatureDisplaySingle({
   showManual?: boolean;
 }){
 
+    const tabs: string[] = [
+  'Overview',
+  ...(showDocs ? ['Docs'] : []),
+  ...(showManual ? ['Manual'] : []),
+];
+
   return (
-    <div style={{ border: '1px solid #ccc', padding: '1rem' }}>
+    <div style={{ borderLeft: '10px solid var(--border-color)',
+        borderBottom: 'var(--border-thickness) solid var(--border-color)',
+        borderTop: 'var(--border-thickness) solid var(--border-color)',
+        marginRight: '5vw', width: 'calc(100% - 5vw)', paddingLeft: '5px' }}>
       <h3>{feature.title} {feature.children.length > 0 && '(Parent)'}</h3>
-      <ReactMarkdown remarkPlugins={[remarkGfm]}>{feature.description}</ReactMarkdown>
-      <p>State: {feature.state}</p>
-      {showDocs && <DocsSectionDisplay section={feature.docsSection!}/>}
-      {showManual && <ManualSectionDisplay section={feature.manualSection!}/>}
+              <p>State: {feature.state}</p>
+        <HeadedTabs tabs={tabs}>
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{feature.description}</ReactMarkdown>
+            {showDocs && <DocsSectionDisplay section={feature.docsSection!}/>}
+            {showManual && <ManualSectionDisplay section={feature.manualSection!}/>}
+        </HeadedTabs>
+
     </div>
   )
 }
