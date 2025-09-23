@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import {HeadedButton, HeadedInput, HeadedTextArea, VariantEnum} from "headed-ui";
+import {HeadedButton, HeadedInput, HeadedSelect, HeadedTextArea, VariantEnum} from "headed-ui";
 
 interface Feature {
   _id: string;
@@ -128,14 +128,22 @@ export default function FeatureCreate({ projectId, onFeatureCreated }: FeatureCr
         />
 
       <div>
-        <select value={parentId} onChange={(e) => setParentId(e.target.value)}>
-          <option value="">No Parent (Root Feature)</option>
-          {features.map(feature => (
-            <option key={feature._id} value={feature._id}>
-              {feature.title}
-            </option>
-          ))}
-        </select>
+
+        <HeadedSelect
+          label="Parent Feature"
+          variant={VariantEnum.Outline}
+          value={parentId}
+          onChange={(e) => setParentId(e.target.value)}
+          options={[
+            { value: '', label: 'No Parent (Root Feature)' },
+            ...features.map((feature) => ({
+              value: feature._id,
+              label: feature.title,
+            })),
+          ]}
+        />
+
+
       </div>
 
       <HeadedButton variant={VariantEnum.Outline} type="submit" disabled={loading}>

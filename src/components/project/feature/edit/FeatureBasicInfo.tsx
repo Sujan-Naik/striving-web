@@ -1,7 +1,7 @@
 // components/FeatureBasicInfo.tsx
 import React, { useState } from 'react';
 import { IFeature } from '@/types/project/Feature';
-import {HeadedButton, HeadedInput, HeadedTextArea, VariantEnum} from "headed-ui";
+import {HeadedButton, HeadedInput, HeadedSelect, HeadedTextArea, VariantEnum} from "headed-ui";
 
 interface FeatureBasicInfoProps {
   feature: IFeature;
@@ -32,21 +32,34 @@ export default function FeatureBasicInfo({ feature, onUpdate, saving }: FeatureB
         placeholder="Feature description"
                       markdown={true} height={'auto'}
       />
-      <select
-        value={formData.state}
-        onChange={(e) => {
-          const newState = e.target.value as IFeature['state'];
-          setFormData({...formData, state: newState});
-          onUpdate({ state: newState });
-        }}
-        disabled={saving}
-      >
-        <option value="PLANNED">Planned</option>
-        <option value="IN_PROGRESS">In Progress</option>
-        <option value="COMPLETED">Completed</option>
-      </select>
+      {/*<HeadedSelect*/}
+      {/*    value={formData.state}*/}
+      {/*    options={['PLANNED', 'IN_PROGRESS', 'COMPLETED']}*/}
+      {/*    onChange={(e) => {*/}
+      {/*        const newState = e.target.value as IFeature['state'];*/}
+      {/*        setFormData({...formData, state: newState});*/}
+      {/*        onUpdate({state: newState});*/}
+      {/*    }}*/}
+      {/*    disabled={saving}*/}
+      {/*    label={'Status'}*/}
+      {/*    variant={VariantEnum.Outline}*/}
+      {/*/>*/}
+
+        <HeadedSelect
+          label="Status"
+          value={formData.state}
+          variant={VariantEnum.Outline}
+          onChange={(e) => { const newState = e.target.value as IFeature['state']; setFormData({...formData, state: newState}); onUpdate({state: newState}); }}
+          options={[
+            { value: 'PLANNED', label: 'Planned Work' },
+            { value: 'IN_PROGRESS', label: 'In Progress' },
+            { value: 'COMPLETED', label: 'Completed' },
+          ]}
+        />
+
+
       <HeadedButton variant={VariantEnum.Outline} onClick={() => onUpdate(formData)} disabled={saving}>
-        Update Basic Info
+        Update Feature
       </HeadedButton>
     </div>
   );
