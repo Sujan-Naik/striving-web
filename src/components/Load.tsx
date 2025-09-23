@@ -1,0 +1,172 @@
+import Particles, { initParticlesEngine } from "@tsparticles/react";
+import { type Engine, ISourceOptions } from "@tsparticles/engine";
+import { useEffect, useState } from "react";
+import { loadFull } from "tsparticles";
+
+const options: ISourceOptions = {
+    fpsLimit: 60,
+    particles: {
+    number: {
+      value: 50,
+      density: {
+        enable: true,
+        width: 800,
+          height: 800
+      }
+    },
+    color: {
+      value: ["#ffffff"]
+    },
+    shape: {
+      type: "circle"
+    },
+    opacity: {
+      value: 1
+    },
+    size: {
+      value: 20,
+        animation: {
+          mode: "random",
+            startValue: "min"
+      }
+    },
+    move: {
+      size: true,
+      enable: true,
+      speed: 1.5,
+      direction: "none",
+      random: false,
+      straight: false,
+      outModes: {
+        default: "out"
+      },
+      attract: {
+        enable: false,
+          rotate: {
+            x: 600,
+              y: 1200
+          }
+      },
+      trail: {
+        enable: true,
+        length: 5,
+          fill: {
+            color: "#222"
+          }
+      },
+      warp: true
+    }
+  },
+  interactivity: {
+    detectsOn: "canvas",
+    events: {
+      onClick: {
+        enable: true,
+        mode: "push"
+      },
+    },
+    modes: {
+      push: {
+        quantity: 4
+      }
+    }
+  },
+  detectRetina: true,
+  absorbers: {
+    orbits: true,
+    destroy: true,
+    opacity: 1,
+    color: "#000",
+    size: {
+      value: 200,
+      limit: 500,
+      random: false,
+      density: 5000
+    },
+    position: {
+      x: 50,
+      y: 50
+    }
+  },
+  background: {
+    color: "#222"
+  }
+};
+
+
+export default function Load() {
+  const [init, setInit] = useState(false);
+
+  useEffect(() => {
+    initParticlesEngine(async (engine: Engine) => {
+      await loadFull(engine);
+    }).then(() => setInit(true));
+  }, []);
+
+  return (
+    <div
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100vw",
+        height: "100vh",
+        zIndex: 1,
+        overflow: "hidden",
+        backgroundColor: "white",
+      }}
+    >
+      {init && (
+        <Particles
+          options={options}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+          }}
+        />
+      )}
+
+      <h1
+  style={{
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%) scale(0.1)",
+    transformOrigin: "center center",
+    margin: 0,                  // remove default h1 margins
+    lineHeight: 1,              // prevent vertical offset
+    color: 'var(--foreground-primary)',
+    fontSize: "5vw",
+    fontWeight: "bold",
+    whiteSpace: "nowrap",
+    textAlign: "center",
+    animation: "expandText 5s ease-out forwards",
+    pointerEvents: "none",
+  }}
+>
+Striving
+</h1>
+
+<style>
+  {`
+    @keyframes expandText {
+      0% {
+        transform: translate(-50%, -50%) scale(0.1);
+        opacity: 0;
+      }
+      50% {
+        opacity: 1;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+      }
+    }
+  `}
+</style>
+    </div>
+  );
+}
