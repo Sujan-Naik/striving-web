@@ -1,17 +1,18 @@
-import Particles, { initParticlesEngine } from "@tsparticles/react";
-import { type Engine, ISourceOptions } from "@tsparticles/engine";
-import { useEffect, useState } from "react";
-import { loadFull } from "tsparticles";
+import Particles, {initParticlesEngine} from "@tsparticles/react";
+import {type Engine, ISourceOptions} from "@tsparticles/engine";
+import {useEffect, useState} from "react";
+import {loadFull} from "tsparticles";
+import {HeadedTextAnim, TextAnimationType} from "headed-ui";
 
 const options: ISourceOptions = {
     fpsLimit: 60,
     particles: {
     number: {
-      value: 50,
+      value: 100,
       density: {
         enable: true,
-        width: 800,
-          height: 800
+        width: 500,
+          height: 500
       }
     },
     color: {
@@ -24,7 +25,7 @@ const options: ISourceOptions = {
       value: 1
     },
     size: {
-      value: 20,
+      value: 4,
         animation: {
           mode: "random",
             startValue: "min"
@@ -33,7 +34,7 @@ const options: ISourceOptions = {
     move: {
       size: true,
       enable: true,
-      speed: 1.5,
+      speed: 0.5,
       direction: "none",
       random: false,
       straight: false,
@@ -49,6 +50,7 @@ const options: ISourceOptions = {
       },
       trail: {
         enable: true,
+
         length: 5,
           fill: {
             color: "#222"
@@ -71,17 +73,16 @@ const options: ISourceOptions = {
       }
     }
   },
-  detectRetina: true,
   absorbers: {
     orbits: true,
-    destroy: true,
+    destroy: false,
     opacity: 1,
     color: "#000",
     size: {
-      value: 200,
+      value: 300,
       limit: 500,
-      random: false,
-      density: 5000
+      random: true,
+      density: 1000
     },
     position: {
       x: 50,
@@ -129,7 +130,7 @@ export default function Load() {
         />
       )}
 
-      <h1
+      <div
   style={{
     position: "absolute",
     top: "50%",
@@ -138,17 +139,23 @@ export default function Load() {
     transformOrigin: "center center",
     margin: 0,                  // remove default h1 margins
     lineHeight: 1,              // prevent vertical offset
-    color: 'var(--foreground-primary)',
-    fontSize: "5vw",
-    fontWeight: "bold",
-    whiteSpace: "nowrap",
+
     textAlign: "center",
     animation: "expandText 5s ease-out forwards",
     pointerEvents: "none",
   }}
 >
-Striving
-</h1>
+          <h1 style={{color: 'var(--foreground-primary)',
+    fontSize: "5vw",
+    fontWeight: "bold"}}>
+              Striving
+          </h1>
+          <div style={{maxWidth: '25vw'}} >
+            <HeadedTextAnim animation={TextAnimationType.TYPEWRITER} colors={['var(--foreground-primary)']} delay={0} speed={10}  >
+                Collaborate on software projects and generate documentation and user-ready manuals effortlessly
+            </HeadedTextAnim>
+          </div>
+</div>
 
 <style>
   {`

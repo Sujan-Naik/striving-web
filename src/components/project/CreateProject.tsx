@@ -88,7 +88,7 @@ export default function CreateProject({ onProjectCreated }: CreateProjectProps) 
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className={'center-column'}>
       <div>
         <HeadedInput width={"100%"}
           name="name"
@@ -108,7 +108,8 @@ export default function CreateProject({ onProjectCreated }: CreateProjectProps) 
           value={formData.description}
           onChange={handleChange}
           required
-                        markdown={false}
+          markdown={false}
+
         />
       </div>
 

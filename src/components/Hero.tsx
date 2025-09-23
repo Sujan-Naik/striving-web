@@ -105,49 +105,113 @@ export default function Hero() {
 
         <Particles
           id="tsparticles"
+          style={{minWidth: "100vw", height: "50vh"}}
+
           options={{
+    key: "responsive",
+    name: "Responsive",
             fullScreen: false,
-            background: {
-              color: { value: cssVars.backgroundColor },
+    particles: {
+        number: {
+            value: 80,
+            density: {
+                enable: false,
             },
-            fpsLimit: 60,
-            interactivity: {
-              events: {
-                onClick: { enable: true, mode: "push" },
-                onHover: { enable: true, mode: "repulse" },
-              },
-              modes: {
-                push: { quantity: 4 },
-                repulse: { distance: 200, duration: 0.4 },
-              },
+        },
+        color: {
+            value: "#ffffff",
+        },
+        shape: {
+            type: "circle",
+        },
+        opacity: {
+            value: 0.5,
+        },
+        size: {
+            value: {
+                min: 1,
+                max: 3,
             },
-            particles: {
-              color: { value: cssVars.color },
-              links: {
-                color: cssVars.hoverColor,
-                distance: 150,
+        },
+        links: {
+            enable: true,
+            distance: 100,
+            color: "#ffffff",
+            opacity: 0.4,
+            width: 1,
+        },
+        move: {
+            enable: true,
+            speed: 3,
+        },
+    },
+    interactivity: {
+        events: {
+            onHover: {
                 enable: true,
-                opacity: 1.0,
-                width: 2,
-              },
-              move: {
-                direction: "outside",
-                enable: true,
-                outModes: { default: "bounce" },
-                random: true,
-                speed: 10,
-                straight: false,
-              },
-              number: {
-                density: { enable: true },
-                value: 50,
-              },
-              opacity: { value: 100 },
-              shape: { type: "circle" },
-              size: { value: { min: 0.1, max: 1 } },
+                mode: "repulse",
             },
-            detectRetina: true,
-          }}
+            onClick: {
+                enable: true,
+                mode: "push",
+            },
+        },
+        modes: {
+            grab: {
+                distance: 400,
+                links: {
+                    opacity: 1,
+                },
+            },
+            bubble: {
+                distance: 400,
+                size: 40,
+                duration: 2,
+                opacity: 0.8,
+            },
+            repulse: {
+                distance: 200,
+            },
+            push: {
+                quantity: 4,
+            },
+            remove: {
+                quantity: 2,
+            },
+        },
+    },
+    responsive: [
+        {
+            maxWidth: 600,
+            options: {
+                particles: {
+                    color: {
+                        value: "#0000ff",
+                    },
+                    number: {
+                        value: 40,
+                    },
+                },
+            },
+        },
+        {
+            maxWidth: 1000,
+            options: {
+                particles: {
+                    color: {
+                        value: "#00ff00",
+                    },
+                    number: {
+                        value: 60,
+                    },
+                },
+            },
+        },
+    ],
+    background: {
+        color: "var(--background-primary)",
+    },
+}}
           particlesLoaded={particlesLoaded}
         />
       )}

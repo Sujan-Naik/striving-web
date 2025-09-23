@@ -59,7 +59,7 @@ export default function DocsSectionEditor({projectId, docsSection}: {projectId: 
         value={content}
         onChange={(e) => setContent(e.target.value)}
         rows={10}
-                      markdown={true}
+                      markdown={true} height={'auto'}
       />
       <div>
         <HeadedButton variant={VariantEnum.Outline} onClick={handleSave} disabled={saving}>
