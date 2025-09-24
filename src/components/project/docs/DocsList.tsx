@@ -1,16 +1,16 @@
 'use client'
 import {useProject} from "@/context/ProjectContext";
-import {HeadedLink, VariantEnum} from "headed-ui";
+import {HeadedGrid, HeadedLink, VariantEnum} from "headed-ui";
 
 export default function DocsList(){
 
     const project = useProject();
     console.log(project)
-    return <div>
+    return <HeadedGrid  variant={VariantEnum.Primary} height={"100%"} width={"100%"} >
         {project.docs.map( (value, index) => {
            return  <HeadedLink variant={VariantEnum.Secondary} key={index} href={`docs/${value._id}`}>
            {value.content}
            </HeadedLink>
-        })}
-    </div>
+        }) || <></>}
+    </HeadedGrid>
 }

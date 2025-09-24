@@ -13,7 +13,7 @@ export default function Page(){
 
     // console.log(project.docs)
 
-    return <div>
+    return <div className={'center-column'} style={{width: '100%'}}>
         <DocsCreate/>
                 <DocsList/>
 

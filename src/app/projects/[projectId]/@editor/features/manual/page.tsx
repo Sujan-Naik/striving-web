@@ -13,7 +13,7 @@ export default function Page(){
 
     // console.log(project.manual)
 
-    return <div>
+    return <div className={'center-column'} style={{width: '100%'}}>
         <ManualCreate/>
                 <ManualList/>
 

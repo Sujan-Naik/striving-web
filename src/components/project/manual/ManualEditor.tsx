@@ -51,7 +51,8 @@ return (
           margin: '4px 0',
           marginLeft: `${level * 20}px`,
           border: '1px solid #ccc',
-          backgroundColor: isSelected ? 'var(--highlight)' : 'var(--hover)'
+          backgroundColor: isSelected ? 'var(--highlight)' : 'var(--hover)',
+          display: 'block'
         }}
       >
         <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -205,7 +206,7 @@ const updateManualSections = async () => {
   setLoading(true);
   try {
     const manualSections = buildManualSections();
-    const response = await fetch(`/api/project/${projectId}/manual/manual-section`, {
+    const response = await fetch(`/api/project/${projectId}/manual/${manual._id}/manual-section`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ manualSections })
@@ -349,7 +350,8 @@ else {
           className={`feature-item ${!isValidDropZone ? 'invalid-drop' : ''} ${isDragging ? 'dragging' : ''}`}
           style={{
             marginLeft: `${level * 20}px`,
-            opacity: isDragging ? 0.5 : 1
+            opacity: isDragging ? 0.5 : 1,
+            display: 'block'
           }}
       >
       <HeadedInput width={"100%"} variant={VariantEnum.Outline}
