@@ -23,10 +23,7 @@ export default function FeatureDisplaySingle({
 ];
 
   return (
-    <div style={{ borderLeft: '10px solid var(--border-color)',
-        borderBottom: 'var(--border-thickness) solid var(--border-color)',
-        borderTop: 'var(--border-thickness) solid var(--border-color)',
-        marginRight: '5vw', width: 'calc(100% - 5vw)', paddingLeft: '5px' }}>
+    <div  className={'indented-block'}>
       <h3>{feature.title} {feature.children.length > 0 && '(Parent)'}</h3>
               <p>State: {feature.state}</p>
         <HeadedTabs tabs={tabs}>

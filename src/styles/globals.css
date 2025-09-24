@@ -120,6 +120,15 @@ kbd {
   align-items: center;
 }
 
+.indented-block{
+  border-left: 10px solid var(--border-color);
+  border-bottom: var(--border-thickness) solid var(--border-color);
+  border-top: var(--border-thickness) solid var(--border-color);
+  margin-right: 5vw;
+  width: calc(100% - 5vw);
+  padding-left: 5px;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;

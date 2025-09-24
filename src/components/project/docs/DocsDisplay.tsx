@@ -76,14 +76,14 @@ export default function DocsDisplay() {
   };
 
   const renderSectionNode = (node: SectionNode): JSX.Element => (
-    <div key={node.docsSection._id} style={{ marginLeft: `${node.level * 20}px` }}>
+    <div  className={'indented-block'} key={node.docsSection._id} style={{ marginLeft: `${node.level * 20}px`, display: 'block' }}>
       <DocsSectionDisplay section={node.docsSection} />
       {node.children.map(child => renderSectionNode(child))}
     </div>
   );
 
   const renderTabContent = (rootNode: SectionNode): JSX.Element => (
-    <div key={rootNode.docsSection._id}>
+    <div key={rootNode.docsSection._id} >
       {rootNode.children.map(child => renderSectionNode(child))}
     </div>
   );
@@ -96,8 +96,8 @@ export default function DocsDisplay() {
   const tabTitles = topLevelSections.map(section => section.docsSection.title);
 
   return (
-    <div>
-      <div className={"center-column"} style={{ whiteSpace: 'pre-wrap' }}>
+    <div className={'indented-block'}>
+      <div className={"center-column"} style={{ whiteSpace: 'pre-wrap'}}>
         <ReactMarkdown remarkPlugins={[remarkGfm]}>{docs.content}</ReactMarkdown>
       </div>
 
