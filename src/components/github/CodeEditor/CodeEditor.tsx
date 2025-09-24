@@ -1,9 +1,9 @@
 // components/github/CodeEditor/CodeEditor.tsx
 'use client';
-
 import { useState, useEffect } from 'react';
 import { githubApi } from '@/lib/api-client';
 import { CodeAction } from "@/types/codeActions";
+import DirectoryExplorer from '../DirectoryExplorer/DirectoryExplorer';
 
 interface CodeActionsProps {
   actions: CodeAction[];
@@ -26,76 +26,6 @@ function CodeActions({ actions, onApprove, onReject }: CodeActionsProps) {
   );
 }
 
-interface CodeEditorProps {
-  owner: string;
-  repo: string;
-  initialPath?: string;
-}
-
-export default function CodeEditor({ owner, repo, initialPath = '' }: CodeEditorProps) {
-  const [currentPath, setCurrentPath] = useState(initialPath);
-  const [contents, setContents] = useState<any[]>([]);
-  const [currentFile, setCurrentFile] = useState<string>('');
-  const [fileContent, setFileContent] = useState<string>('');
-  const [branches, setBranches] = useState<any[]>([]);
-  const [currentBranch, setCurrentBranch] = useState<string>('main');
-  const [isLoading, setIsLoading] = useState(false);
-
-  // Add to CodeEditor component
-  const [pendingActions, setPendingActions] = useState<CodeAction[]>([]);
-  const [showActions, setShowActions] = useState(false);
-// Add new state for file selection
-const [selectedFiles, setSelectedFiles] = useState<Set<string>>(new Set());
-const [showFileSelector, setShowFileSelector] = useState(false);
-const [allRepoFiles, setAllRepoFiles] = useState<Array<{path: string, content: string, type: string}>>([]);
-const [pendingPrompt, setPendingPrompt] = useState<string>('');
-
-// Update the requestLLMChanges function
-const requestLLMChanges = async (prompt: string) => {
-  setPendingPrompt(prompt);
-
-  // Get all files and show selector
-  const codebaseFiles = await getAllRepositoryFiles();
-  setAllRepoFiles(codebaseFiles);
-  setShowFileSelector(true);
-};
-
-const sendToLLM = async () => {
-  const selectedFileData = allRepoFiles.filter(file => selectedFiles.has(file.path));
-
-  const response = await fetch('/api/bedrock/code-actions', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      query: pendingPrompt,
-      owner,
-      repo,
-      branch: currentBranch,
-      codebase: selectedFileData
-    })
-  });
-
-  const result = await response.json();
-
-  if (!result.actions || !Array.isArray(result.actions)) {
-    console.error('Invalid response:', result);
-    alert('Failed to get code actions from LLM');
-    return;
-  }
-
-  const actions = result.actions.map((action: any, index: number) => ({
-    ...action,
-    id: `${Date.now()}-${index}`,
-    status: 'pending'
-  }));
-
-  setPendingActions(actions);
-  setShowActions(true);
-  setShowFileSelector(false);
-  setSelectedFiles(new Set());
-};
-
-// Add FileSelector component before CodeActions
 function FileSelector({
   files,
   selectedFiles,
@@ -144,10 +74,102 @@ function FileSelector({
     </div>
   );
 }
-  // New function to recursively get all files
+
+interface CodeEditorProps {
+  owner: string;
+  repo: string;
+  initialPath?: string;
+}
+
+export default function CodeEditor({ owner, repo, initialPath = '' }: CodeEditorProps) {
+  const [currentPath, setCurrentPath] = useState(initialPath);
+  const [currentFile, setCurrentFile] = useState<string>('');
+  const [fileContent, setFileContent] = useState<string>('');
+  const [branches, setBranches] = useState<any[]>([]);
+  const [currentBranch, setCurrentBranch] = useState<string>('main');
+  const [isLoadingFile, setIsLoadingFile] = useState(false);
+
+  // LLM integration state
+  const [pendingActions, setPendingActions] = useState<CodeAction[]>([]);
+  const [showActions, setShowActions] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState<Set<string>>(new Set());
+  const [showFileSelector, setShowFileSelector] = useState(false);
+  const [allRepoFiles, setAllRepoFiles] = useState<Array<{path: string, content: string, type: string}>>([]);
+  const [pendingPrompt, setPendingPrompt] = useState<string>('');
+
+  useEffect(() => {
+    loadBranches();
+  }, [owner, repo]);
+
+  const loadBranches = async () => {
+    if (!owner || !repo) return;
+
+    const response = await githubApi.getBranches(owner, repo);
+    if (response.success) {
+      setBranches(response.data || []);
+    }
+  };
+
+  const handleFileSelect = async (filePath: string) => {
+    setIsLoadingFile(true);
+    try {
+      const response = await githubApi.getFile(owner, repo, filePath, currentBranch);
+      if (response.success && response.data.decodedContent) {
+        setCurrentFile(filePath);
+        setFileContent(response.data.decodedContent);
+      }
+    } catch (error) {
+      console.error('Error loading file:', error);
+    } finally {
+      setIsLoadingFile(false);
+    }
+  };
+
+  const handleDirectoryChange = (path: string) => {
+    setCurrentPath(path);
+    // Clear current file when navigating directories
+    setCurrentFile('');
+    setFileContent('');
+  };
+
+  const handleBranchChange = (branch: string) => {
+    setCurrentBranch(branch);
+    // Clear current file when switching branches
+    setCurrentFile('');
+    setFileContent('');
+  };
+
+  const saveFile = async () => {
+    if (!currentFile) return;
+
+    try {
+      const encodedContent = btoa(fileContent);
+
+      // Get current file data to get SHA (required for updates)
+      const currentFileResponse = await githubApi.getFile(owner, repo, currentFile, currentBranch);
+      const sha = currentFileResponse.success ? currentFileResponse.data.sha : undefined;
+
+      const response = await githubApi.updateFile(owner, repo, currentFile, {
+        message: `Update ${currentFile}`,
+        content: encodedContent,
+        sha,
+        branch: currentBranch
+      });
+
+      if (response.success) {
+        alert('File saved successfully!');
+      } else {
+        alert('Failed to save file: ' + (response.error || 'Unknown error'));
+      }
+    } catch (error) {
+      console.error('Error saving file:', error);
+      alert('Failed to save file');
+    }
+  };
+
+  // LLM Integration Functions
   const getAllRepositoryFiles = async (path: string = ''): Promise<Array<{path: string, content: string, type: string}>> => {
     const files: Array<{path: string, content: string, type: string}> = [];
-
     try {
       const response = await githubApi.getContents(owner, repo, path, currentBranch);
       if (!response.success) return files;
@@ -174,176 +196,160 @@ function FileSelector({
     } catch (error) {
       console.error('Error fetching repository files:', error);
     }
-
     return files;
   };
 
-  const executeActions = async (approvedActions: CodeAction[]) => {
-    for (const action of approvedActions) {
-      if (action.type === 'update' || action.type === 'create') {
-        const encodedContent = btoa(action.content || '');
-        const existingFile = contents.find(c => c.path === action.path);
+  const requestLLMChanges = async (prompt: string) => {
+    setPendingPrompt(prompt);
+    // Get all files and show selector
+    const codebaseFiles = await getAllRepositoryFiles();
+    setAllRepoFiles(codebaseFiles);
+    setShowFileSelector(true);
+  };
 
-        await githubApi.updateFile(owner, repo, action.path, {
-          message: action.message,
-          content: encodedContent,
-          sha: existingFile?.sha,
-          branch: currentBranch
-        });
+  const sendToLLM = async () => {
+    const selectedFileData = allRepoFiles.filter(file => selectedFiles.has(file.path));
+
+    try {
+      const response = await fetch('/api/bedrock/code-actions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          query: pendingPrompt,
+          owner,
+          repo,
+          branch: currentBranch,
+          codebase: selectedFileData
+        })
+      });
+
+      const result = await response.json();
+
+      if (!result.actions || !Array.isArray(result.actions)) {
+        console.error('Invalid response:', result);
+        alert('Failed to get code actions from LLM');
+        return;
       }
-      // Handle delete actions similarly
-    }
 
-    setPendingActions([]);
-    setShowActions(false);
-    loadContents();
-    alert('Changes committed successfully!');
-  };
+      const actions = result.actions.map((action: any, index: number) => ({
+        ...action,
+        id: `${Date.now()}-${index}`,
+        status: 'pending'
+      }));
 
-  useEffect(() => {
-    loadBranches();
-    loadContents();
-  }, [currentBranch]);
-
-  const loadBranches = async () => {
-    const response = await githubApi.getBranches(owner, repo);
-    if (response.success) {
-      setBranches(response.data || []);
+      setPendingActions(actions);
+      setShowActions(true);
+      setShowFileSelector(false);
+      setSelectedFiles(new Set());
+    } catch (error) {
+      console.error('Error sending to LLM:', error);
+      alert('Failed to send request to LLM');
     }
   };
 
-  const loadContents = async () => {
-    setIsLoading(true);
-    const response = await githubApi.getContents(owner, repo, currentPath, currentBranch);
-    if (response.success) {
-      setContents(Array.isArray(response.data) ? response.data : [response.data]);
-    }
-    setIsLoading(false);
-  };
+  const executeActions = async (approvedActions: CodeAction[]) => {
+    try {
+      for (const action of approvedActions) {
+        if (action.type === 'update' || action.type === 'create') {
+          const encodedContent = btoa(action.content || '');
 
-  const openFile = async (path: string) => {
-    const response = await githubApi.getFile(owner, repo, path, currentBranch);
-    if (response.success && response.data.decodedContent) {
-      setCurrentFile(path);
-      setFileContent(response.data.decodedContent);
-    }
-  };
+          // Get existing file SHA if it exists
+          let sha: string | undefined;
+          if (action.type === 'update') {
+            const existingFileResponse = await githubApi.getFile(owner, repo, action.path, currentBranch);
+            if (existingFileResponse.success) {
+              sha = existingFileResponse.data.sha;
+            }
+          }
 
-  const saveFile = async () => {
-    if (!currentFile) return;
+          await githubApi.updateFile(owner, repo, action.path, {
+            message: action.message,
+            content: encodedContent,
+            sha,
+            branch: currentBranch
+          });
+        }
+        // TODO: Handle delete actions
+      }
 
-    const encodedContent = btoa(fileContent);
-    const currentFileData = contents.find(c => c.path === currentFile);
+      setPendingActions([]);
+      setShowActions(false);
+      alert('Changes committed successfully!');
 
-    const response = await githubApi.updateFile(owner, repo, currentFile, {
-      message: `Update ${currentFile}`,
-      content: encodedContent,
-      sha: currentFileData?.sha,
-      branch: currentBranch
-    });
-
-    if (response.success) {
-      alert('File saved successfully!');
-      loadContents();
-    }
-  };
-
-  const navigateToPath = (path: string, isDir: boolean) => {
-    if (isDir) {
-      setCurrentPath(path);
-      setCurrentFile('');
-      setFileContent('');
-    } else {
-      openFile(path);
+      // Refresh current file if it was modified
+      if (currentFile && approvedActions.some(action => action.path === currentFile)) {
+        handleFileSelect(currentFile);
+      }
+    } catch (error) {
+      console.error('Error executing actions:', error);
+      alert('Failed to execute some actions');
     }
   };
 
   return (
     <div style={{ display: 'flex', height: '600px', border: '1px solid #ccc' }}>
-      {/* File Explorer */}
-      <div style={{ width: '300px', borderRight: '1px solid #ccc', padding: '10px' }}>
-        <div style={{ marginBottom: '10px' }}>
-          <select
-            value={currentBranch}
-            onChange={(e) => setCurrentBranch(e.target.value)}
-          >
-            {branches.map(branch => (
-              <option key={branch.name} value={branch.name}>
-                {branch.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {currentPath && (
-          <button onClick={() => setCurrentPath('')}>
-            ← Root
-          </button>
-        )}
-
-        {isLoading ? (
-          <div>Loading...</div>
-        ) : (
-          <div>
-            {contents.map(item => (
-              <div
-                key={item.path}
-                onClick={() => navigateToPath(item.path, item.type === 'dir')}
-                style={{
-                  cursor: 'pointer',
-                  padding: '5px',
-                  backgroundColor: currentFile === item.path ? '#e0e0e0' : 'transparent'
-                }}
-              >
-                {item.type === 'dir' ? '📁' : '📄'} {item.name}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+      {/* Directory Explorer */}
+      <DirectoryExplorer
+        owner={owner}
+        repo={repo}
+        branch={currentBranch}
+        onFileSelect={handleFileSelect}
+        onDirectoryChange={handleDirectoryChange}
+        selectedFile={currentFile}
+        showBranchSelector={true}
+        branches={branches}
+        onBranchChange={handleBranchChange}
+      />
 
       {/* Code Editor */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        {/* Add LLM prompt input */}
-        <div style={{ padding: '10px', borderBottom: '1px solid #ccc' }}>
+        {/* LLM Prompt Input */}
+        <div style={{ padding: '10px', borderBottom: '1px solid #ccc', backgroundColor: '#f8f9fa' }}>
           <input
             type="text"
-            placeholder="Ask LLM to make changes..."
+            placeholder="Ask LLM to make changes... (Press Enter to submit)"
             onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                requestLLMChanges(e.currentTarget.value);
+              if (e.key === 'Enter' && e.currentTarget.value.trim()) {
+                requestLLMChanges(e.currentTarget.value.trim());
                 e.currentTarget.value = '';
               }
             }}
-            style={{ width: '100%', padding: '5px' }}
+            style={{
+              width: '100%',
+              padding: '8px 12px',
+              border: '1px solid #ddd',
+              borderRadius: '4px',
+              fontSize: '14px'
+            }}
           />
-            {/* Add after the LLM prompt input */}
-{showFileSelector && (
-  <FileSelector
-    files={allRepoFiles}
-    selectedFiles={selectedFiles}
-    onToggleFile={(path) => {
-      const newSelected = new Set(selectedFiles);
-      if (newSelected.has(path)) {
-        newSelected.delete(path);
-      } else {
-        newSelected.add(path);
-      }
-      setSelectedFiles(newSelected);
-    }}
-    onSelectAll={() => setSelectedFiles(new Set(allRepoFiles.map(f => f.path)))}
-    onDeselectAll={() => setSelectedFiles(new Set())}
-    onSend={sendToLLM}
-    onCancel={() => {
-      setShowFileSelector(false);
-      setSelectedFiles(new Set());
-      setPendingPrompt('');
-    }}
-  />
-)}
         </div>
 
-        {/* Add to JSX before the existing editor */}
+        {/* File Selector for LLM */}
+        {showFileSelector && (
+          <FileSelector
+            files={allRepoFiles}
+            selectedFiles={selectedFiles}
+            onToggleFile={(path) => {
+              const newSelected = new Set(selectedFiles);
+              if (newSelected.has(path)) {
+                newSelected.delete(path);
+              } else {
+                newSelected.add(path);
+              }
+              setSelectedFiles(newSelected);
+            }}
+            onSelectAll={() => setSelectedFiles(new Set(allRepoFiles.map(f => f.path)))}
+            onDeselectAll={() => setSelectedFiles(new Set())}
+            onSend={sendToLLM}
+            onCancel={() => {
+              setShowFileSelector(false);
+              setSelectedFiles(new Set());
+              setPendingPrompt('');
+            }}
+          />
+        )}
+
+        {/* Code Actions */}
         {showActions && (
           <CodeActions
             actions={pendingActions}
@@ -355,26 +361,61 @@ function FileSelector({
           />
         )}
 
+        {/* File Header */}
         {currentFile && (
-          <div style={{ padding: '10px', borderBottom: '1px solid #ccc' }}>
-            <span>{currentFile}</span>
-            <button onClick={saveFile} style={{ marginLeft: '10px' }}>
+          <div style={{
+            padding: '10px',
+            borderBottom: '1px solid #ccc',
+            backgroundColor: '#f8f9fa',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <span style={{ fontWeight: 'bold', fontSize: '14px' }}>{currentFile}</span>
+              {isLoadingFile && <span style={{ marginLeft: '10px', color: '#666' }}>Loading...</span>}
+            </div>
+            <button
+              onClick={saveFile}
+              disabled={isLoadingFile}
+              style={{
+                padding: '6px 12px',
+                backgroundColor: '#007bff',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '12px'
+              }}
+            >
               Save
             </button>
           </div>
         )}
 
+        {/* Code Editor Textarea */}
         <textarea
           value={fileContent}
           onChange={(e) => setFileContent(e.target.value)}
           style={{
             flex: 1,
             border: 'none',
-            padding: '10px',
-            fontFamily: 'monospace',
-            fontSize: '14px'
+            padding: '15px',
+            fontFamily: '"Fira Code", "Consolas", "Monaco", monospace',
+            fontSize: '14px',
+            lineHeight: '1.5',
+            backgroundColor: '#ffffff',
+            resize: 'none',
+            outline: 'none'
           }}
-          placeholder="Select a file to edit..."
+          placeholder={
+            currentFile
+              ? isLoadingFile
+                ? "Loading file content..."
+                : ""
+              : "Select a file from the directory explorer to start editing..."
+          }
+          disabled={isLoadingFile}
         />
       </div>
     </div>
