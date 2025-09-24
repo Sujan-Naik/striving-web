@@ -1,62 +1,92 @@
-import { NextResponse } from 'next/server'
-import {
-  BedrockRuntimeClient,
-  ConverseStreamCommand,
-  Message,
-} from "@aws-sdk/client-bedrock-runtime";
+// app/api/chat/route.ts
+import { NextResponse } from "next/server";
+import OpenAI from "openai";
+
+const client = new OpenAI({ apiKey: process.env.OPENAI_TEST_KEY });
+
+// Marker your client listens for
+const USAGE_MARKER = "[[USAGE]]";
 
 export async function POST(request: Request) {
-  const { query: userQuery = 'Hello' } = await request.json();
+  const { query: userQuery = "Hello" } = await request.json();
 
-  const client = new BedrockRuntimeClient({
-    region: "us-east-1",
-    // region: "eu-west-2",
-    // credentials: {
-    //   accessKeyId: process.env.BEDROCK_ACCESS_KEY_ID!,
-    //   secretAccessKey: process.env.BEDROCK_SECRET_ACCESS_KEY!,
-    // }
-  });
+  const systemPrompt =
+    "You are a helpful, concise assistant. Be brief unless more detail is requested - give responses in markdown. " +
+    "Wrap code in code brackets.";
 
-  const modelId = "us.anthropic.claude-sonnet-4-20250514-v1:0";
-  // const modelId = "anthropic.claude-3-7-sonnet-20250219-v1:0";
-  // const modelId = "us.deepseek.r1-v1:0";
+  const start = Date.now();
 
-  const conversation: Message[] = [
-    {
-      role: "assistant",
-      content: [{
-        text: "Be concise. For code: Don't provide a lot of styling unless requested."
-      }],
-    },
-    {
-      role: "user",
-      content: [{ text: userQuery }],
-    },
-  ];
+  try {
+    const response = await client.chat.completions.create({
+      model: "gpt-5",
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userQuery },
+      ],
+      stream: true,
+      // IMPORTANT: include usage in stream chunks
+      stream_options: { include_usage: true },
+    });
 
-  const response = await client.send(
-    new ConverseStreamCommand({
-      modelId,
-      messages: conversation,
-      inferenceConfig: { maxTokens: 8096, temperature: 0.5, topP: 0.9 },
-    })
-  );
+    let finalUsage:
+      | { prompt_tokens: number; completion_tokens: number; total_tokens: number }
+      | undefined;
 
-  const stream = new ReadableStream({
-    async start(controller) {
-      for await (const item of response.stream!) {
-        if (item.contentBlockDelta) {
-          const text = item.contentBlockDelta.delta?.text!;
-          controller.enqueue(new TextEncoder().encode(text));
+    const stream = new ReadableStream({
+      async start(controller) {
+        const encoder = new TextEncoder();
+
+        // Stream assistant content
+        for await (const chunk of response) {
+          const content = chunk.choices?.[0]?.delta?.content || "";
+          if (content) {
+            controller.enqueue(encoder.encode(content));
+          }
+
+          // Capture usage when provided (typically final chunk)
+          if ((chunk as any)?.usage) {
+            finalUsage = (chunk as any).usage;
+          }
         }
-      }
-      controller.close();
-    }
-  });
 
-  return new NextResponse(stream, {
-    headers: {
-      'Content-Type': 'text/plain; charset=utf-8'
-    }
-  });
+        // Compute costs once stream is done
+        const inputTokens = finalUsage?.prompt_tokens || 0;
+        const outputTokens = finalUsage?.completion_tokens || 0;
+        const totalTokens = finalUsage?.total_tokens || inputTokens + outputTokens;
+
+        const inputCost = (inputTokens * 1.25) / 1_000_000;
+        const outputCost = (outputTokens * 10.0) / 1_000_000;
+        const totalCost = inputCost + outputCost;
+
+        const latencyMs = Date.now() - start;
+
+        // Log (optional)
+        console.log("Input tokens:", inputTokens, `($${inputCost.toFixed(4)})`);
+        console.log("Output tokens:", outputTokens, `($${outputCost.toFixed(4)})`);
+        console.log("Total tokens:", totalTokens, `($${totalCost.toFixed(4)})`);
+        console.log("Latency:", latencyMs, "ms");
+
+        // Append usage payload for the client to parse
+        const payload = {
+          inputTokens,
+          outputTokens,
+          totalTokens,
+          inputCost,
+          outputCost,
+          totalCost,
+          latencyMs,
+        };
+
+        controller.enqueue(encoder.encode(USAGE_MARKER + JSON.stringify(payload)));
+        controller.close();
+      },
+    });
+
+    return new NextResponse(stream, {
+      headers: { "Content-Type": "text/plain; charset=utf-8" },
+    });
+  } catch (err: any) {
+    console.error("Chat error:", err);
+    return NextResponse.json({ error: err.message }, { status: 500 });
+  }
 }

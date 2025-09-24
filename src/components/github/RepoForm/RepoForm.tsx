@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { CreateRepoData } from '@/types/github';
-import styles from '@/styles/RepoForm.module.css';
+import {useState} from 'react';
+import {CreateRepoData} from '@/types/github';
+import {HeadedButton, HeadedInput, HeadedTextArea, VariantEnum} from "headed-ui";
 
 interface RepoFormProps {
   onSubmit: (data: CreateRepoData) => Promise<void>;
@@ -22,63 +22,126 @@ export default function RepoForm({ onSubmit, isLoading }: RepoFormProps) {
     await onSubmit(formData);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value, type } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
+      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value,
     }));
   };
 
   return (
-    <form onSubmit={handleSubmit} className={styles.form}>
-      <div className={styles.field}>
-        <label htmlFor="name">Repository Name *</label>
-        <input
+    <form
+      onSubmit={handleSubmit}
+      style={{
+        maxWidth: '500px',
+        margin: '0 auto',
+      }}
+    >
+      {/* Repository Name */}
+      <div style={{ marginBottom: '1rem' }}>
+        <label
+          htmlFor="name"
+          style={{
+            display: 'block',
+            marginBottom: '0.5rem',
+            fontWeight: 500,
+          }}
+        >
+          Repository Name *
+        </label>
+        <HeadedInput
+                      variant={VariantEnum.Outline}
+
           id="name"
           name="name"
           type="text"
           value={formData.name}
           onChange={handleChange}
           required
+          style={{
+            width: '100%',
+            padding: '0.5rem',
+            border: '1px solid #ccc',
+            borderRadius: '4px',
+          }}
         />
       </div>
 
-      <div className={styles.field}>
-        <label htmlFor="description">Description</label>
-        <textarea
-          id="description"
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-        />
+      {/* Description */}
+      <div style={{ marginBottom: '1rem' }}>
+        <label
+          htmlFor="description"
+          style={{
+            display: 'block',
+            marginBottom: '0.5rem',
+            fontWeight: 500,
+          }}
+        >
+          Description
+        </label>
+        <HeadedTextArea
+            variant={VariantEnum.Outline}
+            id="description"
+            name="description"
+            value={formData.description}
+            onChange={handleChange} markdown={false}        />
       </div>
 
-      <div className={styles.checkbox}>
+      {/* Private checkbox */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          marginBottom: '1rem',
+        }}
+      >
         <input
           id="private"
           name="private"
           type="checkbox"
           checked={formData.private}
           onChange={handleChange}
+          style={{
+            marginRight: '0.5rem',
+          }}
         />
         <label htmlFor="private">Private repository</label>
       </div>
 
-      <div className={styles.checkbox}>
-        <input
+      {/* Auto init checkbox */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          marginBottom: '1rem',
+        }}
+      >
+        <HeadedInput
+                      variant={VariantEnum.Outline}
+
           id="auto_init"
           name="auto_init"
           type="checkbox"
           checked={formData.auto_init}
           onChange={handleChange}
+          style={{
+            marginRight: '0.5rem',
+          }}
         />
         <label htmlFor="auto_init">Initialize with README</label>
       </div>
 
-      <button type="submit" disabled={isLoading} className={styles.submit}>
+      {/* Submit button */}
+      <HeadedButton
+          variant={VariantEnum.Outline}
+        type="submit"
+        disabled={isLoading}
+      >
         {isLoading ? 'Creating...' : 'Create Repository'}
-      </button>
+      </HeadedButton>
     </form>
   );
 }

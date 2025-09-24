@@ -33,15 +33,17 @@ function FileSelector({
   onSelectAll,
   onDeselectAll,
   onSend,
-  onCancel
+  onCancel,
+  sending,
 }: {
-  files: Array<{path: string, content: string, type: string}>;
+  files: Array<{ path: string; content: string; type: string }>;
   selectedFiles: Set<string>;
   onToggleFile: (path: string) => void;
   onSelectAll: () => void;
   onDeselectAll: () => void;
   onSend: () => void;
   onCancel: () => void;
+  sending: boolean;
 }) {
   return (
     <div style={{ padding: '10px', borderBottom: '1px solid #ccc', backgroundColor: '#f9f9f9' }}>
@@ -65,8 +67,9 @@ function FileSelector({
           </div>
         ))}
       </div>
-      <button onClick={onSend} disabled={selectedFiles.size === 0}>
-        Send to LLM
+      {/*<button onClick={onSend} disabled={selectedFiles.size === 0}>*/}
+      <button onClick={onSend} disabled={sending}>
+        {sending ? 'Sending...' : 'Send to LLM'}
       </button>
       <button onClick={onCancel} style={{ marginLeft: '10px' }}>
         Cancel
@@ -143,6 +146,7 @@ export default function CodeEditor({ owner, repo, initialPath = '' }: CodeEditor
     if (!currentFile) return;
 
     try {
+      // const sanitized = fileContent.replace(/[^\x00-\xFF]/g, '');
       const encodedContent = btoa(fileContent);
 
       // Get current file data to get SHA (required for updates)
@@ -207,7 +211,13 @@ export default function CodeEditor({ owner, repo, initialPath = '' }: CodeEditor
     setShowFileSelector(true);
   };
 
+  const [sending, setSending] = useState(false);
+
   const sendToLLM = async () => {
+
+    if (sending) return; // 🚫 Prevent duplicates at function level
+    setSending(true);
+
     const selectedFileData = allRepoFiles.filter(file => selectedFiles.has(file.path));
 
     try {
@@ -244,6 +254,8 @@ export default function CodeEditor({ owner, repo, initialPath = '' }: CodeEditor
     } catch (error) {
       console.error('Error sending to LLM:', error);
       alert('Failed to send request to LLM');
+    } finally {
+      setSending(false); // ✅ Re-enable button after completion
     }
   };
 
@@ -346,6 +358,7 @@ export default function CodeEditor({ owner, repo, initialPath = '' }: CodeEditor
               setSelectedFiles(new Set());
               setPendingPrompt('');
             }}
+              sending={sending}
           />
         )}
 

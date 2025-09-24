@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Repository } from '@/types/github';
 import RepoDetails from '@/components/github/RepoDetails/RepoDetails';
 import CodeEditor from '@/components/github/CodeEditor/CodeEditor';
+import Doxygen from '@/components/github/Doxygen/Doxygen';
 
 
 export default function RepoPage() {
@@ -72,6 +73,12 @@ export default function RepoPage() {
     <CodeEditor
       owner={repository.owner.login}
       repo={repository.name}
+    />
+
+    <Doxygen
+      owner={repository.owner.login}
+      repo={repository.name}
+      initialBranch="main"
     />
   </div>
 );
