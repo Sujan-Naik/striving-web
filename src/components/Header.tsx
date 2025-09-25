@@ -21,7 +21,7 @@ const navLinks = [
   { href: "/projects", label: "Projects" },
   { href: "/llm", label: "LLM" },
   { href: "/github", label: "Github" },
-  { href: "/login", label: "Authenticate" },
+  { href: "/login", label: "Login" },
   { href: "/sign-out", label: "Sign Out" }
 ];
 
@@ -78,7 +78,7 @@ return (
               opacity: isHovered ? 1 : 0,
               transition: 'opacity 0.3s ease'
             }}>
-              FOSS Documentation and User Manuals
+              AI-pow Software Docs and User Manuals
             </p>
             <small style={{
               color: 'var(--foreground-tertiary)',
