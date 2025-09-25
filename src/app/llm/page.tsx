@@ -213,44 +213,61 @@ useEffect(() => {
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "row" }}>
-      <SideBar messageCount={messages.length} onClearChat={clearChat} />
-      <div className="chat-container">
-        <InputArea
-          query={query}
-          setQuery={setQuery}
-          onSend={handleSend}
-          loading={loading}
-          textareaRef={textareaRef}
-        />
+    <div style={{ display: "flex", flexDirection: "row", height: "100vh" }}>
+  <SideBar messageCount={messages.length} onClearChat={clearChat} />
 
-        <div style={{ fontSize: 12, color: 'var(--disabled)', padding: '4px 8px', display: 'flex',
-        justifyContent: 'space-between'}}>
-          {lastTurnCost ? (
+  {/* make this a column layout filling the viewport */}
+  <div className="chat-container" style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+
+
+    <div
+      style={{
+        fontSize: 12,
+        color: "var(--disabled)",
+        padding: "4px 8px",
+        display: "flex",
+        justifyContent: "space-between",
+      }}
+    >
+      {lastTurnCost ? (
+        <>
+          <span>This message: ${lastTurnCost.totalCost.toFixed(6)}</span>
+          <span>•</span>
+          <span>
+            tokens in/out/total: {lastTurnCost.inputTokens}/{lastTurnCost.outputTokens}/{lastTurnCost.totalTokens}
+          </span>
+          {typeof lastTurnCost.latencyMs === "number" && (
             <>
-              <span>This message: ${lastTurnCost.totalCost.toFixed(6)}</span>
               <span>•</span>
-              <span> tokens in/out/total: {lastTurnCost.inputTokens}/{lastTurnCost.outputTokens}/{lastTurnCost.totalTokens}</span>
-              {typeof lastTurnCost.latencyMs === 'number' && (
-                  <><span>•</span><span> latency: {lastTurnCost.latencyMs} ms</span></>
-              )}
-              <span> • </span>
-              <span>Chat total: ${chatTotals.totalCost.toFixed(6)}</span>
-              <span> • tokens: {chatTotals.totalTokens}</span>
-            </>
-          ) : (
-            <>
-              <span>{loading ? 'Generating…' : 'Ready'}</span>
-              <span>•</span>
-              <span>Chat total: ${chatTotals.totalCost.toFixed(6)}</span>
-              <span>•</span>
-              <span> total tokens: {chatTotals.totalTokens}</span>
+              <span> latency: {lastTurnCost.latencyMs} ms</span>
             </>
           )}
-        </div>
-
-        <MessageList messages={messages} currentResponse={currentResponse} />
-      </div>
+          <span> • </span>
+          <span>Chat total: ${chatTotals.totalCost.toFixed(6)}</span>
+          <span> • tokens: {chatTotals.totalTokens}</span>
+        </>
+      ) : (
+        <>
+          <span>{loading ? "Generating…" : "Ready"}</span>
+          <span>•</span>
+          <span>Chat total: ${chatTotals.totalCost.toFixed(6)}</span>
+          <span>•</span>
+          <span> total tokens: {chatTotals.totalTokens}</span>
+        </>
+      )}
     </div>
+
+      <MessageList messages={messages} currentResponse={currentResponse} />
+
+    <InputArea
+      query={query}
+      setQuery={setQuery}
+      onSend={handleSend}
+      loading={loading}
+      textareaRef={textareaRef}
+    />
+  </div>
+</div>
+
   )
 }
