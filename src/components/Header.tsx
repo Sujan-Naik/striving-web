@@ -78,7 +78,7 @@ return (
               opacity: isHovered ? 1 : 0,
               transition: 'opacity 0.3s ease'
             }}>
-              AI-pow Software Docs and User Manuals
+              AI-powered Software Docs and User Manuals
             </p>
             <small style={{
               color: 'var(--foreground-tertiary)',

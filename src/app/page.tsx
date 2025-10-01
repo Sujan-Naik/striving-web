@@ -19,15 +19,18 @@ export default function Home() {
     }
     return (
         <div
-            className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-            <main className="center-column">
+className="font-sans min-h-screen w-full">
+        <main className="center-column">
+
                 <HeadedTextAnim
                     speed={50}
-                    delay={2000}
+                    delay={1000}
                     animation={TextAnimationType.SLIDE_UP}
+                    className="mx-auto max-w-3xl text-center text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight tracking-tight"
                 >
                     Document as you Code
                 </HeadedTextAnim>
+
                 <Hero/>
                 <About/>
             </main>

@@ -4,7 +4,6 @@ import "@/styles/globals.css";
 import {SessionProvider} from "next-auth/react";
 import Header from "@/components/Header";
 
-const pixelifySans = Pixelify_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Striving",
@@ -18,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${pixelifySans.className} antialiased`}>
+<body className={`antialiased`}>
       <Header/>
         <SessionProvider>
           {children}

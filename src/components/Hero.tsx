@@ -47,10 +47,10 @@ export default function Hero() {
             <HeadedCard variant={VariantEnum.Secondary} className={'center-column'}
                         style={{position: 'absolute', overflow: 'hidden', zIndex: '1'}}>
 
-                <HeadedLink variant={VariantEnum.Outline} href={'/login'}>
+                <HeadedLink variant={VariantEnum.Outline} href={'/login'} className="font-semibold inline-flex items-center gap-2">
                     <FaGithub/> Login with Github to Create a Project
                 </HeadedLink>
-                <HeadedLink variant={VariantEnum.Outline} href={'/projects'}>
+                <HeadedLink variant={VariantEnum.Outline} href={'/projects'} className="font-semibold inline-flex items-center gap-2">
                     <FaProjectDiagram/> View Existing Projects
                 </HeadedLink>
 
@@ -59,7 +59,7 @@ export default function Hero() {
                         <div className="flex items-center gap-3 p-4">
 
                             <div>
-                                <h3 className="font-semibold"><FaProjectDiagram className="text-2xl"/> Projects</h3>
+                                <h3 className="font-semibold inline-flex items-center gap-2"><FaProjectDiagram  className="text-2xl"/> Projects</h3>
                                 <p className="text-sm opacity-75">
                                     Create a project to organize features, developer-focused documentation, and manuals
                                     for end users.
@@ -71,7 +71,7 @@ export default function Hero() {
                     <HeadedCard variant={VariantEnum.Primary}>
                         <div className="flex items-center gap-3 p-4">
                             <div>
-                                <h3 className="font-semibold"><FaCubes className="text-2xl"/> Features</h3>
+                                <h3 className="font-semibold inline-flex items-center gap-2"><FaCubes className="text-2xl"/> Features</h3>
                                 <p className="text-sm opacity-75">
                                     Break down your project into features that own their docs and manuals.
                                 </p>
@@ -82,7 +82,7 @@ export default function Hero() {
                     <HeadedCard variant={VariantEnum.Primary}>
                         <div className="flex items-center gap-3 p-4">
                             <div>
-                                <h3 className="font-semibold"><FaBook className="text-2xl"/> Docs & Manuals</h3>
+                                <h3 className="font-semibold inline-flex items-center gap-2"><FaBook className="text-2xl"/> Docs & Manuals</h3>
                                 <p className="text-sm opacity-75">
                                     Generate developer docs and user manuals side by side, always in sync.
                                 </p>
@@ -93,7 +93,7 @@ export default function Hero() {
                     <HeadedCard variant={VariantEnum.Primary}>
                         <div className="flex items-center gap-3 p-4">
                             <div>
-                                <h3 className="font-semibold"><FaExchangeAlt className="text-2xl"/> Flexible Structure
+                                <h3 className="font-semibold inline-flex items-center gap-2"><FaExchangeAlt className="text-2xl"/> Flexible Structure
                                 </h3>
                                 <p className="text-sm opacity-75">
                                     Reorder documentation and manual sections at any time as features evolve.

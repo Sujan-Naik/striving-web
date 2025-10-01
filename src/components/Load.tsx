@@ -145,16 +145,20 @@ export default function Load() {
     pointerEvents: "none",
   }}
 >
-          <h1 style={{color: 'var(--foreground-primary)',
-    fontSize: "5vw",
-    fontWeight: "bold"}}>
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6">
               Striving
-          </h1>
-          <div style={{maxWidth: '25vw'}} >
-            <HeadedTextAnim animation={TextAnimationType.TYPEWRITER} colors={['var(--foreground-primary)']} delay={0} speed={10}  >
+            </h1>
+            <div className="max-w-2xl">
+              <HeadedTextAnim
+                className="text-xl md:text-2xl lg:text-3xl leading-relaxed"
+                animation={TextAnimationType.TYPEWRITER}
+                colors={['var(--foreground-primary)']}
+                delay={0}
+                speed={10}
+              >
                 Collaborate on software projects and generate documentation and user-ready manuals effortlessly
-            </HeadedTextAnim>
-          </div>
+              </HeadedTextAnim>
+            </div>
 </div>
 
 <style>

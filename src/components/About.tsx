@@ -1,280 +1,140 @@
-// about.tsx
-// Minimal, responsive, no colors, fewer fixed numbers.
+import {HeadedLink, VariantEnum} from "headed-ui";
 
-export default function About() {
+export default function AboutPage() {
   return (
-    <section id="about" aria-labelledby="about-title">
-      <h2 id="about-title">About Striving</h2>
-      <p>
-        Striving helps you plan software, structure features, and generate polished Documentation and Manuals—with GitHub and AI built in.
-      </p>
+    <main 
+      className="space-y-16 w-full p-6 min-h-screen transition-all duration-300"
+      style={{ backgroundColor: 'var(--base-background)', color: 'var(--base-foreground)' }}
+    >
+      <header 
+        className="w-full space-y-4 text-center py-8 px-6 rounded-lg shadow-lg backdrop-blur-sm border"
+        style={{
+          backgroundColor: 'var(--background-primary)',
+          borderColor: 'var(--border-color)',
+          borderRadius: 'var(--border-radius-large)'
+        }}
+      >
+        <h1
+          className="w-full text-5xl font-bold tracking-tight leading-tight"
+          style={{ color: 'var(--foreground-primary)' }}
+        >
+          About Striving
+        </h1>
+        <p
+          className="w-full text-xl leading-relaxed max-w-3xl mx-auto"
+          style={{ color: 'var(--foreground-secondary)' }}
+        >
+          Discover how ideas transform into comprehensive software projects through our structured workflow of features, documentation, and seamless integrations with Github.
+        </p>
+        <div
+          className="w-24 h-1 mx-auto rounded-full"
+          style={{ backgroundColor: 'var(--highlight)' }}
+        ></div>
+      </header>
 
-      <div>
-        <FlowDiagram />
+      <section className="w-full">
+        <div
+          className="w-full p-8 rounded-lg shadow-lg border backdrop-blur-sm"
+          style={{
+            backgroundColor: 'var(--background-secondary)',
+            borderColor: 'var(--border-color)',
+            borderRadius: 'var(--border-radius-large)'
+          }}
+        >
+          <FlowDiagram />
 
-        <section aria-labelledby="how-it-works">
-          <h3 id="how-it-works">How it works</h3>
-          <ul>
-            <li>Create a project from your idea.</li>
-            <li>Break it down into nested features (as deep as you need).</li>
-            <li>Add Documentation Sections and Manual Sections to features.</li>
-            <li>Organize sections into viewable Docs and Manuals (multiple per project).</li>
-            <li>Connect GitHub to sync context and ship changes.</li>
-            <li>Use AI tools for a chatbot and AI-powered GitHub edits.</li>
-          </ul>
-        </section>
+          <p
+          style={{ color: 'var(--foreground-secondary)' }}
+        >
+            We offer <HeadedLink variant={VariantEnum.Outline} href={'/github'}>a GPT-5 powered Github Repository generator</HeadedLink>
+             to create Github repositories or edit your currently available ones if desired!
+          </p>
+        </div>
 
-        <FeatureTreeDiagram />
+      </section>
 
-        <DocsManualsDiagram />
+      <section className="w-full">
+        <div
+          className="w-full p-8 rounded-lg shadow-lg border backdrop-blur-sm"
+          style={{
+            backgroundColor: 'var(--background-secondary)',
+            borderColor: 'var(--border-color)',
+            borderRadius: 'var(--border-radius-large)'
+          }}
+        >
+          <FeatureTree />
+        </div>
+      </section>
 
-        <IntegrationsDiagram />
-      </div>
-    </section>
+      <section className="w-full">
+        <div
+          className="w-full p-8 rounded-lg shadow-lg border backdrop-blur-sm"
+          style={{
+            backgroundColor: 'var(--background-secondary)',
+            borderColor: 'var(--border-color)',
+            borderRadius: 'var(--border-radius-large)'
+          }}
+        >
+          <DocsManuals />
+        </div>
+      </section>
+
+      <section className="w-full">
+        <div
+          className="w-full p-8 rounded-lg shadow-lg border backdrop-blur-sm"
+          style={{
+            backgroundColor: 'var(--background-secondary)',
+            borderColor: 'var(--border-color)',
+            borderRadius: 'var(--border-radius-large)'
+          }}
+        >
+          <Integrations />
+        </div>
+      </section>
+    </main>
   );
 }
 
-/* ───────────────────────── Diagrams ───────────────────────── */
-
-function FlowDiagram() {
-  const view = { w: 960, h: 180 };
-  // Scale helpers (based on original baseline)
-  const sx = (n: number) => (n / 960) * view.w;
-  const sy = (n: number) => (n / 180) * view.h;
-  const fs = (n: number) => (n / 180) * view.h; // font size scales with height
-
-  // Layout derived from viewBox
-  const padX = sx(20);
-  const cols = 5;
-  const gridW = (view.w - padX * 2) / (cols - 1);
-  const yMid = view.h / 2;
-  const yTop = sy(55);
-  const yBottom = view.h - yTop;
-  const boxW = sx(180);
-  const boxH = sy(48);
-  const pillH = sy(28);
-
-  const col = (i: number) => padX + i * gridW;
-
-  return (
-    <figure>
-      <figcaption>Overview</figcaption>
-      <svg role="img" aria-label="Flow from Idea to Project, Features/Sections to Docs/Manuals, then Publish" viewBox={`0 0 ${view.w} ${view.h}`} style={{ width: "100%", height: "auto" }}>
-        <Defs />
-
-        {/* Idea -> Project */}
-        <FlowBox x={col(0)} y={yMid - boxH / 2} w={boxW} h={boxH} label="Idea" fs={fs} />
-        <Arrow x1={col(0) + boxW} y1={yMid} x2={col(1) - sx(10)} y2={yMid} />
-        <FlowBox x={col(1)} y={yMid - boxH / 2} w={sx(200)} h={boxH} label="Project" fs={fs} />
-
-        {/* Features / Sections column */}
-        <Arrow x1={col(1) + sx(200)} y1={yMid} x2={col(2) - sx(10)} y2={yMid} />
-        <FlowBox x={col(2)} y={yTop - boxH / 2} w={sx(180)} h={boxH * 0.9} label="Features" sub="Nested" fs={fs} />
-        <FlowBox x={col(2)} y={yBottom - boxH / 2} w={sx(180)} h={boxH * 0.9} label="Sections" sub="Docs + Manual" fs={fs} />
-
-        {/* Docs / Manuals */}
-        <Arrow x1={col(2) + sx(180)} y1={yTop} x2={col(3) - sx(10)} y2={yTop} />
-        <Arrow x1={col(2) + sx(180)} y1={yBottom} x2={col(3) - sx(10)} y2={yBottom} />
-        <FlowBox x={col(3)} y={yTop - boxH / 2} w={sx(140)} h={boxH * 0.9} label="Docs" fs={fs} />
-        <FlowBox x={col(3)} y={yBottom - boxH / 2} w={sx(140)} h={boxH * 0.9} label="Manuals" fs={fs} />
-
-        {/* Publish */}
-        <Arrow x1={col(3) + sx(70)} y1={yBottom + boxH * 0.5} x2={col(3) + sx(70)} y2={view.h - sy(20)} />
-        <FlowPill x={col(3)} y={view.h - sy(20) - pillH} w={sx(140)} h={pillH} label="Publish" fs={fs} />
-      </svg>
-    </figure>
-  );
-}
-
-function FeatureTreeDiagram() {
-  const view = { w: 960, h: 260 };
-  const sx = (n: number) => (n / 960) * view.w;
-  const sy = (n: number) => (n / 260) * view.h;
-  const fs = (n: number) => (n / 260) * view.h;
-
-  const padX = sx(40);
-  const padY = sy(20);
-  const col = (i: number, cols = 4) => padX + (i * (view.w - padX * 2)) / (cols - 1);
-
-  const row1 = padY + sy(30);
-  const row2a = row1 - sy(20);
-  const row2b = row1 + sy(40);
-  const row3a = row2b - sy(20);
-  const row3b = row2b + sy(40);
-
-  return (
-    <figure>
-      <figcaption>Feature hierarchy</figcaption>
-      <svg role="img" aria-label="A project with nested features; each feature can have docs and manual sections" viewBox={`0 0 ${view.w} ${view.h}`} style={{ width: "100%", height: "auto" }}>
-        <Defs />
-
-        {/* Root project */}
-        <Node x={col(0)} y={padY} label="Project: Striving" fs={fs} />
-
-        {/* Level 1 features */}
-        <Connector x1={col(0) + sx(140)} y1={padY + sy(30)} x2={col(1)} y2={row2a + sy(20)} />
-        <Connector x1={col(0) + sx(140)} y1={padY + sy(30)} x2={col(1)} y2={row2b + sy(20)} />
-        <Node x={col(1)} y={row2a} label="Feature: Planning" fs={fs} />
-        <Node x={col(1)} y={row2b} label="Feature: Docs/Manuals" fs={fs} />
-
-        {/* Level 2 under Docs/Manuals */}
-        <Connector x1={col(1) + sx(160)} y1={row2b + sy(30)} x2={col(2)} y2={row3a + sy(20)} />
-        <Connector x1={col(1) + sx(160)} y1={row2b + sy(30)} x2={col(2)} y2={row3b + sy(20)} />
-        <Node x={col(2)} y={row3a} label="Docs Sections" chips={["Overview", "API", "Guides"]} fs={fs} />
-        <Node x={col(2)} y={row3b} label="Manual Sections" chips={["Setup", "Operate", "Troubleshoot"]} fs={fs} />
-
-        {/* Note */}
-        <Note x={padX} y={view.h - sy(40)} text="Organize sections into multiple viewable Docs or Manuals per project." fs={fs} />
-      </svg>
-    </figure>
-  );
-}
-
-function DocsManualsDiagram() {
-  const view = { w: 960, h: 400 };
-  const sx = (n: number) => (n / 960) * view.w;
-  const sy = (n: number) => (n / 400) * view.h;
-  const fs = (n: number) => (n / 400) * view.h;
-
-  const pad = sx(40);
-  const groupW = (view.w - pad * 3) / 2;
-  const groupH = view.h - pad * 2;
-  const leftX = pad;
-  const rightX = pad * 2 + groupW;
-  const top = pad;
-
-  const rowGap = groupH * 0.35;
-  const row1Y = top + sy(56);
-  const row2Y = row1Y + rowGap;
-
-  const stackW = Math.min(sx(180), groupW * 0.42);
-  const outputW = Math.min(sx(300), groupW * 0.66);
-
-  const arrowStartX = leftX + stackW + sx(60);
-  const arrowEndX = rightX + sx(16);
-
-  return (
-    <figure>
-      <figcaption>From sections to outputs</figcaption>
-      <svg role="img" aria-label="Sections flow into multiple outputs" viewBox={`0 0 ${view.w} ${view.h}`} style={{ width: "100%", height: "auto" }}>
-        <Defs />
-
-        {/* Group frames (stroke only) */}
-        <rect x={leftX} y={top} width={groupW} height={groupH} rx={sy(12)} fill="none" stroke="currentColor" />
-        <rect x={rightX} y={top} width={groupW} height={groupH} rx={sy(12)} fill="none" stroke="currentColor" />
-
-        {/* Labels */}
-        <GroupLabel x={leftX + sx(12)} y={top + sy(18)} text="Sources" fs={fs} />
-        <GroupLabel x={rightX + sx(12)} y={top + sy(18)} text="Outputs" fs={fs} />
-
-        {/* Left: stacks */}
-        <Stack x={leftX + sx(28)} y={row1Y} title="Documentation Sections" items={["Intro", "Concepts", "API", "Examples"]} width={stackW} fs={fs} />
-        <Stack x={leftX + sx(28)} y={row2Y} title="Manual Sections" items={["Install", "Configure", "Operate", "Support"]} width={stackW} fs={fs} />
-
-        {/* Right: outputs */}
-        <OutputDoc x={rightX + sx(28)} y={row1Y} title="Docs: Developer Guide" tags={["Docs Sections"]} width={outputW} fs={fs} />
-        <OutputDoc x={rightX + sx(28)} y={row2Y} title="Manual: User Handbook" tags={["Manual Sections"]} width={outputW} fs={fs} />
-
-        {/* Arrows */}
-        <Arrow x1={arrowStartX} y1={row1Y + sy(20)} x2={arrowEndX} y2={row1Y + sy(20)} />
-        <Arrow x1={arrowStartX} y1={row2Y + sy(20)} x2={arrowEndX} y2={row2Y + sy(20)} />
-      </svg>
-    </figure>
-  );
-}
-
-function IntegrationsDiagram() {
-  const view = { w: 960, h: 180 };
-  const sx = (n: number) => (n / 960) * view.w;
-  const sy = (n: number) => (n / 180) * view.h;
-  const fs = (n: number) => (n / 180) * view.h;
-
-  const pad = sx(40);
-  const cols = 3;
-  const colX = (i: number) => pad + (i * (view.w - pad * 2 - sx(200))) / (cols - 1);
-  const y = sy(40);
-
-  return (
-    <figure>
-      <figcaption>GitHub + AI</figcaption>
-      <svg role="img" aria-label="GitHub integration with AI-assisted edits and a chatbot" viewBox={`0 0 ${view.w} ${view.h}`} style={{ width: "100%", height: "auto" }}>
-        <Defs />
-        <IconBlock x={colX(0)} y={y} title="GitHub" subtitle="Sync, PRs, branches" fs={fs}>
-          <GitHubMark x={sx(16)} y={sy(12)} size={sy(20)} />
-        </IconBlock>
-
-        <IconBlock x={colX(1)} y={y} title="AI Tools" subtitle="Chatbot + AI GitHub edits" fs={fs}>
-          <AIGear x={sx(16)} y={sy(12)} size={sy(20)} />
-        </IconBlock>
-
-        <IconBlock x={colX(2)} y={y} title="Your Project" subtitle="Features, Docs, Manuals" fs={fs} />
-
-        <Arrow x1={colX(0) + sx(200)} y1={y + sy(40)} x2={colX(1)} y2={y + sy(40)} />
-        <Arrow x1={colX(1) + sx(200)} y1={y + sy(40)} x2={colX(2)} y2={y + sy(40)} />
-        <Arrow x1={colX(2) + sx(100)} y1={y + sy(80)} x2={colX(0) + sx(100)} y2={y + sy(80)} dashed />
-      </svg>
-
-      <ul>
-        <li>Connect repositories to pull context and push changes.</li>
-        <li>Ask the chatbot about your project and docs.</li>
-        <li>Generate or edit content with AI, then commit via GitHub.</li>
-      </ul>
-    </figure>
-  );
-}
-
-/* ───────────────────────── SVG primitives ───────────────────────── */
-
+/* ---------------------- Shared SVG primitives ---------------------- */
 function Defs() {
   return (
     <defs>
-      <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
-        <path d="M0,0 L10,5 L0,10 Z" fill="currentColor" />
+      <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="strokeWidth">
+        <path d="M0,0 L0,10 L10,5 z" fill="var(--highlight)"/>
       </marker>
+      <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+        <feMerge>
+          <feMergeNode in="coloredBlur"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+      <linearGradient id="cardGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="var(--background-primary)" stopOpacity="0.9"/>
+        <stop offset="100%" stopColor="var(--background-secondary)" stopOpacity="0.7"/>
+      </linearGradient>
+      <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="var(--highlight)" stopOpacity="0.3"/>
+        <stop offset="100%" stopColor="var(--hover)" stopOpacity="0.1"/>
+      </linearGradient>
     </defs>
   );
 }
 
-function FlowBox({
-  x, y, w, h, label, sub, fs,
-}: {
-  x: number; y: number; w: number; h: number; label: string; sub?: string; fs: (n: number) => number;
-}) {
-  return (
-    <>
-      <rect x={x} y={y} width={w} height={h} rx={Math.min(w, h) * 0.15} fill="none" stroke="currentColor" />
-      <text x={x + w / 2} y={y + h / 2 - (sub ? fs(6) : 0)} textAnchor="middle" dominantBaseline="central" fontSize={fs(14)} fill="currentColor">
-        {label}
-      </text>
-      {sub && (
-        <text x={x + w / 2} y={y + h / 2 + fs(10)} textAnchor="middle" dominantBaseline="central" fontSize={fs(12)} fill="currentColor" opacity={0.8}>
-          {sub}
-        </text>
-      )}
-    </>
-  );
-}
-
-function FlowPill({
-  x, y, w, h, label, fs,
-}: {
-  x: number; y: number; w: number; h: number; label: string; fs: (n: number) => number;
-}) {
-  const r = h / 2;
-  return (
-    <>
-      <rect x={x} y={y} width={w} height={h} rx={r} fill="none" stroke="currentColor" />
-      <text x={x + w / 2} y={y + h / 2} textAnchor="middle" dominantBaseline="central" fontSize={fs(13)} fill="currentColor">
-        {label}
-      </text>
-    </>
-  );
-}
-
 function Arrow({
-  x1, y1, x2, y2, dashed = false,
+  x1,
+  y1,
+  x2,
+  y2,
+  dashed = false,
+  strokeWidth = 2,
 }: {
-  x1: number; y1: number; x2: number; y2: number; dashed?: boolean;
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+  dashed?: boolean;
+  strokeWidth?: number;
 }) {
   return (
     <line
@@ -282,161 +142,578 @@ function Arrow({
       y1={y1}
       x2={x2}
       y2={y2}
-      stroke="currentColor"
-      strokeWidth={2}
-      strokeDasharray={dashed ? "6 6" : undefined}
+      strokeWidth={strokeWidth}
+      strokeDasharray={dashed ? "8 4" : undefined}
       markerEnd="url(#arrow)"
+      stroke="var(--hover)"
+      filter="var(--hover)"
+      opacity="0.8"
     />
   );
 }
 
-function Node({
-  x, y, label, chips, fs,
+function RectText({
+  x,
+  y,
+  w,
+  h,
+  rx = 0,
+  title,
+  subtitle,
+  fs,
+  subtitleOffset = 8,
+  accent = false,
 }: {
-  x: number; y: number; label: string; chips?: string[]; fs: (n: number) => number;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  rx?: number;
+  title: string;
+  subtitle?: string;
+  fs: (n: number) => number;
+  subtitleOffset?: number;
+  accent?: boolean;
 }) {
-  const w = fs(220 * (260 / 220)); // maintain relative scale
-  const h = chips ? fs(64 * (260 / 220)) : fs(40 * (260 / 220));
-  const width = Math.max(w, fs(180));
-  const height = h;
-
   return (
     <>
-      <rect x={x} y={y} width={width} height={height} rx={fs(8)} fill="none" stroke="currentColor" />
-      <text x={x + fs(12)} y={y + fs(20)} fontSize={fs(13)} fill="currentColor">
-        {label}
+      <rect
+        x={x}
+        y={y}
+        width={w}
+        height={h}
+        rx={rx}
+        fill={accent ? "url(#accentGradient)" : "url(#cardGradient)"}
+        stroke="var(--border-color)"
+        strokeWidth="1.5"
+        filter="url(#glow)"
+      />
+      <text
+        x={x + w / 2}
+        y={y + h / 2 - (subtitle ? fs(subtitleOffset) : 0)}
+        fontSize={fs(16)}
+        fontWeight="600"
+        textAnchor="middle"
+        dominantBaseline="central"
+        fill="var(--foreground-primary)"
+      >
+        {title}
       </text>
-      {chips && (
-        <>
-          {chips.map((c, i) => (
-            <g key={c}>
-              <rect x={x + fs(12) + i * fs(72)} y={y + fs(34)} width={fs(64)} height={fs(20)} rx={fs(10)} fill="none" stroke="currentColor" />
-              <text x={x + fs(12) + i * fs(72) + fs(32)} y={y + fs(44)} fontSize={fs(11)} textAnchor="middle" dominantBaseline="central" fill="currentColor">
-                {c}
-              </text>
-            </g>
-          ))}
-        </>
+      {subtitle && (
+        <text
+          x={x + w / 2}
+          y={y + h / 2 + fs(subtitleOffset)}
+          fontSize={fs(12)}
+          textAnchor="middle"
+          dominantBaseline="central"
+          fill="var(--foreground-secondary)"
+          opacity="0.8"
+        >
+          {subtitle}
+        </text>
       )}
     </>
   );
 }
 
-function Connector({ x1, y1, x2, y2 }: { x1: number; y1: number; x2: number; y2: number }) {
-  return <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="currentColor" strokeWidth={2} />;
-}
+/* ---------------------- Diagrams ---------------------- */
+function FlowDiagram() {
+  const viewW = 1000;
+  const viewH = 200;
+  const { sx, sy, fs } = makeScaler(viewW, viewH);
+  const pad = sx(30);
+  const cols = 4;
+  const boxW = sx(180);
+  const boxH = sy(50);
+  const pillW = sx(150);
+  const pillH = sy(32);
 
-function Note({ x, y, text, fs }: { x: number; y: number; text: string; fs: (n: number) => number }) {
-  const w = fs(520 * (260 / 220));
-  const h = fs(32);
+  const colCenter = (i: number) =>
+    pad + boxW / 2 + (i * (viewW - 2 * (pad + boxW / 2))) / (cols - 1);
+  const centerY = viewH / 2;
+
+  const pillTop = viewH - sy(25) - pillH;
+  const pillCenterY = pillTop + pillH / 2;
+  const manualsBottom = centerY + sy(12) + boxH / 2;
+  const arrowY1 = manualsBottom + sy(8);
+  const arrowY2 = pillTop - sy(8);
+
   return (
-    <>
-      <rect x={x} y={y - h / 2} width={w} height={h} rx={fs(6)} fill="none" stroke="currentColor" />
-      <text x={x + fs(10)} y={y} fontSize={fs(12)} fill="currentColor" dominantBaseline="central">
-        {text}
-      </text>
-    </>
+    <figure className="w-full">
+      <figcaption
+        className="mb-4 text-xl font-bold tracking-wide"
+        style={{ color: 'var(--foreground-primary)' }}
+      >
+        Development Flow Overview
+      </figcaption>
+      <svg
+        role="img"
+        aria-label="Development flow from Idea to Project to Features then Docs, Manuals, Publish"
+        viewBox={`0 0 ${viewW} ${viewH}`}
+        preserveAspectRatio="xMidYMid meet"
+        className="w-full h-auto rounded-lg"
+        style={{ backgroundColor: 'var(--background-tertiary)' }}
+      >
+        <Defs />
+
+        {/* Background gradient */}
+        <rect width={viewW} height={viewH} fill="url(#accentGradient)" rx="12" opacity="0.3"/>
+
+        {/* Idea */}
+        <RectText
+          x={colCenter(0) - boxW / 2}
+          y={centerY - boxH / 2}
+          w={boxW}
+          h={boxH}
+          rx={boxH * 0.2}
+          title="Idea"
+          fs={fs}
+        />
+        <Arrow
+          x1={colCenter(0) + boxW / 2}
+          y1={centerY}
+          x2={colCenter(1) - boxW / 2}
+          y2={centerY}
+          strokeWidth={2}
+        />
+
+        {/* Project */}
+        <RectText
+          x={colCenter(1) - boxW / 2}
+          y={centerY - boxH / 2}
+          w={boxW}
+          h={boxH}
+          rx={boxH * 0.2}
+          title="Project"
+          fs={fs}
+        />
+        <Arrow
+          x1={colCenter(1) + boxW / 2}
+          y1={centerY}
+          x2={colCenter(2) - boxW / 2}
+          y2={centerY}
+        />
+
+        {/* Features */}
+        <RectText
+          x={colCenter(2) - boxW / 2}
+          y={centerY - boxH / 2}
+          w={boxW}
+          h={boxH}
+          rx={boxH * 0.2}
+          title="Features"
+          fs={fs}
+          accent={true}
+        />
+        <Arrow
+          x1={colCenter(2) + boxW / 2}
+          y1={centerY}
+          x2={colCenter(3) - boxW / 2}
+          y2={centerY}
+        />
+
+        {/* Docs */}
+        <RectText
+          x={colCenter(3) - boxW / 2}
+          y={centerY - boxH - sy(15)}
+          w={boxW}
+          h={boxH}
+          rx={boxH * 0.2}
+          title="Docs"
+          fs={fs}
+        />
+
+        {/* Manuals */}
+        <RectText
+          x={colCenter(3) - boxW / 2}
+          y={centerY + sy(15)}
+          w={boxW}
+          h={boxH}
+          rx={boxH * 0.2}
+          title="Manuals"
+          fs={fs}
+        />
+
+        {/* Arrow from Manuals to Publish */}
+        <Arrow x1={colCenter(3)} y1={arrowY1} x2={colCenter(3)} y2={arrowY2} strokeWidth={3} />
+
+        {/* Publish pill */}
+        <rect
+          x={colCenter(3) - pillW / 2}
+          y={pillTop}
+          width={pillW}
+          height={pillH}
+          rx={pillH / 2}
+          fill="var(--highlight)"
+          stroke="var(--border-color)"
+          strokeWidth="2"
+          filter="url(#glow)"
+        />
+        <text
+          x={colCenter(3)}
+          y={pillCenterY}
+          fontSize={fs(14)}
+          fontWeight="bold"
+          textAnchor="middle"
+          dominantBaseline="central"
+          fill="var(--foreground-primary)"
+        >
+          Publish
+        </text>
+      </svg>
+    </figure>
   );
 }
 
-function GroupLabel({ x, y, text, fs }: { x: number; y: number; text: string; fs: (n: number) => number }) {
-  return <text x={x} y={y} fontSize={fs(12)} fill="currentColor">{text}</text>;
-}
+function FeatureTree() {
+  const viewW = 1000;
+  const viewH = 200;
+  const { sx, sy, fs } = makeScaler(viewW, viewH);
+  const rootX = viewW / 2;
+  const rootY = sy(100);
+  const boxW = sx(180);
+  const boxH = sy(100);
+  const childY = sy(300);
+  const spread = sx(280);
 
-function Stack({
-  x, y, title, items, width, fs,
-}: {
-  x: number; y: number; title: string; items: string[]; width: number; fs: (n: number) => number;
-}) {
-  const itemH = fs(22);
-  const gap = fs(2);
+  const features = ["Core Engine", "UI Components", "Integrations"];
+
   return (
-    <g>
-      <text x={x} y={y} fontSize={fs(13)} fontWeight={600} fill="currentColor">{title}</text>
-      {items.map((it, i) => {
-        const iy = y + fs(10) + i * (itemH + fs(2));
-        return (
-          <g key={it}>
-            <rect x={x} y={iy} width={width} height={itemH} rx={fs(6)} fill="none" stroke="currentColor" />
-            <circle cx={x + fs(12)} cy={iy + itemH / 2} r={fs(4)} fill="currentColor" />
-            <text x={x + fs(26)} y={iy + itemH / 2 + fs(3)} fontSize={fs(12)} fill="currentColor">
-              {it}
-            </text>
+    <figure className="w-full">
+      <figcaption
+        className="mb-4 text-xl font-bold tracking-wide"
+        style={{ color: 'var(--foreground-primary)' }}
+      >
+        Feature Architecture Examples
+      </figcaption>
+      <svg
+        role="img"
+        aria-label="Feature tree showing core components and their relationships"
+        viewBox={`0 0 ${viewW} ${viewH}`}
+        preserveAspectRatio="xMidYMid meet"
+        className="w-full h-auto rounded-lg"
+        style={{ backgroundColor: 'var(--background-tertiary)' }}
+      >
+        <Defs />
+
+        {/* Background */}
+        <rect width={viewW} height={viewH} fill="url(#accentGradient)" rx="12" opacity="0.2"/>
+
+        {/* Root Features */}
+        <RectText
+          x={rootX - boxW / 2}
+          y={rootY - boxH / 2}
+          w={boxW}
+          h={boxH}
+          rx={boxH * 0.2}
+          title="Features"
+          subtitle="Core System"
+          fs={fs}
+          accent={true}
+        />
+
+        {features.map((feature, i) => (
+          <g key={i}>
+            <Arrow
+              x1={rootX}
+              y1={rootY + boxH / 2}
+              x2={rootX + (i - 1) * spread}
+              y2={childY - sy(15)}
+              strokeWidth={3}
+            />
+            <RectText
+              x={rootX + (i - 1) * spread - boxW / 2}
+              y={childY}
+              w={boxW}
+              h={boxH}
+              rx={boxH * 0.2}
+              title={feature}
+              fs={fs}
+            />
           </g>
-        );
-      })}
-    </g>
+        ))}
+      </svg>
+      <p>Features can be nested and own their relevant sections of documentation and manual sections</p>
+      <p>These sections can be organised to create documentation and manuals and remain in sync forever!</p>
+    </figure>
   );
 }
 
-function OutputDoc({
-  x, y, title, tags, width, fs,
-}: {
-  x: number; y: number; title: string; tags: string[]; width: number; fs: (n: number) => number;
-}) {
-  const h = fs(44);
+function DocsManuals() {
+  const viewW = 1000;
+  const viewH = 200;
+  const { sx, sy, fs } = makeScaler(viewW, viewH);
+
+  const leftX = sx(250);
+  const rightX = sx(750);
+  const boxW = sx(200);
+  const boxH = sy(100);
+  const subBoxW = sx(150);
+  const subBoxH = sy(50);
+  const categoryY = sy(100);
+  const subCategoryY = sy(300);
+  const detailY = sy(500);
+
+  const docTypes = [
+    { title: "API Reference", items: ["REST API", "GraphQL", "Webhooks"] },
+    { title: "Tutorials", items: ["Quick Start", "Advanced", "Examples"] },
+    { title: "SDK Guides", items: ["JavaScript", "Python", "Go"] }
+  ];
+
+  const manualTypes = [
+    { title: "User Manual", items: ["Setup", "Configuration", "Usage"] },
+    { title: "Admin Guide", items: ["Installation", "Maintenance", "Security"] }
+  ];
+
   return (
-    <g>
-      <rect x={x} y={y} width={width} height={h} rx={fs(8)} fill="none" stroke="currentColor" />
-      <text x={x + fs(12)} y={y + fs(18)} fontSize={fs(13)} fill="currentColor">
-        {title}
-      </text>
-      {tags.map((t, i) => (
-        <g key={t}>
-          <rect x={x + fs(12) + i * fs(120)} y={y + fs(24)} width={fs(110)} height={fs(18)} rx={fs(9)} fill="none" stroke="currentColor" />
-          <text x={x + fs(12) + i * fs(120) + fs(55)} y={y + fs(33)} fontSize={fs(11)} textAnchor="middle" dominantBaseline="central" fill="currentColor">
-            {t}
-          </text>
-        </g>
-      ))}
-    </g>
+    <figure className="w-full">
+      <figcaption
+        className="mb-4 text-xl font-bold tracking-wide"
+        style={{ color: 'var(--foreground-primary)' }}
+      >
+        Full Ecosystem Examples
+      </figcaption>
+      <svg
+        role="img"
+        aria-label="Documentation structure showing developer and user resources"
+        viewBox={`0 0 ${viewW} ${viewH}`}
+        preserveAspectRatio="xMidYMid meet"
+        className="w-full h-auto rounded-lg"
+        style={{ backgroundColor: 'var(--background-tertiary)' }}
+      >
+        <Defs />
+
+        {/* Background sections */}
+        <rect x="0" y="0" width={leftX + sx(500)} height={viewH} fill="url(#accentGradient)" rx="12" opacity="0.2"/>
+        <rect x={rightX - sx(200)} y="0" width={sx(500)} height={viewH} fill="url(#accentGradient)" rx="12" opacity="0.15"/>
+
+        {/* Main Documentation category */}
+        <RectText
+          x={leftX - boxW / 2}
+          y={categoryY - boxH / 2}
+          w={boxW}
+          h={boxH}
+          rx={boxH * 0.25}
+          title="Documentation"
+          fs={fs}
+          accent={true}
+        />
+
+        {/* Main Manuals category */}
+        <RectText
+          x={rightX - boxW / 2}
+          y={categoryY - boxH / 2}
+          w={boxW}
+          h={boxH}
+          rx={boxH * 0.25}
+          title="Manuals"
+          fs={fs}
+          accent={true}
+        />
+
+        {/* Documentation subcategories */}
+        {docTypes.map((docType, i) => {
+          const x = leftX + (i - 1) * sx(160);
+          return (
+            <g key={docType.title}>
+              <Arrow
+                x1={leftX}
+                y1={categoryY + boxH / 2}
+                x2={x}
+                y2={subCategoryY - subBoxH / 2}
+                strokeWidth={2}
+              />
+              <RectText
+                x={x - subBoxW / 2}
+                y={subCategoryY - subBoxH / 2}
+                w={subBoxW}
+                h={subBoxH}
+                rx={subBoxH * 0.2}
+                title={docType.title}
+                fs={fs}
+              />
+
+              {docType.items.map((item, j) => {
+                const detailX = x + (j - 1) * sx(50);
+                return (
+                  <g key={item}>
+                    <line
+                      x1={x}
+                      y1={subCategoryY + subBoxH / 2}
+                      x2={detailX}
+                      y2={detailY - sy(10)}
+                      stroke="var(--highlight)"
+                      strokeWidth="1.5"
+                      opacity="0.6"
+                    />
+                    <circle cx={detailX} cy={detailY} r="4" fill="var(--highlight)" opacity="0.8" />
+                    <text
+                      x={detailX}
+                      y={detailY + sy(15)}
+                      fontSize={fs(10)}
+                      textAnchor="middle"
+                      fill="var(--foreground-secondary)"
+                      fontWeight="500"
+                    >
+                      {item}
+                    </text>
+                  </g>
+                );
+              })}
+            </g>
+          );
+        })}
+
+        {/* Manual subcategories */}
+        {manualTypes.map((manualType, i) => {
+          const x = rightX + (i - 0.5) * sx(180);
+          return (
+            <g key={manualType.title}>
+              <Arrow
+                x1={rightX}
+                y1={categoryY + boxH / 2}
+                x2={x}
+                y2={subCategoryY - subBoxH / 2}
+                strokeWidth={2}
+              />
+              <RectText
+                x={x - subBoxW / 2}
+                y={subCategoryY - subBoxH / 2}
+                w={subBoxW}
+                h={subBoxH}
+                rx={subBoxH * 0.2}
+                title={manualType.title}
+                fs={fs}
+              />
+
+              {manualType.items.map((item, j) => {
+                const detailX = x + (j - 1) * sx(60);
+                return (
+                  <g key={item}>
+                    <line
+                      x1={x}
+                      y1={subCategoryY + subBoxH / 2}
+                      x2={detailX}
+                      y2={detailY - sy(10)}
+                      stroke="var(--highlight)"
+                      strokeWidth="1.5"
+                      opacity="0.6"
+                    />
+                    <circle cx={detailX} cy={detailY} r="4" fill="var(--highlight)" opacity="0.8" />
+                    <text
+                      x={detailX}
+                      y={detailY + sy(15)}
+                      fontSize={fs(10)}
+                      textAnchor="middle"
+                      fill="var(--foreground-secondary)"
+                      fontWeight="500"
+                    >
+                      {item}
+                    </text>
+                  </g>
+                );
+              })}
+            </g>
+          );
+        })}
+      </svg>
+    </figure>
   );
 }
 
-function IconBlock({
-  x, y, title, subtitle, children, fs,
-}: {
-  x: number; y: number; title: string; subtitle?: string; children?: React.ReactNode; fs: (n: number) => number;
-}) {
-  const w = 200;
-  const h = 80;
+function Integrations() {
+  const viewW = 1000;
+  const viewH = 280;
+  const { sx, sy, fs } = makeScaler(viewW, viewH);
+  const centerX = viewW / 2;
+  const topY = sy(50);
+  const boxW = sx(180);
+  const boxH = sy(50);
+
+  const systems = ["APIs", "Cloud Services", "Databases"];
+
   return (
-    <g>
-      <rect x={x} y={y} width={w} height={h} rx={fs(10)} fill="none" stroke="currentColor" />
-      <rect x={x} y={y} width={w} height={fs(30)} rx={fs(10)} fill="none" stroke="currentColor" />
-      {children}
-      <text x={x + fs(16)} y={y + fs(20)} fontSize={fs(12)} fontWeight={600} fill="currentColor">{title}</text>
-      {subtitle && <text x={x + fs(16)} y={y + fs(52)} fontSize={fs(12)} fill="currentColor">{subtitle}</text>}
-    </g>
-  );
+      <p
+          style={{ color: 'var(--foreground-secondary)' }}
+        >
+        Publish your completed manual to end-users or documentation to collaborators by sharing a link!
+        </p>
+  )
+  // return (
+  //   <figure className="w-full">
+  //     <figcaption
+  //       className="mb-4 text-xl font-bold tracking-wide"
+  //       style={{ color: 'var(--foreground-primary)' }}
+  //     >
+  //       Integration Network
+  //     </figcaption>
+  //     <svg
+  //       role="img"
+  //       aria-label="Integration connections to external systems and services"
+  //       viewBox={`0 0 ${viewW} ${viewH}`}
+  //       preserveAspectRatio="xMidYMid meet"
+  //       className="w-full h-auto rounded-lg"
+  //       style={{ backgroundColor: 'var(--background-tertiary)' }}
+  //     >
+  //       <Defs />
+  //
+  //       {/* Background */}
+  //       <rect width={viewW} height={viewH} fill="url(#accentGradient)" rx="12" opacity="0.3"/>
+  //
+  //       {/* Central Publish node */}
+  //       <RectText
+  //         x={centerX - boxW / 2}
+  //         y={topY}
+  //         w={boxW}
+  //         h={boxH}
+  //         rx={boxH * 0.25}
+  //         title="Publish"
+  //         subtitle="Distribution Hub"
+  //         fs={fs}
+  //         accent={true}
+  //       />
+  //
+  //       {systems.map((system, i) => (
+  //         <g key={i}>
+  //           <Arrow
+  //             x1={centerX}
+  //             y1={topY + boxH}
+  //             x2={centerX + (i - 1) * sx(280)}
+  //             y2={sy(180)}
+  //             dashed={i === 1}
+  //             strokeWidth={3}
+  //           />
+  //           <RectText
+  //             x={centerX + (i - 1) * sx(280) - boxW / 2}
+  //             y={sy(180)}
+  //             w={boxW}
+  //             h={boxH}
+  //             rx={boxH * 0.2}
+  //             title={system}
+  //             fs={fs}
+  //           />
+  //         </g>
+  //       ))}
+  //
+  //       {/* Connection indicators */}
+  //       <g transform={`translate(${sx(50)}, ${sy(50)})`}>
+  //         <text fontSize={fs(11)} fill="var(--foreground-secondary)" fontWeight="500">Status:</text>
+  //         <line x1="0" y1="15" x2="20" y2="15" stroke="var(--highlight)" strokeWidth="2" />
+  //         <text x="25" y="15" fontSize={fs(9)} fill="var(--foreground-secondary)" dominantBaseline="central">Active</text>
+  //         <line x1="0" y1="30" x2="20" y2="30" stroke="var(--highlight)" strokeWidth="2" strokeDasharray="8 4" />
+  //         <text x="25" y="30" fontSize={fs(9)} fill="var(--foreground-secondary)" dominantBaseline="central">Pending</text>
+  //       </g>
+  //     </svg>
+  //   </figure>
+  // );
 }
 
-function GitHubMark({ x, y, size }: { x: number; y: number; size: number }) {
-  return (
-    <path
-      aria-hidden="true"
-      transform={`translate(${x}, ${y}) scale(${size / 24})`}
-      fill="currentColor"
-      d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.11.79-.25.79-.56s0-1 0-2c-3.22.7-3.9-1.55-3.9-1.55a3.07 3.07 0 0 0-1.29-1.69c-1.05-.72.08-.71.08-.71a2.43 2.43 0 0 1 1.77 1.19 2.47 2.47 0 0 0 3.38 1 2.45 2.45 0 0 1 .73-1.54c-2.57-.29-5.27-1.28-5.27-5.68a4.45 4.45 0 0 1 1.19-3.09 4.13 4.13 0 0 1 .11-3.05s.97-.31 3.18 1.18a10.97 10.97 0 0 1 5.8 0c2.21-1.49 3.18-1.18 3.18-1.18a4.13 4.13 0 0 1 .11 3.05 4.45 4.45 0 0 1 1.19 3.09c0 4.41-2.71 5.38-5.29 5.66a2.76 2.76 0 0 1 .78 2.15c0 1.55 0 2.81 0 3.19 0 .31.21.68.79.56A11.5 11.5 0 0 0 12 .5Z"
-    />
-  );
-}
-
-function AIGear({ x, y, size }: { x: number; y: number; size: number }) {
-  const s = size / 24;
-  return (
-    <g transform={`translate(${x}, ${y}) scale(${s})`} aria-hidden="true">
-      <circle cx="12" cy="12" r="4" fill="currentColor" />
-      <g stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round">
-        <path d="M12 2v3" />
-        <path d="M12 19v3" />
-        <path d="M2 12h3" />
-        <path d="M19 12h3" />
-        <path d="M4.2 4.2l2.1 2.1" />
-        <path d="M17.7 17.7l2.1 2.1" />
-        <path d="M4.2 19.8l2.1-2.1" />
-        <path d="M17.7 6.3l2.1-2.1" />
-      </g>
-    </g>
-  );
+/* ---------------------- Utility ---------------------- */
+function makeScaler(viewW: number, viewH: number) {
+  const baseW = 1000;
+  const baseH = 600;
+  const sx = (n: number) => (n * viewW) / baseW;
+  const sy = (n: number) => (n * viewH) / baseH;
+  const fs = (n: number) => Math.round(sx(n));
+  return { sx, sy, fs };
 }
