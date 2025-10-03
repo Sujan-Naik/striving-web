@@ -15,6 +15,7 @@ type CostInfo = {
   outputCost: number
   totalCost: number
   latencyMs?: number
+  model?: string
 }
 
 type ChatTotals = {
@@ -24,12 +25,27 @@ type ChatTotals = {
   totalCost: number
 }
 
+const AVAILABLE_MODELS = [
+  { id: 'gpt-4o', name: 'GPT-4o', provider: 'OpenAI' },
+  { id: 'gpt-4o-mini', name: 'GPT-4o Mini', provider: 'OpenAI' },
+  { id: 'gpt-4-turbo', name: 'GPT-4 Turbo', provider: 'OpenAI' },
+  { id: 'gpt-3.5-turbo', name: 'GPT-3.5 Turbo', provider: 'OpenAI' },
+] as const;
+
+type ModelId = typeof AVAILABLE_MODELS[number]['id'];
+
 export default function Page() {
   const [messages, setMessages] = useState<Message[]>([])
   const [query, setQuery] = useState('')
   const [loading, setLoading] = useState(false)
   const [currentResponse, setCurrentResponse] = useState('')
+  const [selectedModel, setSelectedModel] = useState<ModelId>('gpt-4o-mini')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+  // Focus streaming + scroll behavior
+  const [focusStreaming, setFocusStreaming] = useState(true)
+  const [behavior, setBehavior] = useState<'auto' | 'smooth'>('auto')
+
   // Cost state
   const [lastTurnCost, setLastTurnCost] = useState<CostInfo | null>(null)
   const [chatTotals, setChatTotals] = useState<ChatTotals>({
@@ -38,9 +54,11 @@ export default function Page() {
     totalTokens: 0,
     totalCost: 0,
   })
+
   const STORAGE_KEYS = {
     messages: 'chat.messages.v1',
     totals: 'chat.totals.v1',
+    model: 'chat.model.v1',
   }
 
   function reviveMessages(raw: unknown): Message[] {
@@ -56,42 +74,49 @@ export default function Page() {
     try { return JSON.parse(str) as T } catch { return fallback }
   }
 
-  // 1) Track hydration so we don't write defaults before we load
-const hydrated = useRef(false)
+  const hydrated = useRef(false)
 
-// Load from localStorage
-useEffect(() => {
-  try {
-    const msgRaw = localStorage.getItem(STORAGE_KEYS.messages)
-    const loadedMessages = reviveMessages(safeParse(msgRaw, []))
-    if (loadedMessages.length) setMessages(loadedMessages)
+  // Load from localStorage
+  useEffect(() => {
+    try {
+      const msgRaw = localStorage.getItem(STORAGE_KEYS.messages)
+      const loadedMessages = reviveMessages(safeParse(msgRaw, []))
+      if (loadedMessages.length) setMessages(loadedMessages)
 
-    const totalsRaw = localStorage.getItem(STORAGE_KEYS.totals)
-    const loadedTotals = safeParse<ChatTotals | null>(totalsRaw, null)
-    if (loadedTotals) setChatTotals(loadedTotals)
-  } catch {
-    // ignore storage errors
-  } finally {
-    hydrated.current = true
-  }
-}, [])
+      const totalsRaw = localStorage.getItem(STORAGE_KEYS.totals)
+      const loadedTotals = safeParse<ChatTotals | null>(totalsRaw, null)
+      if (loadedTotals) setChatTotals(loadedTotals)
 
-// Persist to localStorage when messages change (unchanged)
-useEffect(() => {
-  try {
-    localStorage.setItem(STORAGE_KEYS.messages, JSON.stringify(messages))
-  } catch {}
-}, [messages])
+      const modelRaw = localStorage.getItem(STORAGE_KEYS.model)
+      if (modelRaw) setSelectedModel(modelRaw as ModelId)
+    } catch {
+      // ignore storage errors
+    } finally {
+      hydrated.current = true
+    }
+  }, [])
 
-// 2) Persist totals whenever they change (and only after hydration)
-useEffect(() => {
-  if (!hydrated.current) return
-  try {
-    localStorage.setItem(STORAGE_KEYS.totals, JSON.stringify(chatTotals))
-  } catch {}
-}, [chatTotals])
+  // Persist to localStorage
+  useEffect(() => {
+    if (!hydrated.current) return
+    try {
+      localStorage.setItem(STORAGE_KEYS.messages, JSON.stringify(messages))
+    } catch {}
+  }, [messages])
 
+  useEffect(() => {
+    if (!hydrated.current) return
+    try {
+      localStorage.setItem(STORAGE_KEYS.totals, JSON.stringify(chatTotals))
+    } catch {}
+  }, [chatTotals])
 
+  useEffect(() => {
+    if (!hydrated.current) return
+    try {
+      localStorage.setItem(STORAGE_KEYS.model, selectedModel)
+    } catch {}
+  }, [selectedModel])
 
   async function handleSend() {
     if (!query.trim() || loading) return
@@ -112,10 +137,22 @@ useEffect(() => {
     setLastTurnCost(null)
 
     try {
+      const conversationMessages = messages.map(m => ({
+        role: m.role,
+        content: m.content
+      }));
+      conversationMessages.push({ role: 'user', content: currentQuery });
+
       const response = await fetch('/api/bedrock/converse-stream', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: currentQuery })
+        body: JSON.stringify({
+          query: currentQuery,
+          model: selectedModel,
+          messages: conversationMessages,
+          temperature: 0.7,
+          maxTokens: 4096
+        })
       })
 
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
@@ -124,7 +161,6 @@ useEffect(() => {
       const decoder = new TextDecoder('utf-8')
       let fullResponse = ''
 
-      // Usage parsing
       const USAGE_MARKER = '[[USAGE]]'
       let foundUsageMarker = false
       let usageBuffer = ''
@@ -154,7 +190,6 @@ useEffect(() => {
           }
         }
 
-        // Parse usage if present
         if (foundUsageMarker) {
           try {
             const parsed: CostInfo = JSON.parse(usageBuffer.trim())
@@ -205,69 +240,120 @@ useEffect(() => {
     try {
       localStorage.removeItem(STORAGE_KEYS.messages)
       localStorage.removeItem(STORAGE_KEYS.totals)
-    } catch {
-      // ignore storage errors
-    }
+    } catch {}
 
     textareaRef.current?.focus()
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "row", height: "100vh" }}>
-  <SideBar messageCount={messages.length} onClearChat={clearChat} />
+    <div style={{
+      display: "flex",
+      flexDirection: "row",
+      height: "100vh",
+      marginRight: '20px',
+      scrollbarWidth: 'auto',
+      borderRight: 'var(--border-radius) solid var(--border-color)'
+    }}>
+      <SideBar messageCount={messages.length} onClearChat={clearChat} />
 
-  {/* make this a column layout filling the viewport */}
-  <div className="chat-container" style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+      <div className="chat-container" style={{ flex: 1, display: "flex", flexDirection: "column", height: "100%" }}>
+        {/* Model selector */}
+        <div style={{
+          padding: "8px 16px",
+          borderBottom: "1px solid var(--border-color)",
+          backgroundColor: "var(--background-secondary)",
+          display: "flex",
+          alignItems: "center",
+          gap: "12px",
+          overflowY: 'hidden'
+        }}>
+          <label style={{ fontSize: 14, color: "var(--foreground-secondary)" }}>
+            Model:
+          </label>
+          <select
+            value={selectedModel}
+            onChange={(e) => setSelectedModel(e.target.value as ModelId)}
+            style={{
+              padding: "4px 8px",
+              borderRadius: "4px",
+              border: "1px solid var(--border-color)",
+              backgroundColor: "var(--background-primary)",
+              color: "var(--foreground-primary)",
+              fontSize: 14
+            }}
+          >
+            {AVAILABLE_MODELS.map(model => (
+              <option key={model.id} value={model.id}>
+                {model.name} ({model.provider})
+              </option>
+            ))}
+          </select>
 
+          {/* Focus streaming controls */}
+          <label style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "6px", fontSize: 13 }}>
+            <input
+              type="checkbox"
+              checked={focusStreaming}
+              onChange={(e) => setFocusStreaming(e.target.checked)}
+            />
+            Focus Streaming
+          </label>
+          <label style={{ fontSize: 13 }}>
+            Behavior:
+            <select
+              value={behavior}
+              onChange={(e) => setBehavior(e.target.value as 'auto' | 'smooth')}
+            >
+              <option value="auto">Instant (auto)</option>
+              <option value="smooth">Smooth</option>
+            </select>
+          </label>
+        </div>
 
-    <div
-      style={{
-        fontSize: 12,
-        color: "var(--disabled)",
-        padding: "4px 8px",
-        display: "flex",
-        justifyContent: "space-between",
-      }}
-    >
-      {lastTurnCost ? (
-        <>
-          <span>This message: ${lastTurnCost.totalCost.toFixed(6)}</span>
-          <span>•</span>
-          <span>
-            tokens in/out/total: {lastTurnCost.inputTokens}/{lastTurnCost.outputTokens}/{lastTurnCost.totalTokens}
-          </span>
-          {typeof lastTurnCost.latencyMs === "number" && (
+        {/* Cost display */}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            fontSize: 12,
+            color: 'var(--disabled)',
+            padding: '4px 8px',
+            borderBottom: '1px solid var(--border-color)',
+            overflowY: 'hidden'
+          }}
+        >
+          {lastTurnCost ? (
             <>
-              <span>•</span>
-              <span> latency: {lastTurnCost.latencyMs} ms</span>
+              <span>Last: ${lastTurnCost.totalCost.toFixed(6)}</span>
+              <span>tokens: {lastTurnCost.inputTokens}/{lastTurnCost.outputTokens}/{lastTurnCost.totalTokens}</span>
+              {typeof lastTurnCost.latencyMs === 'number' && (
+                <span>latency: {lastTurnCost.latencyMs}ms</span>
+              )}
+              <span>Total: ${chatTotals.totalCost.toFixed(6)}</span>
+              <span>tokens: {chatTotals.totalTokens}</span>
+            </>
+          ) : (
+            <>
+              <span>{loading ? 'Generating…' : 'Ready'}</span>
+              <span>Total: ${chatTotals.totalCost.toFixed(6)}</span>
+              <span>tokens: {chatTotals.totalTokens}</span>
             </>
           )}
-          <span> • </span>
-          <span>Chat total: ${chatTotals.totalCost.toFixed(6)}</span>
-          <span> • tokens: {chatTotals.totalTokens}</span>
-        </>
-      ) : (
-        <>
-          <span>{loading ? "Generating…" : "Ready"}</span>
-          <span>•</span>
-          <span>Chat total: ${chatTotals.totalCost.toFixed(6)}</span>
-          <span>•</span>
-          <span> total tokens: {chatTotals.totalTokens}</span>
-        </>
-      )}
+        </div>
+
+        <MessageList
+          messages={messages}
+          currentResponse={currentResponse}
+          focusStreaming={focusStreaming}
+          behavior={behavior}
+        />
+        <InputArea
+          query={query}
+          setQuery={setQuery}
+          onSend={handleSend}
+          loading={loading}
+        />
+      </div>
     </div>
-
-      <MessageList messages={messages} currentResponse={currentResponse} />
-
-    <InputArea
-      query={query}
-      setQuery={setQuery}
-      onSend={handleSend}
-      loading={loading}
-      textareaRef={textareaRef}
-    />
-  </div>
-</div>
-
   )
 }

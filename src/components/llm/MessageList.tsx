@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Virtuoso } from 'react-virtuoso';
+import React, { useRef, useMemo, useEffect } from 'react';
+import { Virtuoso, VirtuosoHandle } from 'react-virtuoso';
 import { Message } from '@/types/messages';
 import MessageBubble from './MessageBubble';
 import StreamingMessage from './StreamingMessage';
@@ -7,93 +7,76 @@ import StreamingMessage from './StreamingMessage';
 interface MessageListProps {
   messages: Message[];
   currentResponse: string;
+  focusStreaming: boolean;
+  behavior: 'auto' | 'smooth';
 }
 
-export default function MessageList({ messages, currentResponse }: MessageListProps) {
-  const [atBottom, setAtBottom] = useState(true);
+type DisplayMessage = Message | { id: string; role: 'assistant'; content: string; timestamp?: Date };
 
-  // Merge streaming response into the list as a temporary assistant message
-  const displayMessages: (Message | { id: string; role: 'assistant'; content: string })[] =
-    currentResponse
-      ? [...messages, { id: 'streaming', role: 'assistant', content: currentResponse }]
-      : messages;
+export default function MessageList({ messages, currentResponse, focusStreaming, behavior }: MessageListProps) {
+  const virtuosoRef = useRef<VirtuosoHandle>(null);
 
-  // Empty state
-  if (displayMessages.length === 0) {
-    return (
-      <div className="flex flex-1 h-full items-center justify-center p-6 text-center text-foreground-tertiary bg-background-tertiary">
-        <div>
-          <div className="text-5xl mb-4">💬</div>
-          <div className="text-base italic">
-            Start a conversation by typing a message below
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // Merge messages with a streaming message if any
+  const displayMessages: DisplayMessage[] = useMemo(() => {
+    if (currentResponse) {
+      const lastUser = messages[messages.length - 1];
+      return [
+        ...messages,
+        {
+          id: `streaming-${lastUser?.id ?? 'temp'}`,
+          role: 'assistant',
+          content: currentResponse,
+          timestamp: new Date(),
+        },
+      ];
+    }
+    return messages;
+  }, [messages, currentResponse]);
+
+  // 👇 Force scroll when streaming updates
+  useEffect(() => {
+    if (focusStreaming && currentResponse) {
+      virtuosoRef.current?.scrollToIndex({
+        index: displayMessages.length - 1,
+        behavior,
+        align: 'end', // ensure we stick to the bottom of the last item
+      });
+    }
+  }, [currentResponse, focusStreaming, behavior, displayMessages.length]);
 
   return (
-  <Virtuoso<Message | { id: string; role: 'assistant'; content: string }>
-  style={{
-    height: '100%',
-    width: '100%',
-    // DO NOT set overflow: 'hidden' - Virtuoso needs to scroll internally
-  }}
-  data={displayMessages}
-  itemContent={(_, m) =>
-    m.id === 'streaming' ? (
-      <StreamingMessage content={m.content} />
-    ) : (
-      <MessageBubble message={m as Message} />
-    )
-  }
-  computeItemKey={(_, m) => m.id}
-  alignToBottom
-  atBottomStateChange={setAtBottom}
-  followOutput={atBottom ? 'smooth' : false}
-  components={{
-    List: (props) => (
-      <div
-        {...props}
-        id="virtuoso-item-list"
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '24px',
-          padding: '12px', // Add some padding for better appearance
-          margin: '0',
-          boxSizing: 'border-box',
+    <div style={{ height: '100%', boxSizing: 'border-box', display: 'block', overflow: 'hidden' }}>
+      {/* Virtuoso message list */}
+      <Virtuoso
+        ref={virtuosoRef}
+        style={{ height: '100%', width: '100%' }}
+        data={displayMessages}
+        followOutput={false} // we control scroll manually
+        computeItemKey={(index) => displayMessages[index].id}
+        itemContent={(index, message) => {
+          const isStreaming = message.id.startsWith('streaming');
+          return (
+            <div
+              style={{
+                paddingBottom: index < displayMessages.length - 1 ? '16px' : '8px',
+                width: '100%',
+                display: 'block',
+              }}
+            >
+              {isStreaming ? (
+                <StreamingMessage content={message.content} />
+              ) : (
+                <MessageBubble message={message as Message} />
+              )}
+            </div>
+          );
+        }}
+        components={{
+          Item: (props) => (
+            <div {...props} style={{ ...props.style, display: 'block', boxSizing: 'border-box' }} />
+          ),
         }}
       />
-    ),
-    Item: (props) => (
-      <div
-        {...props}
-        style={{
-          display: 'block',
-          minHeight: 'auto',
-          boxSizing: 'border-box',
-          // Ensure items don't create their own scroll
-          overflow: 'visible',
-        }}
-      />
-    ),
-    // Optional: Customize the scrollbar if needed
-    Scroller: React.forwardRef((props, ref) => (
-      <div
-        {...props}
-        ref={ref}
-        style={{
-          ...props.style,
-          // Custom scrollbar styling if desired
-          scrollbarWidth: 'thin',
-          scrollbarColor: 'rgba(155, 155, 155, 0.5) transparent',
-        }}
-      />
-    )),
-  }}
-  increaseViewportBy={200}
-  overscan={5} // Render a few extra items for smoother scrolling
-/>
-);
+    </div>
+  );
 }

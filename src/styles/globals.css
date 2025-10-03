@@ -114,6 +114,14 @@
   }
 }
 
+[data-viewport-type="element"] {
+  position: relative !important; /* override absolute */
+  overflow: visible !important;   /* let Virtuoso control scrolling */
+  height: 100% !important;       /* ensure it fills the viewport */
+  width: 100% !important;
+}
+
+
 @layer components {
   .chat-container {
     display: flex;
