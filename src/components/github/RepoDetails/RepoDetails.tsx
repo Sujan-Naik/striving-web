@@ -21,7 +21,6 @@ export default function RepoDetails({ repository }: RepoDetailsProps) {
           target="_blank"
           rel="noopener noreferrer"
           style={{
-            color: '#0070f3',
             textDecoration: 'none',
             padding: '0.5rem 1rem',
             border: '1px solid #0070f3',
@@ -36,7 +35,6 @@ export default function RepoDetails({ repository }: RepoDetailsProps) {
         <p
           style={{
             fontSize: '1.125rem',
-            color: '#666',
             marginBottom: '2rem',
           }}
         >
@@ -64,7 +62,6 @@ export default function RepoDetails({ repository }: RepoDetailsProps) {
             style={{
               display: 'block',
               fontSize: '0.875rem',
-              color: '#666',
               marginBottom: '0.25rem',
             }}
           >
@@ -93,7 +90,6 @@ export default function RepoDetails({ repository }: RepoDetailsProps) {
             style={{
               display: 'block',
               fontSize: '0.875rem',
-              color: '#666',
               marginBottom: '0.25rem',
             }}
           >
@@ -123,7 +119,6 @@ export default function RepoDetails({ repository }: RepoDetailsProps) {
               style={{
                 display: 'block',
                 fontSize: '0.875rem',
-                color: '#666',
                 marginBottom: '0.25rem',
               }}
             >
@@ -153,7 +148,6 @@ export default function RepoDetails({ repository }: RepoDetailsProps) {
             style={{
               display: 'block',
               fontSize: '0.875rem',
-              color: '#666',
               marginBottom: '0.25rem',
             }}
           >
@@ -172,10 +166,10 @@ export default function RepoDetails({ repository }: RepoDetailsProps) {
       </div>
 
       <div style={{ borderTop: '1px solid #eee', paddingTop: '1rem' }}>
-        <p style={{ margin: '0.25rem 0', color: '#666' }}>
+        <p style={{ margin: '0.25rem 0' }}>
           Created: {new Date(repository.created_at).toLocaleDateString()}
         </p>
-        <p style={{ margin: '0.25rem 0', color: '#666' }}>
+        <p style={{ margin: '0.25rem 0' }}>
           Updated: {new Date(repository.updated_at).toLocaleDateString()}
         </p>
       </div>

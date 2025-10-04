@@ -12,7 +12,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <UserProvider username={session.user.name}>
-      <div>{children}</div>
+      {children}
     </UserProvider>
   );
 }

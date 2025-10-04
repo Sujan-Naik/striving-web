@@ -13,7 +13,7 @@ interface CodeActionsProps {
 
 function CodeActions({ actions, onApprove, onReject }: CodeActionsProps) {
   return (
-    <div style={{ padding: '10px', borderBottom: '1px solid #ccc', backgroundColor: '#f5f5f5' }}>
+    <div style={{ padding: '10px', borderBottom: '1px solid #ccc' }}>
       <h4>Pending Changes</h4>
       {actions.map(action => (
         <div key={action.id} style={{ marginBottom: '5px' }}>
@@ -46,7 +46,7 @@ function FileSelector({
   sending: boolean;
 }) {
   return (
-    <div style={{ padding: '10px', borderBottom: '1px solid #ccc', backgroundColor: '#f9f9f9' }}>
+    <div style={{ padding: '10px', borderBottom: '1px solid #ccc'}}>
       <h4>Select files to send to LLM</h4>
       <div style={{ marginBottom: '10px' }}>
         <button onClick={onSelectAll}>Select All</button>
@@ -316,7 +316,7 @@ export default function CodeEditor({ owner, repo, initialPath = '' }: CodeEditor
       {/* Code Editor */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         {/* LLM Prompt Input */}
-        <div style={{ padding: '10px', borderBottom: '1px solid #ccc', backgroundColor: '#f8f9fa' }}>
+        <div style={{ padding: '10px', borderBottom: '1px solid #ccc' }}>
           <input
             type="text"
             placeholder="Ask LLM to make changes... (Press Enter to submit)"
@@ -379,7 +379,6 @@ export default function CodeEditor({ owner, repo, initialPath = '' }: CodeEditor
           <div style={{
             padding: '10px',
             borderBottom: '1px solid #ccc',
-            backgroundColor: '#f8f9fa',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between'
@@ -393,8 +392,6 @@ export default function CodeEditor({ owner, repo, initialPath = '' }: CodeEditor
               disabled={isLoadingFile}
               style={{
                 padding: '6px 12px',
-                backgroundColor: '#007bff',
-                color: 'white',
                 border: 'none',
                 borderRadius: '4px',
                 cursor: 'pointer',
@@ -417,7 +414,6 @@ export default function CodeEditor({ owner, repo, initialPath = '' }: CodeEditor
             fontFamily: '"Fira Code", "Consolas", "Monaco", monospace',
             fontSize: '14px',
             lineHeight: '1.5',
-            backgroundColor: '#ffffff',
             resize: 'none',
             outline: 'none'
           }}

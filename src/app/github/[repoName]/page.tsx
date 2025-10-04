@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Repository } from '@/types/github';
 import RepoDetails from '@/components/github/RepoDetails/RepoDetails';
 import CodeEditor from '@/components/github/CodeEditor/CodeEditor';
-import Doxygen from '@/components/github/Doxygen/Doxygen';
+import DocumentationGenerator from '@/components/github/Doxygen/Doxygen';
 
 
 export default function RepoPage() {
@@ -75,7 +75,7 @@ export default function RepoPage() {
       repo={repository.name}
     />
 
-    <Doxygen
+    <DocumentationGenerator
       owner={repository.owner.login}
       repo={repository.name}
       initialBranch="main"

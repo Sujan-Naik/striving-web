@@ -99,10 +99,11 @@ export default function DirectoryExplorer({
 
   const defaultStyle: React.CSSProperties = {
     width: '300px',
-    borderRight: '1px solid #ccc',
-    padding: '10px',
-    backgroundColor: '#fafafa',
+    borderRight: `var(--border-thickness) solid var(--border-color)`,
+    padding: 'var(--padding-thickness)',
+    backgroundColor: 'var(--background-secondary)',
     overflowY: 'auto',
+    color: 'var(--foreground-secondary)',
     ...style
   };
 
@@ -117,8 +118,10 @@ export default function DirectoryExplorer({
             style={{
               width: '100%',
               padding: '5px',
-              border: '1px solid #ccc',
-              borderRadius: '3px'
+              border: `var(--border-thickness) solid var(--border-color)`,
+              borderRadius: 'var(--border-radius)',
+              backgroundColor: 'var(--background-tertiary)',
+              color: 'var(--foreground-primary)'
             }}
           >
             {branches.map(branchItem => (
@@ -131,13 +134,13 @@ export default function DirectoryExplorer({
       )}
 
       {/* Breadcrumb Navigation */}
-      <div style={{ marginBottom: '10px', fontSize: '12px', color: '#666' }}>
+      <div style={{ marginBottom: '10px', fontSize: '12px', color: 'var(--foreground-tertiary)' }}>
         <button
           onClick={goToRoot}
           style={{
             background: 'none',
             border: 'none',
-            color: currentPath ? '#0066cc' : '#666',
+            color: currentPath ? 'var(--link-color)' : 'var(--foreground-tertiary)',
             cursor: currentPath ? 'pointer' : 'default',
             padding: '2px 4px',
             textDecoration: currentPath ? 'underline' : 'none'
@@ -162,7 +165,7 @@ export default function DirectoryExplorer({
                   style={{
                     background: 'none',
                     border: 'none',
-                    color: '#0066cc',
+                    color: 'var(--link-color)',
                     cursor: 'pointer',
                     padding: '2px',
                     textDecoration: 'underline'
@@ -183,11 +186,12 @@ export default function DirectoryExplorer({
             onClick={goToParent}
             style={{
               background: 'none',
-              border: '1px solid #ddd',
+              border: `var(--border-thickness) solid var(--border-color)`,
               padding: '5px 10px',
               cursor: 'pointer',
-              borderRadius: '3px',
-              fontSize: '12px'
+              borderRadius: 'var(--border-radius)',
+              fontSize: '12px',
+              color: 'var(--foreground-primary)'
             }}
           >
             ← Back
@@ -197,7 +201,7 @@ export default function DirectoryExplorer({
 
       {/* Loading State */}
       {isLoading && (
-        <div style={{ textAlign: 'center', padding: '20px', color: '#666' }}>
+        <div style={{ textAlign: 'center', padding: '20px', color: 'var(--foreground-tertiary)' }}>
           Loading...
         </div>
       )}
@@ -205,12 +209,12 @@ export default function DirectoryExplorer({
       {/* Error State */}
       {error && (
         <div style={{
-          color: 'red',
+          color: 'var(--foreground-primary)',
           fontSize: '12px',
           padding: '10px',
           backgroundColor: '#ffe6e6',
-          border: '1px solid #ffcccc',
-          borderRadius: '3px',
+          border: `var(--border-thickness) solid #ffcccc`,
+          borderRadius: 'var(--border-radius)',
           marginBottom: '10px'
         }}>
           {error}
@@ -221,7 +225,7 @@ export default function DirectoryExplorer({
       {!isLoading && !error && (
         <div>
           {contents.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '20px', color: '#666', fontSize: '12px' }}>
+            <div style={{ textAlign: 'center', padding: '20px', color: 'var(--foreground-tertiary)', fontSize: '12px' }}>
               Empty directory
             </div>
           ) : (
@@ -240,9 +244,9 @@ export default function DirectoryExplorer({
                   style={{
                     cursor: 'pointer',
                     padding: '8px 5px',
-                    borderRadius: '3px',
-                    backgroundColor: selectedFile === item.path ? '#e3f2fd' : 'transparent',
-                    border: selectedFile === item.path ? '1px solid #2196f3' : '1px solid transparent',
+                    borderRadius: 'var(--border-radius)',
+                    backgroundColor: selectedFile === item.path ? 'var(--background-primary)' : 'transparent',
+                    border: selectedFile === item.path ? `var(--border-thickness) solid var(--highlight)` : '1px solid transparent',
                     marginBottom: '2px',
                     display: 'flex',
                     alignItems: 'center',
@@ -251,7 +255,7 @@ export default function DirectoryExplorer({
                   }}
                   onMouseEnter={(e) => {
                     if (selectedFile !== item.path) {
-                      e.currentTarget.style.backgroundColor = '#f5f5f5';
+                      e.currentTarget.style.backgroundColor = 'var(--hover)';
                     }
                   }}
                   onMouseLeave={(e) => {
@@ -267,14 +271,15 @@ export default function DirectoryExplorer({
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
-                    flex: 1
+                    flex: 1,
+                    color: 'var(--foreground-primary)'
                   }}>
                     {item.name}
                   </span>
                   {item.type === 'file' && item.size !== undefined && (
                     <span style={{
                       fontSize: '11px',
-                      color: '#888',
+                      color: 'var(--foreground-tertiary)',
                       marginLeft: '5px',
                       flexShrink: 0
                     }}>

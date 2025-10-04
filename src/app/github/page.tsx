@@ -51,7 +51,7 @@ export default function GitHubPage() {
   //
 
   return (
-    <div className={'center-column'}>
+    <div className={'center-column'} style={{width: '100%'}}>
       <h1>GitHub Repository Manager</h1>
       {/*<HeadedLink variant={VariantEnum.Primary} href={'/github/projects'}>Projects</HeadedLink>*/}
       <section className={'center-column'}>
@@ -59,7 +59,7 @@ export default function GitHubPage() {
         <RepoForm onSubmit={handleCreateRepo} isLoading={isCreating} />
       </section>
 
-      <section className={'center-column'}>
+      <section className={'center-column'} style={{width: '100%'}}>
         <h2>Your Repositories</h2>
         {loading ? (
           <p>Loading repositories...</p>

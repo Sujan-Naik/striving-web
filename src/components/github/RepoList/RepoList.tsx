@@ -16,6 +16,8 @@ export default function RepoList({ repositories }: RepoListProps) {
     return <p>No repositories found.</p>;
   }
 
+  console.log(repositories)
+
   const userRepos = repositories
     .filter(repo => repo.owner.login === user.user?.githubId)
     .filter(repo => repo.name.includes(filterText))
@@ -48,36 +50,54 @@ export default function RepoList({ repositories }: RepoListProps) {
       </div>
 
       <HeadedGrid variant={VariantEnum.Outline} height={"100%"} width={"100%"}>
-        {userRepos.map((repo) => (
-          <div key={repo.id} style={{
-            border: '1px solid var(--border-color)',
-            padding: '1rem',
-            borderRadius: '4px',
-            height: '100%',
-            width: '100%'
+  {userRepos.map((repo) => (
+    <div
+      key={repo.id}
+      style={{
+        border: '1px solid var(--border-color)',
+        padding: '1rem',
+        borderRadius: 'var(--border-radius)',
+        boxSizing: 'border-box',
+        height: '100%',
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        color: 'var(--foreground-primary)',
+      }}
+    >
+      <div>
+          <HeadedLink variant={VariantEnum.Primary} href={`github/${repo.name}`}>
+            {repo.name}
+          </HeadedLink>
+        {repo.description && (
+          <p style={{
+            margin: '0 0 0.5rem 0',
+            maxHeight: '3em', // Adjust the height as needed
+            overflowY: 'hidden',
+            textOverflow: 'ellipsis',
+            display: '-webkit-box',
+            WebkitLineClamp: 2, // Number of lines before clipping
+            WebkitBoxOrient: 'vertical',
+            color: 'var(--foreground-secondary)',
           }}>
-            <h3 style={{ margin: '0 0 0.5rem 0' }}>
-              <HeadedLink variant={VariantEnum.Primary} href={`github/${repo.name}`}>
-                {repo.name}
-              </HeadedLink>
-            </h3>
-            {repo.description && (
-              <p style={{ margin: '0 0 0.5rem 0' }}>
-                {repo.description}
-              </p>
-            )}
-            <div style={{
-              display: 'flex',
-              gap: '1rem',
-              fontSize: '0.875rem',
-            }}>
-              <span>⭐ {repo.stargazers_count}</span>
-              <span>🍴 {repo.forks_count}</span>
-              {repo.language && <span>📝 {repo.language}</span>}
-            </div>
-          </div>
-        ))}
-      </HeadedGrid>
+            {repo.description}
+          </p>
+        )}
+      </div>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        color: 'var(--foreground-tertiary)',
+      }}>
+        <span>⭐ {repo.stargazers_count}</span>
+        <span>🍴 {repo.forks_count}</span>
+        {repo.language && <span>📝 {repo.language}</span>}
+      </div>
+    </div>
+  ))}
+</HeadedGrid>
     </div>
   );
 }
