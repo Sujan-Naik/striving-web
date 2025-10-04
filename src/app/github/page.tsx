@@ -6,6 +6,8 @@ import RepoForm from '@/components/github/RepoForm/RepoForm';
 import RepoList from '@/components/github/RepoList/RepoList';
 import {useGithubRepository} from "@/hooks/useGithubRepository";
 import {HeadedLink, VariantEnum} from "headed-ui";
+import {useUser} from "@/context/UserContext";
+import {useSession} from "next-auth/react";
 
 export default function GitHubPage() {
 
@@ -13,6 +15,12 @@ export default function GitHubPage() {
 
     const { repos, loading, error, refetch } = useGithubRepository()
 
+  const session = useSession();
+  if (!session.data?.user){
+    return (<div className={'center-column'}>
+      This Page is only available for logged in users!
+    </div>)
+  }
 
   const handleCreateRepo = async (data: CreateRepoData) => {
     setIsCreating(true);
@@ -40,17 +48,16 @@ export default function GitHubPage() {
     }
   };
 
-  console.log(repos)
   return (
-    <div>
+    <div className={'center-column'}>
       <h1>GitHub Repository Manager</h1>
-      <HeadedLink variant={VariantEnum.Primary} href={'/github/projects'}>Projects</HeadedLink>
-      <section>
+      {/*<HeadedLink variant={VariantEnum.Primary} href={'/github/projects'}>Projects</HeadedLink>*/}
+      <section className={'center-column'}>
         <h2>Create New Repository</h2>
         <RepoForm onSubmit={handleCreateRepo} isLoading={isCreating} />
       </section>
 
-      <section>
+      <section className={'center-column'}>
         <h2>Your Repositories</h2>
         {loading ? (
           <p>Loading repositories...</p>

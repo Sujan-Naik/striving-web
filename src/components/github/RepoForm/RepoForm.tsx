@@ -41,7 +41,7 @@ export default function RepoForm({ onSubmit, isLoading }: RepoFormProps) {
       }}
     >
       {/* Repository Name */}
-      <div style={{ marginBottom: '1rem' }}>
+      <div style={{ marginBottom: '1rem' }} className={'center-column'}>
         <label
           htmlFor="name"
           style={{
