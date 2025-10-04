@@ -1,6 +1,7 @@
 "use client"
 import {HeadedCard, HeadedDropdown, HeadedDropdownOption, HeadedLink, VariantEnum} from 'headed-ui';
 import {useState, useEffect, useRef} from 'react';
+import {useSession} from "next-auth/react";
 
 export default function Header() {
   const [isHovered, setIsInView] = useState(false);
@@ -16,14 +17,27 @@ useEffect(() => {
   return () => observer.disconnect();
 }, []);
 
-const navLinks = [
+
+let navLinks = [
+  { href: "/", label: "Home" },
+  { href: "/projects", label: "Projects" },
+  { href: "/llm", label: "LLM" },
+  { href: "/github", label: "Github" },
+  { href: "/sign-out", label: "Sign Out" }
+];
+
+
+const session = useSession();
+  if (!session.data?.user){
+    let navLinks = [
   { href: "/", label: "Home" },
   { href: "/projects", label: "Projects" },
   { href: "/llm", label: "LLM" },
   { href: "/github", label: "Github" },
   { href: "/login", label: "Login" },
-  { href: "/sign-out", label: "Sign Out" }
 ];
+  }
+
 
 // Inline styles — no dynamic DOM modification after initial load
 const headerStyles = (visible: boolean): React.CSSProperties => ({
