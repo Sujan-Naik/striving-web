@@ -16,11 +16,6 @@ export default function GitHubPage() {
     const { repos, loading, error, refetch } = useGithubRepository()
 
   const session = useSession();
-  if (!session.data?.user){
-    return (<div className={'center-column'}>
-      This Page is only available for logged in users!
-    </div>)
-  }
 
   const handleCreateRepo = async (data: CreateRepoData) => {
     setIsCreating(true);
@@ -47,6 +42,13 @@ export default function GitHubPage() {
       setIsCreating(false);
     }
   };
+
+  // if (!session.data?.user){
+  //   return (<div className={'center-column'}>
+  //     This Page is only available for logged in users!
+  //   </div>)
+  // }
+  //
 
   return (
     <div className={'center-column'}>

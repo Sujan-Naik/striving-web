@@ -16,6 +16,9 @@ export function useGithubRepository() {
       const response = await fetch('/api/github/repos')
 
       if (!response.ok) {
+              const json = await response.json()
+
+        console.log(json)
         throw new Error('Failed to fetch repositories')
       }
 

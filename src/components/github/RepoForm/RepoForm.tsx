@@ -39,6 +39,7 @@ export default function RepoForm({ onSubmit, isLoading }: RepoFormProps) {
         maxWidth: '500px',
         margin: '0 auto',
       }}
+      className={'center-column p-6'}
     >
       {/* Repository Name */}
       <div style={{ marginBottom: '1rem' }} className={'center-column'}>

@@ -29,7 +29,7 @@ let navLinks = [
 
 const session = useSession();
   if (!session.data?.user){
-    let navLinks = [
+     navLinks = [
   { href: "/", label: "Home" },
   { href: "/projects", label: "Projects" },
   { href: "/llm", label: "LLM" },
