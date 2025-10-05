@@ -26,6 +26,14 @@ type ChatTotals = {
 }
 
 const AVAILABLE_MODELS = [
+  { id: 'gpt-5', name: 'GPT-5', provider: 'OpenAI' },
+  { id: 'gpt-5-mini', name: 'GPT-5 Mini', provider: 'OpenAI' },
+  { id: 'gpt-5-nano', name: 'GPT-5 Nano', provider: 'OpenAI' },
+  { id: 'gpt-5-chat-latest', name: 'GPT-5 Chat Latest', provider: 'OpenAI' },
+  { id: 'gpt-5-codex', name: 'GPT-5 Codex', provider: 'OpenAI' },
+  { id: 'gpt-4.1', name: 'GPT-4.1', provider: 'OpenAI' },
+  { id: 'gpt-4.1-mini', name: 'GPT-4.1 Mini', provider: 'OpenAI' },
+  { id: 'gpt-4.1-nano', name: 'GPT-4.1 Nano', provider: 'OpenAI' },
   { id: 'gpt-4o', name: 'GPT-4o', provider: 'OpenAI' },
   { id: 'gpt-4o-mini', name: 'GPT-4o Mini', provider: 'OpenAI' },
   { id: 'gpt-4-turbo', name: 'GPT-4 Turbo', provider: 'OpenAI' },
