@@ -159,7 +159,7 @@ export default function Page() {
           model: selectedModel,
           messages: conversationMessages,
           temperature: 0.7,
-          maxTokens: 4096
+          maxTokens: 40000
         })
       })
 

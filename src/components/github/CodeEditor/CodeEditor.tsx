@@ -1,7 +1,6 @@
 // components/github/CodeEditor/CodeEditor.tsx
 'use client';
 import { useState, useEffect } from 'react';
-import { githubApi } from '@/lib/api-client';
 import { CodeAction } from "@/types/codeActions";
 import DirectoryExplorer from '../DirectoryExplorer/DirectoryExplorer';
 
@@ -67,7 +66,6 @@ function FileSelector({
           </div>
         ))}
       </div>
-      {/*<button onClick={onSend} disabled={selectedFiles.size === 0}>*/}
       <button onClick={onSend} disabled={sending}>
         {sending ? 'Sending...' : 'Send to LLM'}
       </button>
@@ -85,6 +83,8 @@ interface CodeEditorProps {
 }
 
 export default function CodeEditor({ owner, repo, initialPath = '' }: CodeEditorProps) {
+  const fullRepoName = `${owner}/${repo}`;
+
   const [currentPath, setCurrentPath] = useState(initialPath);
   const [currentFile, setCurrentFile] = useState<string>('');
   const [fileContent, setFileContent] = useState<string>('');
@@ -106,20 +106,21 @@ export default function CodeEditor({ owner, repo, initialPath = '' }: CodeEditor
 
   const loadBranches = async () => {
     if (!owner || !repo) return;
-
-    const response = await githubApi.getBranches(owner, repo);
-    if (response.success) {
-      setBranches(response.data || []);
+    const response = await fetch(`/api/github/${fullRepoName}/branches`);
+    if (response.ok) {
+      const data = await response.json();
+      setBranches(data || []);
     }
   };
 
   const handleFileSelect = async (filePath: string) => {
     setIsLoadingFile(true);
     try {
-      const response = await githubApi.getFile(owner, repo, filePath, currentBranch);
-      if (response.success && response.data.decodedContent) {
+      const response = await fetch(`/api/github/${fullRepoName}/file?path=${encodeURIComponent(filePath)}&branch=${currentBranch}`);
+      const data = await response.json();
+      if (response.ok && data.decodedContent) {
         setCurrentFile(filePath);
-        setFileContent(response.data.decodedContent);
+        setFileContent(data.decodedContent);
       }
     } catch (error) {
       console.error('Error loading file:', error);
@@ -130,40 +131,40 @@ export default function CodeEditor({ owner, repo, initialPath = '' }: CodeEditor
 
   const handleDirectoryChange = (path: string) => {
     setCurrentPath(path);
-    // Clear current file when navigating directories
     setCurrentFile('');
     setFileContent('');
   };
 
   const handleBranchChange = (branch: string) => {
     setCurrentBranch(branch);
-    // Clear current file when switching branches
     setCurrentFile('');
     setFileContent('');
   };
 
   const saveFile = async () => {
     if (!currentFile) return;
-
     try {
-      // const sanitized = fileContent.replace(/[^\x00-\xFF]/g, '');
-      const encodedContent = btoa(fileContent);
+      const getFileResp = await fetch(`/api/github/${fullRepoName}/file?path=${encodeURIComponent(currentFile)}&branch=${currentBranch}`);
+      const getFileData = await getFileResp.json();
+      const sha = getFileResp.ok ? getFileData.sha : undefined;
 
-      // Get current file data to get SHA (required for updates)
-      const currentFileResponse = await githubApi.getFile(owner, repo, currentFile, currentBranch);
-      const sha = currentFileResponse.success ? currentFileResponse.data.sha : undefined;
-
-      const response = await githubApi.updateFile(owner, repo, currentFile, {
-        message: `Update ${currentFile}`,
-        content: encodedContent,
-        sha,
-        branch: currentBranch
+      const response = await fetch(`/api/github/${fullRepoName}/file`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          path: currentFile,
+          message: `Update ${currentFile}`,
+          content: fileContent,
+          sha,
+          branch: currentBranch
+        })
       });
 
-      if (response.success) {
+      const result = await response.json();
+      if (response.ok) {
         alert('File saved successfully!');
       } else {
-        alert('Failed to save file: ' + (response.error || 'Unknown error'));
+        alert('Failed to save file: ' + (result.error || 'Unknown error'));
       }
     } catch (error) {
       console.error('Error saving file:', error);
@@ -171,28 +172,26 @@ export default function CodeEditor({ owner, repo, initialPath = '' }: CodeEditor
     }
   };
 
-  // LLM Integration Functions
   const getAllRepositoryFiles = async (path: string = ''): Promise<Array<{path: string, content: string, type: string}>> => {
     const files: Array<{path: string, content: string, type: string}> = [];
     try {
-      const response = await githubApi.getContents(owner, repo, path, currentBranch);
-      if (!response.success) return files;
+      const response = await fetch(`/api/github/${fullRepoName}/contents?path=${encodeURIComponent(path)}&branch=${currentBranch}`);
+      const data = await response.json();
+      if (!response.ok) return files;
 
-      const items = Array.isArray(response.data) ? response.data : [response.data];
-
+      const items = Array.isArray(data) ? data : [data];
       for (const item of items) {
         if (item.type === 'file') {
-          // Get file content
-          const fileResponse = await githubApi.getFile(owner, repo, item.path, currentBranch);
-          if (fileResponse.success && fileResponse.data.decodedContent) {
+          const fileResp = await fetch(`/api/github/${fullRepoName}/file?path=${encodeURIComponent(item.path)}&branch=${currentBranch}`);
+          const fileData = await fileResp.json();
+          if (fileResp.ok && fileData.decodedContent) {
             files.push({
               path: item.path,
-              content: fileResponse.data.decodedContent,
+              content: fileData.decodedContent,
               type: item.type
             });
           }
         } else if (item.type === 'dir') {
-          // Recursively get files from subdirectories
           const subFiles = await getAllRepositoryFiles(item.path);
           files.push(...subFiles);
         }
@@ -205,7 +204,6 @@ export default function CodeEditor({ owner, repo, initialPath = '' }: CodeEditor
 
   const requestLLMChanges = async (prompt: string) => {
     setPendingPrompt(prompt);
-    // Get all files and show selector
     const codebaseFiles = await getAllRepositoryFiles();
     setAllRepoFiles(codebaseFiles);
     setShowFileSelector(true);
@@ -214,10 +212,8 @@ export default function CodeEditor({ owner, repo, initialPath = '' }: CodeEditor
   const [sending, setSending] = useState(false);
 
   const sendToLLM = async () => {
-
-    if (sending) return; // 🚫 Prevent duplicates at function level
+    if (sending) return;
     setSending(true);
-
     const selectedFileData = allRepoFiles.filter(file => selectedFiles.has(file.path));
 
     try {
@@ -234,7 +230,6 @@ export default function CodeEditor({ owner, repo, initialPath = '' }: CodeEditor
       });
 
       const result = await response.json();
-
       if (!result.actions || !Array.isArray(result.actions)) {
         console.error('Invalid response:', result);
         alert('Failed to get code actions from LLM');
@@ -255,7 +250,7 @@ export default function CodeEditor({ owner, repo, initialPath = '' }: CodeEditor
       console.error('Error sending to LLM:', error);
       alert('Failed to send request to LLM');
     } finally {
-      setSending(false); // ✅ Re-enable button after completion
+      setSending(false);
     }
   };
 
@@ -263,32 +258,32 @@ export default function CodeEditor({ owner, repo, initialPath = '' }: CodeEditor
     try {
       for (const action of approvedActions) {
         if (action.type === 'update' || action.type === 'create') {
-          const encodedContent = btoa(action.content || '');
-
-          // Get existing file SHA if it exists
           let sha: string | undefined;
           if (action.type === 'update') {
-            const existingFileResponse = await githubApi.getFile(owner, repo, action.path, currentBranch);
-            if (existingFileResponse.success) {
-              sha = existingFileResponse.data.sha;
+            const resp = await fetch(`/api/github/${fullRepoName}/file?path=${encodeURIComponent(action.path)}&branch=${currentBranch}`);
+            const data = await resp.json();
+            if (resp.ok) {
+              sha = data.sha;
             }
           }
 
-          await githubApi.updateFile(owner, repo, action.path, {
-            message: action.message,
-            content: encodedContent,
-            sha,
-            branch: currentBranch
+          await fetch(`/api/github/${fullRepoName}/file`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              path: action.path,
+              message: action.message,
+              content: action.content,
+              sha,
+              branch: currentBranch
+            })
           });
         }
-        // TODO: Handle delete actions
       }
 
       setPendingActions([]);
       setShowActions(false);
       alert('Changes committed successfully!');
-
-      // Refresh current file if it was modified
       if (currentFile && approvedActions.some(action => action.path === currentFile)) {
         handleFileSelect(currentFile);
       }
@@ -300,10 +295,8 @@ export default function CodeEditor({ owner, repo, initialPath = '' }: CodeEditor
 
   return (
     <div style={{ display: 'flex', height: '600px', border: '1px solid #ccc' }}>
-      {/* Directory Explorer */}
       <DirectoryExplorer
-        owner={owner}
-        repo={repo}
+        fullRepoName={fullRepoName}
         branch={currentBranch}
         onFileSelect={handleFileSelect}
         onDirectoryChange={handleDirectoryChange}
@@ -312,10 +305,7 @@ export default function CodeEditor({ owner, repo, initialPath = '' }: CodeEditor
         branches={branches}
         onBranchChange={handleBranchChange}
       />
-
-      {/* Code Editor */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        {/* LLM Prompt Input */}
         <div style={{ padding: '10px', borderBottom: '1px solid #ccc' }}>
           <input
             type="text"
@@ -336,7 +326,6 @@ export default function CodeEditor({ owner, repo, initialPath = '' }: CodeEditor
           />
         </div>
 
-        {/* File Selector for LLM */}
         {showFileSelector && (
           <FileSelector
             files={allRepoFiles}
@@ -358,11 +347,10 @@ export default function CodeEditor({ owner, repo, initialPath = '' }: CodeEditor
               setSelectedFiles(new Set());
               setPendingPrompt('');
             }}
-              sending={sending}
+            sending={sending}
           />
         )}
 
-        {/* Code Actions */}
         {showActions && (
           <CodeActions
             actions={pendingActions}
@@ -374,7 +362,6 @@ export default function CodeEditor({ owner, repo, initialPath = '' }: CodeEditor
           />
         )}
 
-        {/* File Header */}
         {currentFile && (
           <div style={{
             padding: '10px',
@@ -403,7 +390,6 @@ export default function CodeEditor({ owner, repo, initialPath = '' }: CodeEditor
           </div>
         )}
 
-        {/* Code Editor Textarea */}
         <textarea
           value={fileContent}
           onChange={(e) => setFileContent(e.target.value)}

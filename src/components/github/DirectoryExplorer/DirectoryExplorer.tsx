@@ -1,7 +1,6 @@
 // components/github/DirectoryExplorer/DirectoryExplorer.tsx
 'use client';
 import { useState, useEffect } from 'react';
-import { githubApi } from '@/lib/api-client';
 
 export interface DirectoryItem {
   name: string;
@@ -12,8 +11,7 @@ export interface DirectoryItem {
 }
 
 export interface DirectoryExplorerProps {
-  owner: string;
-  repo: string;
+  fullRepoName: string;
   branch: string;
   onFileSelect?: (filePath: string) => void;
   onDirectoryChange?: (path: string) => void;
@@ -26,8 +24,7 @@ export interface DirectoryExplorerProps {
 }
 
 export default function DirectoryExplorer({
-  owner,
-  repo,
+  fullRepoName,
   branch,
   onFileSelect,
   onDirectoryChange,
@@ -45,34 +42,42 @@ export default function DirectoryExplorer({
 
   useEffect(() => {
     loadContents();
-  }, [currentPath, branch, owner, repo]);
+  }, [currentPath, branch, fullRepoName]);
 
-  const loadContents = async () => {
-    if (!owner || !repo || !branch) return;
+const loadContents = async () => {
+  if (!fullRepoName|| !branch) return;
+  setIsLoading(true);
+  setError(null);
+  try {
+    const res = await fetch(
+      `/api/github/${fullRepoName}/contents?path=${encodeURIComponent(
+        currentPath
+      )}&branch=${branch}`
+    );
+    const response = await res.json();
+    console.log(response)
 
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const response = await githubApi.getContents(owner, repo, currentPath, branch);
-      if (response.success) {
-        const items = Array.isArray(response.data) ? response.data : [response.data];
-        setContents(items.map(item => ({
+    // response is already the data, no .success wrapper
+    if (res.ok) {
+      const items = Array.isArray(response) ? response : [response];
+      setContents(
+        items.map((item: any) => ({
           name: item.name,
           path: item.path,
           type: item.type as 'file' | 'dir',
           sha: item.sha,
           size: item.size
-        })));
-      } else {
-        setError(response.error || 'Failed to load directory contents');
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error occurred');
-    } finally {
-      setIsLoading(false);
+        }))
+      );
+    } else {
+      setError(response.error || 'Failed to load directory contents');
     }
-  };
+  } catch (err) {
+    setError(err instanceof Error ? err.message : 'Unknown error occurred');
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   const navigateToPath = (path: string, isDir: boolean) => {
     if (isDir) {
@@ -146,7 +151,7 @@ export default function DirectoryExplorer({
             textDecoration: currentPath ? 'underline' : 'none'
           }}
         >
-          {repo}
+          {fullRepoName}
         </button>
         {breadcrumbs.map((segment, index) => {
           const isLast = index === breadcrumbs.length - 1;

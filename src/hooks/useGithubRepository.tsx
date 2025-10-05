@@ -13,7 +13,7 @@ export function useGithubRepository() {
     setError(null)
 
     try {
-      const response = await fetch(`/api/github/repos?&per_page=${200}`, {
+      const response = await fetch(`/api/github/list-repos?&per_page=${200}`, {
       method: 'GET', // Use GET for fetching resources
       headers: {
         'Content-Type': 'application/json',

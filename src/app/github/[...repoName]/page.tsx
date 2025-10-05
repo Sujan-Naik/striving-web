@@ -8,34 +8,32 @@ import RepoDetails from '@/components/github/RepoDetails/RepoDetails';
 import CodeEditor from '@/components/github/CodeEditor/CodeEditor';
 import DocumentationGeneration from "@/components/github/DocumentationGeneration/DocumentationGeneration";
 
-
 export default function RepoPage() {
-  const params = useParams();
-  const repoName = params.repoName as string;
+  const params = useParams()!;
+  const owner = params.repoName![0]
+  const repo = params.repoName![1]
+
+
   const [repository, setRepository] = useState<Repository | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    loadRepository();
-  }, [repoName]);
+    if (owner && repo) {
+      loadRepository();
+    }
+  }, [owner, repo]);
 
   const loadRepository = async () => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const userResponse = await fetch('/api/github/user');
-      if (!userResponse.ok) {
-        throw new Error(`Failed to get user: ${userResponse.status}`);
-      }
-      const user = await userResponse.json();
-
-      const reposResponse = await fetch(`/api/github/repos/${repoName}?owner=${user.login}`);
+      // you may not need user info anymore if supporting arbitrary repos
+      const reposResponse = await fetch(`/api/github/${owner}/${repo}`);
       if (!reposResponse.ok) {
-        throw new Error(`Failed to fetch repos: ${reposResponse.status}`);
+        throw new Error(`Failed to fetch repo: ${reposResponse.status}`);
       }
-
       setRepository(await reposResponse.json());
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
@@ -43,6 +41,15 @@ export default function RepoPage() {
       setIsLoading(false);
     }
   };
+
+  if (!owner || !repo) {
+    return (
+      <div>
+        <p>Invalid repository path</p>
+        <Link href="/github">← Back to repositories</Link>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return <div>Loading repository...</div>;
@@ -67,19 +74,11 @@ export default function RepoPage() {
   }
 
   return (
-  <div>
-    <Link href="/github">← Back to repositories</Link>
-    <RepoDetails repository={repository} />
-    <CodeEditor
-      owner={repository.owner.login}
-      repo={repository.name}
-    />
-
-    <DocumentationGeneration
-      owner={repository.owner.login}
-      repo={repository.name}
-      initialBranch="main"
-    />
-  </div>
-);
+    <div>
+      <Link href="/github">← Back to repositories</Link>
+      <RepoDetails repository={repository} />
+      <CodeEditor owner={owner} repo={repo} />
+      <DocumentationGeneration owner={owner} repo={repo} initialBranch="main" />
+    </div>
+  );
 }

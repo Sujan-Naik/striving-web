@@ -28,7 +28,7 @@ export default function GitHubPage() {
       }
       const user = await userResponse.json();
 
-      await fetch(`/api/github/repos?owner=${user.login}`, {
+      await fetch(`/api/github`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
