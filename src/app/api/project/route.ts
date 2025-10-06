@@ -22,17 +22,22 @@ export async function GET(request: NextRequest) {
     console.log('connected');
     const { searchParams } = new URL(request.url);
     const ownerId = searchParams.get('ownerId');
+        console.log('get ownerId');
 
     if (ownerId) {
+            console.log('ownerId');
+
       const projects = await projectService.getProjectsByOwner(ownerId);
       return NextResponse.json(projects);
     } else {
+            console.log('!ownerId');
+
       const projects = await projectService.getProjects();
       return NextResponse.json(projects);
     }
 
     // return NextResponse.json({ error: 'ownerId required' }, { status: 400 });
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch projects' }, { status: 500 });
+    return NextResponse.json({ error: `Failed to fetch projects: ${error}` }, { status: 500 });
   }
 }

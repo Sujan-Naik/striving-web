@@ -16,9 +16,7 @@ export default function Layout({
   const {projectId, docsId} = React.use(params);
   return (
       <div>
-
-                  <DocsList/>
-<DocsProvider docsId={docsId} projectId={projectId}>
+          <DocsProvider docsId={docsId} projectId={projectId}>
         {children}
       </DocsProvider>
       </div>

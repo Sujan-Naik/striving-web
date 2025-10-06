@@ -26,16 +26,13 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
   return (
     <div className="flex flex-col gap-2">
       {session && (
-        <div className="mb-4 p-4 rounded">
-          <Link href={"/"}>
-            Main Page
-          </Link>
+        <div className="mb-4 p-4 rounded center-column">
           <p>Signed in as {session.user?.email}</p>
           <p>Connected providers: {connectedAccounts.map((acc) => acc.provider).join(", ")}</p>
-          <details>
-            <summary>Account Details</summary>
-            <pre>{JSON.stringify(connectedAccounts, null, 2)}</pre>
-          </details>
+          {/*<details>*/}
+          {/*  <summary>Account Details</summary>*/}
+          {/*  <pre>{JSON.stringify(connectedAccounts, null, 2)}</pre>*/}
+          {/*</details>*/}
         </div>
       )}
 
@@ -48,6 +45,7 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
 
         return (
           <form
+              className={'center-column'}
             key={provider.id}
             action={async () => {
               "use server"

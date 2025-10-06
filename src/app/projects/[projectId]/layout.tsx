@@ -21,29 +21,52 @@ function LayoutContent({ editor, preview }: {editor: React.ReactNode, preview: R
     const bothVisible = showEditor && showPreview;
 
     return (
-      <div style={{ height: '90vh', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
         <div style={{ flexShrink: 0 }}>
           <ProjectMenu/>
         </div>
+                  <div style={{ display: 'flex', flexDirection: 'row', width: '100vw' }}>
+                      {showEditor && showPreview &&
+                          <>
+                                  <HeadedCard variant={VariantEnum.Outline} width={'50%'} style={{display: 'flex', justifyContent: 'center'}}>
+                                        <HeadedSwitch checked={showEditor} onChange={setShowEditor} variant={VariantEnum.Secondary}/>
+                                  </HeadedCard>
+                                  <HeadedCard variant={VariantEnum.Outline} width={'50%'} style={{display: 'flex', justifyContent: 'center'}}>
+                                    <HeadedSwitch checked={showPreview} onChange={setShowPreview} variant={VariantEnum.Secondary}/>
+                                  </HeadedCard>
+                                  </>
+                      }
+                      {showEditor && !showPreview &&
+                          <div style={{display: 'flex', justifyContent: 'end', width: '100%'}}>
+                                  <HeadedCard variant={VariantEnum.Outline} width={'50%'} style={{display: 'flex', justifyContent: 'center'}}>
+                                    <HeadedSwitch checked={showPreview} onChange={setShowPreview} variant={VariantEnum.Secondary}/>
+                                  </HeadedCard>
+                                  </div>
 
-                  <div style={{ display: 'flex', flexDirection: 'row' }}>
-                      <HeadedCard variant={VariantEnum.Outline} width={'50%'} style={{display: 'flex', justifyContent: 'center'}}>
-                            <HeadedSwitch checked={showEditor} onChange={setShowEditor} variant={VariantEnum.Secondary}/>
-                      </HeadedCard>
-                      <HeadedCard variant={VariantEnum.Outline} width={'50%'} style={{display: 'flex', justifyContent: 'center'}}>
-                        <HeadedSwitch checked={showPreview} onChange={setShowPreview} variant={VariantEnum.Secondary}/>
-                      </HeadedCard>
+                      }
+
+                      {!showEditor && showPreview &&
+                          <>
+                                  <HeadedCard variant={VariantEnum.Outline} width={'50%'} style={{display: 'flex', justifyContent: 'center'}}>
+                                        <HeadedSwitch checked={showEditor} onChange={setShowEditor} variant={VariantEnum.Secondary}/>
+                                  </HeadedCard>
+                                  </>
+                      }
                   </div>
 
         <div style={{ display: 'flex', flex: 1 }}>
           {showEditor && (
             <div style={{
-              width: bothVisible ? '50%' : '100%',
+              width: bothVisible ? '50vw' : '100%',
               borderRight: bothVisible ? '1px solid #ccc' : 'none',
               display: 'flex',
               justifyContent: 'center',
                 overflowY: 'auto',
-                height: '90vh'
+                maxWidth: '100%',
+                flexWrap: 'wrap',
+                height: '100%',
+                padding: '5px',
+                overscrollBehaviorY: 'contain'
             }}>
               {editor}
             </div>
@@ -51,11 +74,15 @@ function LayoutContent({ editor, preview }: {editor: React.ReactNode, preview: R
 
           {showPreview && (
             <div style={{
-              width: bothVisible ? '50%' : '100%',
+              width: bothVisible ? '50vw' : '100%',
               display: 'flex',
               justifyContent: 'center',
                 overflowY: 'auto',
-                height: '90vh'
+                maxWidth: '100%',
+                flexWrap: 'wrap',
+                height: '100%',
+                padding: '5px',
+                overscrollBehaviorY: 'contain'
             }}>
               {preview}
             </div>
@@ -66,7 +93,7 @@ function LayoutContent({ editor, preview }: {editor: React.ReactNode, preview: R
   }
 
   return (
-    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', overscrollBehaviorY: 'contain' }}>
       <div style={{ flexShrink: 0 }}>
       </div>
       <div style={{ flex: 1, display: 'flex' }}>
@@ -112,7 +139,6 @@ export default function Layout({
         </ProjectProvider>
   );
   }
-
 
   return (
           <UserProvider username={session.user.name}>

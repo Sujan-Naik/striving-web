@@ -39,7 +39,7 @@ export default function FeatureDisplay({ projectId }: FeatureDisplayProps) {
     const children = features.filter(f => f.parent === feature._id);
 
     return (
-      <div key={feature._id} style={{ marginLeft: `${level * 20}px`, marginBottom: '1rem' }}>
+      <div key={feature._id} style={{ marginLeft: `${level * 20}px`, marginBottom: '1rem', width: '100%'}} >
         <FeatureDisplaySingle feature={feature}/>
         {children.map(child => renderFeature(child, level + 1))}
       </div>
@@ -52,12 +52,12 @@ export default function FeatureDisplay({ projectId }: FeatureDisplayProps) {
   const rootFeatures = buildHierarchy(features);
 
   return (
-    <div className={'center-column'}>
+    <>
       <h1>Features</h1>
             <HeadedTabs tabs={rootFeatures.map(value => value.title)} >
 
       {rootFeatures.map(feature => renderFeature(feature))}
             </HeadedTabs>
-    </div>
+    </>
   );
 }

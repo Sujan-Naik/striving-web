@@ -59,7 +59,7 @@ export default function ManualSectionEditor({projectId, manualSection}: {project
         value={content}
         onChange={(e) => setContent(e.target.value)}
         rows={10}
-                      markdown={true}
+                      markdown={true} height={'auto'}
       />
       <div>
         <HeadedButton variant={VariantEnum.Outline} onClick={handleSave} disabled={saving}>

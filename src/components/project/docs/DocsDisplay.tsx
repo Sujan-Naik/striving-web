@@ -6,6 +6,8 @@ import DocsSectionDisplay from "@/components/project/docs/section/DocsSectionDis
 import { HeadedTabs } from "headed-ui";
 import {IDocs, IDocsSectionOrder} from "@/types/project/Docs";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+
 
 interface SectionNode extends IDocsSectionOrder {
   children: SectionNode[];
@@ -74,14 +76,14 @@ export default function DocsDisplay() {
   };
 
   const renderSectionNode = (node: SectionNode): JSX.Element => (
-    <div key={node.docsSection._id} style={{ marginLeft: `${node.level * 20}px` }}>
+    <div  className={'indented-block'} key={node.docsSection._id} style={{ marginLeft: `${node.level * 20}px`, display: 'block' }}>
       <DocsSectionDisplay section={node.docsSection} />
       {node.children.map(child => renderSectionNode(child))}
     </div>
   );
 
   const renderTabContent = (rootNode: SectionNode): JSX.Element => (
-    <div key={rootNode.docsSection._id}>
+    <div key={rootNode.docsSection._id} >
       {rootNode.children.map(child => renderSectionNode(child))}
     </div>
   );
@@ -94,15 +96,15 @@ export default function DocsDisplay() {
   const tabTitles = topLevelSections.map(section => section.docsSection.title);
 
   return (
-    <div>
-      <div className={"center-column"} style={{ whiteSpace: 'pre-wrap' }}>
-        <ReactMarkdown>{docs.content}</ReactMarkdown>
+    <div className={'indented-block'}>
+      <div className={"center-column"} style={{ whiteSpace: 'pre-wrap'}}>
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>{docs.content}</ReactMarkdown>
       </div>
 
       <HeadedTabs tabs={tabTitles}>
         {topLevelSections.map(section =>
             <div>
-              <ReactMarkdown>{section.docsSection.content}</ReactMarkdown>
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{section.docsSection.content}</ReactMarkdown>
               {renderTabContent(section)}
         </div>
         )}

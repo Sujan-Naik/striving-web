@@ -1,51 +1,70 @@
-// app/api/github/file/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-import { githubApi } from "@/lib/api-client";
+import { NextRequest, NextResponse } from 'next/server'
+import { githubApi } from "@/lib/api-client"
 
-export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const owner = searchParams.get('owner');
-  const repo = searchParams.get('repo');
-  const path = searchParams.get('path') || '';
-  const branch = searchParams.get('branch') || 'main';
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ githubUsername: string; repoId: string }> }
+) {
+  try {
+    const { githubUsername, repoId } = await params
+    const { searchParams } = new URL(request.url)
+    
+    const path = searchParams.get('path')
+    const branch = searchParams.get('branch') || 'main'
 
-  if (!owner || !repo) {
-    return NextResponse.json({ error: 'Owner and repo required' }, { status: 400 });
-  }
-
-
-  const response = await githubApi.getFile(owner, repo, path, branch);
-
-  if (!response.success){
-        return NextResponse.json({ success: false, error: 'Failed to fetch contents' }, { status: 500 });
+    if (!githubUsername || !repoId) {
+      return NextResponse.json({ error: 'Owner and repo required' }, { status: 400 })
     }
 
-  return NextResponse.json(response);
-}
+    if (!path) {
+      return NextResponse.json({ error: 'File path required' }, { status: 400 })
+    }
 
-export async function PUT(request: NextRequest) {
-  const body = await request.json();
-  console.log(body)
-  const { owner, repo, path, message, content, sha, branch = 'main' } = body;
-
-  if (!owner || !repo || !path || !message || !content) {
-    return NextResponse.json({ error: 'Owner, repo, path, message and content required' }, { status: 400 });
-  }
-
-  try {
-    const response = await githubApi.updateFile(owner, repo, path, {
-      message,
-      content: btoa(content), // Encode here
-      sha,
-      branch
-    });
+    const response = await githubApi.getFile(githubUsername, repoId, path, branch)
 
     if (!response.success) {
-      return NextResponse.json({ success: false, error: 'Failed to update file' }, { status: 500 });
+      return NextResponse.json({ error: response.error || 'Failed to fetch file' }, { status: response.status || 500 })
     }
 
-    return NextResponse.json(response);
+    return NextResponse.json(response.data)
   } catch (error) {
-    return NextResponse.json({ success: false, error: 'Failed to update file' }, { status: 500 });
+    console.error('Error fetching file:', error)
+    return NextResponse.json({ error: 'Failed to fetch file' }, { status: 500 })
+  }
+}
+
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ githubUsername: string; repoId: string }> }
+) {
+  try {
+    const { githubUsername, repoId } = await params
+    const body = await request.json()
+    
+    const { path, message, content, sha, branch = 'main' } = body
+
+    if (!githubUsername || !repoId) {
+      return NextResponse.json({ error: 'Owner and repo required' }, { status: 400 })
+    }
+
+    if (!path || !message || content === undefined) {
+      return NextResponse.json({ error: 'Path, message and content are required' }, { status: 400 })
+    }
+
+    const response = await githubApi.updateFile(githubUsername, repoId, path, {
+      message,
+      content: btoa(content),
+      sha,
+      branch
+    })
+
+    if (!response.success) {
+      return NextResponse.json({ error: response.error || 'Failed to update file' }, { status: response.status || 500 })
+    }
+
+    return NextResponse.json(response.data)
+  } catch (error) {
+    console.error('Error updating file:', error)
+    return NextResponse.json({ error: 'Failed to update file' }, { status: 500 })
   }
 }

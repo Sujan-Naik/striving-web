@@ -52,7 +52,8 @@ return (
           margin: '4px 0',
           marginLeft: `${level * 20}px`,
           border: '1px solid #ccc',
-          backgroundColor: isSelected ? 'var(--highlight)' : 'var(--hover)'
+          backgroundColor: isSelected ? 'var(--highlight)' : 'var(--hover)',
+          display: 'block'
         }}
       >
         <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -207,7 +208,7 @@ const updateDocsSections = async () => {
   try {
     const docsSections = buildDocsSections();
 
-    const response = await fetch(`/api/project/${projectId}/docs/docs-section`, {
+    const response = await fetch(`/api/project/${projectId}/docs/${docs._id}/docs-section`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ docsSections })
@@ -352,7 +353,9 @@ else {
           className={`feature-item ${!isValidDropZone ? 'invalid-drop' : ''} ${isDragging ? 'dragging' : ''}`}
           style={{
             marginLeft: `${level * 20}px`,
-            opacity: isDragging ? 0.5 : 1
+            opacity: isDragging ? 0.5 : 1,
+                      display: 'block'
+
           }}
       >
       <HeadedInput width={"100%"} variant={VariantEnum.Outline}
@@ -387,7 +390,7 @@ return (
         value={docs.content}
         onChange={(e) => setDocs({ ...docs, content: e.target.value })}
         rows={15}
-                      markdown={true}
+                      markdown={true} height={'auto'}
       />
       <HeadedButton variant={VariantEnum.Outline} type="submit" disabled={loading}>
         {'Update Docs'}

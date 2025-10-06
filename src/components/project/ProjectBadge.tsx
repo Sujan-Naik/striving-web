@@ -1,5 +1,8 @@
 import {Project} from "@/types/project/Project";
 import {HeadedCard, HeadedLink, VariantEnum} from "headed-ui";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+
 
 export default function ProjectBadge({ project }: { project: Project }) {
   return (
@@ -7,7 +10,7 @@ export default function ProjectBadge({ project }: { project: Project }) {
         <HeadedCard variant={VariantEnum.Primary}>
           <p>{project.name}</p>
           <p>Owned by: {project.owner.username}</p>
-          <p>{project.description}</p>
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>{project.description}</ReactMarkdown>
           {project.members.map((member, index) => (
             <p key={index}>{member.username}</p>
           ))}

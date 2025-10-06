@@ -47,9 +47,11 @@ export function ProjectEdit() {
           <HeadedTextArea variant={VariantEnum.Primary}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="border p-2 w-full h-24"
+            className="border p-2 w-full"
                           placeholder={project.description}
                           markdown={true}
+                          height={'auto'}
+
           />
         </div>
 

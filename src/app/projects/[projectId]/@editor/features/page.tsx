@@ -23,11 +23,11 @@ export default function Page(){
     const children = features.filter(f => f.parent === feature._id);
     if (children) {
       return (
-          <div  key={feature._id} style={{marginLeft: `${level * 20}px`}}>
+          <div  key={feature._id} style={{marginLeft: `${level * 20}px`, width: '100%'}}>
             <FeatureEditor projectId={projectId} feature={feature}/>
             <HeadedAccordion>
               {children.map(child =>
-                  <AccordionItem title={child.title} variant={VariantEnum.Outline} key={child._id}>
+                  <AccordionItem title={child.title} variant={VariantEnum.Outline} key={child._id} >
                     {renderFeatureEditor(child, level + 1)}
                   </AccordionItem>
                     )}

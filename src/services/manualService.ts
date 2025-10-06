@@ -19,7 +19,7 @@ export const manualService = {
 },
 
   async getById(id: string): Promise<IManual | null> {
-    return await Manual.findById(id).populate('project').populate('manualSections');
+    return await Manual.findById(id).populate('project').populate('manualSections').populate('manualSections.manualSection').populate('manualSections.parentSection');
   },
 
   async getByProject(projectId: string): Promise<IManual[]> {

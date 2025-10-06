@@ -1,52 +1,26 @@
 'use client';
 
-import {useEffect, useState} from 'react';
-import {useUser} from "@/context/UserContext";
-import {HeadedButton, HeadedInput, HeadedSelect, HeadedTextArea, VariantEnum} from "headed-ui";
+import { useState } from 'react';
+import { useUser } from "@/context/UserContext";
+import { HeadedButton, HeadedInput, HeadedSelect, HeadedTextArea, VariantEnum } from "headed-ui";
+import { useGithubRepository } from "@/hooks/useGithubRepository"; // Update path as needed
 
 interface CreateProjectProps {
   onProjectCreated?: (project: any) => void;
 }
 
-interface Repository {
-  id: number;
-  name: string;
-  full_name: string;
-}
-
 export default function CreateProject({ onProjectCreated }: CreateProjectProps) {
-  const {user} = useUser();
+  const { user } = useUser();
+  const { repos, loading: loadingRepos, error: repoError } = useGithubRepository();
 
   const [formData, setFormData] = useState({
     name: '',
     description: '',
     githubRepo: ''
   });
-  const [repositories, setRepositories] = useState<Repository[]>([]);
+
   const [loading, setLoading] = useState(false);
-  const [loadingRepos, setLoadingRepos] = useState(false);
   const [error, setError] = useState('');
-
-  useEffect(() => {
-    const fetchRepositories = async () => {
-      setLoadingRepos(true);
-      try {
-        const response = await fetch('/api/github/repos');
-        if (!response.ok) throw new Error('Failed to fetch repositories');
-        const repos = await response.json();
-        setRepositories(repos);
-        console.log(repos)
-      } catch (err) {
-        setError('Failed to load repositories');
-      } finally {
-        setLoadingRepos(false);
-      }
-    };
-
-    fetchRepositories();
-  }, []);
-
-
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,7 +42,6 @@ export default function CreateProject({ onProjectCreated }: CreateProjectProps) 
 
       if (!response.ok) throw new Error('Failed to create project');
 
-
       const project = await response.json();
 
       onProjectCreated?.(project);
@@ -87,10 +60,14 @@ export default function CreateProject({ onProjectCreated }: CreateProjectProps) 
     }));
   };
 
+  // Display repo error if there's one, otherwise display form error
+  const displayError = repoError || error;
+
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className={'center-column'}>
       <div>
-        <HeadedInput width={"100%"}
+        <HeadedInput
+          width={"100%"}
           name="name"
           placeholder="Project name"
           value={formData.name}
@@ -101,23 +78,24 @@ export default function CreateProject({ onProjectCreated }: CreateProjectProps) 
       </div>
 
       <div>
-        <HeadedTextArea width={"100%"}
-            variant={VariantEnum.Outline}
+        <HeadedTextArea
+          width={"100%"}
+          variant={VariantEnum.Outline}
           name="description"
           placeholder="Project description"
           value={formData.description}
           onChange={handleChange}
           required
-                        markdown={false}
+          markdown={false}
         />
       </div>
 
       <div>
         <HeadedSelect
-            name="githubRepo"
+          name="githubRepo"
           options={[
             loadingRepos ? 'Loading repositories...' : 'Select a repository',
-            ...repositories.map(repo => repo.full_name)
+            ...repos.map(repo => repo.full_name)
           ]}
           label="GitHub Repository"
           description="Choose a repository to link with your project"
@@ -126,9 +104,13 @@ export default function CreateProject({ onProjectCreated }: CreateProjectProps) 
         />
       </div>
 
-      {error && <div style={{ color: 'red' }}>{error}</div>}
+      {displayError && <div style={{ color: 'red' }}>{displayError}</div>}
 
-      <HeadedButton variant={VariantEnum.Outline} type="submit" disabled={loading || loadingRepos}>
+      <HeadedButton
+        variant={VariantEnum.Outline}
+        type="submit"
+        disabled={loading || loadingRepos}
+      >
         {loading ? 'Creating...' : 'Create Project'}
       </HeadedButton>
     </form>

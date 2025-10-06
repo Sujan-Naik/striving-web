@@ -1,6 +1,7 @@
 'use client'
-import { useState } from 'react';
+import {useState} from 'react';
 import {useProject} from "@/context/ProjectContext";
+import {HeadedButton, HeadedInput, VariantEnum} from "headed-ui";
 
 export default function DocsCreate(){
   const [content, setContent] = useState('');
@@ -9,6 +10,7 @@ export default function DocsCreate(){
 
 
   const handleCreate = async () => {
+      if (!content.trim()) return;
     await fetch(`/api/project/${project._id}/docs`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -17,13 +19,15 @@ export default function DocsCreate(){
   };
 
   return (
-    <div>
-      <input
+    <div className={'center-column'} style={{width: '100%'}}>
+      <HeadedInput
         value={content}
         onChange={(e) => setContent(e.target.value)}
-        placeholder="Enter content"
+        placeholder="Name your next Docs"
+        variant={VariantEnum.Secondary}
+        width={'auto'}
       />
-      <button onClick={handleCreate}>Create</button>
+      <HeadedButton variant={VariantEnum.Secondary} onClick={handleCreate} disabled={!content.trim()} >Create</HeadedButton>
     </div>
   );
 }
