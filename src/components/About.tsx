@@ -46,7 +46,7 @@ export default function AboutPage() {
           <p
           style={{ color: 'var(--foreground-secondary)' }}
         >
-            We offer <HeadedLink variant={VariantEnum.Outline} href={'/github'}>a GPT-5 powered Github Repository generator</HeadedLink>
+            We offer <HeadedLink variant={VariantEnum.Outline} href={'/github'}>an AI powered Github Repository generator</HeadedLink>
              to create Github repositories or edit your currently available ones if desired!
           </p>
         </div>

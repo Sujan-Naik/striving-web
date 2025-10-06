@@ -1,8 +1,67 @@
 // components/github/CodeEditor/CodeEditor.tsx
 'use client';
-import { useState, useEffect } from 'react';
-import { CodeAction } from "@/types/codeActions";
+import {useEffect, useState} from 'react';
+import {CodeAction} from "@/types/codeActions";
 import DirectoryExplorer from '../DirectoryExplorer/DirectoryExplorer';
+import {HeadedSelect, VariantEnum} from "headed-ui";
+
+// AVAILABLE_MODELS - extended with Grok models
+const AVAILABLE_MODELS = [
+  // OpenAI models
+  { id: 'gpt-5', name: 'GPT-5', provider: 'OpenAI' },
+  { id: 'gpt-5-mini', name: 'GPT-5 Mini', provider: 'OpenAI' },
+  { id: 'gpt-5-nano', name: 'GPT-5 Nano', provider: 'OpenAI' },
+  { id: 'gpt-5-chat-latest', name: 'GPT-5 Chat Latest', provider: 'OpenAI' },
+  { id: 'gpt-4.1', name: 'GPT-4.1', provider: 'OpenAI' },
+  { id: 'gpt-4.1-mini', name: 'GPT-4.1 Mini', provider: 'OpenAI' },
+  { id: 'gpt-4.1-nano', name: 'GPT-4.1 Nano', provider: 'OpenAI' },
+  { id: 'gpt-4o', name: 'GPT-4o', provider: 'OpenAI' },
+  { id: 'gpt-4o-mini', name: 'GPT-4o Mini', provider: 'OpenAI' },
+  { id: 'gpt-4o-2024-05-13', name: 'GPT-4o (2024-05-13)', provider: 'OpenAI' },
+  { id: 'gpt-4-turbo', name: 'GPT-4 Turbo', provider: 'OpenAI' },
+  { id: 'gpt-3.5-turbo', name: 'GPT-3.5 Turbo', provider: 'OpenAI' },
+  { id: 'o3', name: 'o3', provider: 'OpenAI' },
+  { id: 'o4-mini', name: 'o4-mini (efficient reasoning)', provider: 'OpenAI' },
+  { id: 'o3-mini', name: 'o3-mini', provider: 'OpenAI' },
+  { id: 'o1-mini', name: 'o1-mini', provider: 'OpenAI' },
+  // Grok models
+  { id: 'grok-code-fast-1', name: 'Grok-Code-Fast-1', provider: 'xAI' },
+  { id: 'grok-4-fast-reasoning', name: 'Grok-4-Fast Reasoning', provider: 'xAI' },
+  { id: 'grok-4-fast-non-reasoning', name: 'Grok-4-Fast Non-Reasoning', provider: 'xAI' },
+  { id: 'grok-4-0709', name: 'Grok-4-0709', provider: 'xAI' },
+  { id: 'grok-3-mini', name: 'Grok-3 Mini', provider: 'xAI' },
+  { id: 'grok-3', name: 'Grok-3', provider: 'xAI' },
+] as const;
+
+type ModelId = typeof AVAILABLE_MODELS[number]['id'];
+
+// PRICING for display in UI (prompt/completion per million tokens)
+const PRICING = {
+  // OpenAI
+  "gpt-5": { prompt: 1.25, completion: 10.00 },
+  "gpt-5-mini": { prompt: 0.25, completion: 2.00 },
+  "gpt-5-nano": { prompt: 0.05, completion: 0.40 },
+  "gpt-5-chat-latest": { prompt: 1.25, completion: 10.00 },
+  "gpt-4.1": { prompt: 2.00, completion: 8.00 },
+  "gpt-4.1-mini": { prompt: 0.40, completion: 1.60 },
+  "gpt-4.1-nano": { prompt: 0.10, completion: 0.40 },
+  "gpt-4o": { prompt: 2.50, completion: 10.00 },
+  "gpt-4o-2024-05-13": { prompt: 5.00, completion: 15.00 },
+  "gpt-4o-mini": { prompt: 0.15, completion: 0.60 },
+  "o3": { prompt: 2.00, completion: 8.00 },
+  "o4-mini": { prompt: 1.10, completion: 4.40 },
+  "o3-mini": { prompt: 1.10, completion: 4.40 },
+  "o1-mini": { prompt: 1.10, completion: 4.40 },
+  "gpt-4-turbo": { prompt: 10.00, completion: 30.00 },
+  "gpt-3.5-turbo": { prompt: 0.50, completion: 1.50 },
+  // Grok
+  "grok-code-fast-1": { prompt: 0.20, completion: 1.50 },
+  "grok-4-fast-reasoning": { prompt: 0.20, completion: 0.80 },
+  "grok-4-fast-non-reasoning": { prompt: 0.20, completion: 0.80 },
+  "grok-4-0709": { prompt: 5.00, completion: 15.00 },
+  "grok-3-mini": { prompt: 0.30, completion: 0.50 },
+  "grok-3": { prompt: 3.00, completion: 15.00 },
+} as const;
 
 interface CodeActionsProps {
   actions: CodeAction[];
@@ -34,6 +93,8 @@ function FileSelector({
   onSend,
   onCancel,
   sending,
+  selectedModel,
+  setSelectedModel,
 }: {
   files: Array<{ path: string; content: string; type: string }>;
   selectedFiles: Set<string>;
@@ -43,10 +104,35 @@ function FileSelector({
   onSend: () => void;
   onCancel: () => void;
   sending: boolean;
+  selectedModel: ModelId;
+  setSelectedModel: (model: ModelId) => void;
+
+
+
 }) {
+
+  const options = AVAILABLE_MODELS.map(model => {
+            const price = PRICING[model.id as keyof typeof PRICING];
+            return {
+                value: model.id,
+                label: `${model.name} (${model.provider}) - In: ${price.prompt.toFixed(2)} / Out: ${price.completion.toFixed(2)} per MTok`
+          }})
+
   return (
     <div style={{ padding: '10px', borderBottom: '1px solid #ccc'}}>
       <h4>Select files to send to LLM</h4>
+      <div style={{ marginBottom: '10px' }}>
+        <label style={{ fontSize: 14, color: "#666" }}>
+          Model:
+        </label>
+        <HeadedSelect
+            variant={VariantEnum.Outline}
+          value={selectedModel}
+          onChange={(e) => setSelectedModel(e.target.value as ModelId)}
+          label={'Model'}
+            options={options}
+        />
+      </div>
       <div style={{ marginBottom: '10px' }}>
         <button onClick={onSelectAll}>Select All</button>
         <button onClick={onDeselectAll} style={{ marginLeft: '5px' }}>Deselect All</button>
@@ -99,6 +185,7 @@ export default function CodeEditor({ owner, repo, initialPath = '' }: CodeEditor
   const [showFileSelector, setShowFileSelector] = useState(false);
   const [allRepoFiles, setAllRepoFiles] = useState<Array<{path: string, content: string, type: string}>>([]);
   const [pendingPrompt, setPendingPrompt] = useState<string>('');
+  const [selectedModel, setSelectedModel] = useState<ModelId>('o4-mini');
 
   useEffect(() => {
     loadBranches();
@@ -225,7 +312,8 @@ export default function CodeEditor({ owner, repo, initialPath = '' }: CodeEditor
           owner,
           repo,
           branch: currentBranch,
-          codebase: selectedFileData
+          codebase: selectedFileData,
+          model: selectedModel, // Pass selected model
         })
       });
 
@@ -294,7 +382,7 @@ export default function CodeEditor({ owner, repo, initialPath = '' }: CodeEditor
   };
 
   return (
-    <div style={{ display: 'flex', height: '600px', border: '1px solid #ccc' }}>
+    <div style={{ display: 'flex', height: 'auto', border: '1px solid #ccc' }}>
       <DirectoryExplorer
         fullRepoName={fullRepoName}
         branch={currentBranch}
@@ -348,6 +436,8 @@ export default function CodeEditor({ owner, repo, initialPath = '' }: CodeEditor
               setPendingPrompt('');
             }}
             sending={sending}
+            selectedModel={selectedModel}
+            setSelectedModel={setSelectedModel}
           />
         )}
 

@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
+import {useEffect, useState} from 'react';
+import {useParams} from 'next/navigation';
 import Link from 'next/link';
-import { Repository } from '@/types/github';
+import {Repository} from '@/types/github';
 import RepoDetails from '@/components/github/RepoDetails/RepoDetails';
 import CodeEditor from '@/components/github/CodeEditor/CodeEditor';
-import DocumentationGeneration from "@/components/github/DocumentationGeneration/DocumentationGeneration";
+import {HeadedLink, VariantEnum} from "headed-ui";
 
 export default function RepoPage() {
   const params = useParams()!;
@@ -74,11 +74,15 @@ export default function RepoPage() {
   }
 
   return (
-    <div>
-      <Link href="/github">← Back to repositories</Link>
-      <RepoDetails repository={repository} />
-      <CodeEditor owner={owner} repo={repo} />
-      <DocumentationGeneration owner={owner} repo={repo} initialBranch="main" />
+    <div className={'center-column w-full'}>
+      <div className={'flex flex-row w-full center-column'}>
+        <HeadedLink variant={VariantEnum.Outline} href="/github">← Back to repositories</HeadedLink>
+        <RepoDetails repository={repository} />
+      </div>
+        <div className={'w-full'}>
+          <CodeEditor owner={owner} repo={repo} />
+        </div>
+
     </div>
   );
 }

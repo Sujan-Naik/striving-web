@@ -154,7 +154,7 @@ export default function Load() {
                 animation={TextAnimationType.TYPEWRITER}
                 colors={['var(--foreground-primary)']}
                 delay={0}
-                speed={10}
+                speed={5}
               >
                 Collaborate on software projects and generate documentation and user-ready manuals effortlessly
               </HeadedTextAnim>

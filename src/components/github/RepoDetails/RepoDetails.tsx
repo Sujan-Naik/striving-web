@@ -1,4 +1,5 @@
-import { Repository } from '@/types/github';
+import {Repository} from '@/types/github';
+import {HeadedCard, HeadedLink, VariantEnum} from "headed-ui";
 
 interface RepoDetailsProps {
   repository: Repository;
@@ -6,173 +7,57 @@ interface RepoDetailsProps {
 
 export default function RepoDetails({ repository }: RepoDetailsProps) {
   return (
-    <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-      <header
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '1rem',
-        }}
-      >
+    <HeadedCard variant={VariantEnum.Primary} width={'100%'}>
         <h1 style={{ margin: 0 }}>{repository.name}</h1>
-        <a
+        <HeadedLink
           href={repository.html_url}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            textDecoration: 'none',
-            padding: '0.5rem 1rem',
-            border: '1px solid #0070f3',
-            borderRadius: '4px',
-          }}
+          variant={VariantEnum.Primary}
         >
           View on GitHub
-        </a>
-      </header>
-
+        </HeadedLink>
       {repository.description && (
-        <p
-          style={{
-            fontSize: '1.125rem',
-            marginBottom: '2rem',
-          }}
-        >
+        <p>
           {repository.description}
         </p>
       )}
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-          gap: '1rem',
-          marginBottom: '2rem',
-        }}
-      >
-        <div
-          style={{
-            textAlign: 'center',
-            padding: '1rem',
-            border: '1px solid #eee',
-            borderRadius: '4px',
-          }}
-        >
-          <span
-            style={{
-              display: 'block',
-              fontSize: '0.875rem',
-              marginBottom: '0.25rem',
-            }}
-          >
-            Stars
-          </span>
-          <span
-            style={{
-              display: 'block',
-              fontSize: '1.25rem',
-              fontWeight: 600,
-            }}
-          >
-            {repository.stargazers_count}
+      <HeadedCard className={'flex justify-between'}   variant={VariantEnum.Outline} height={'auto'} width={'100%'}>
+        <div>
+          <span>
+            Stars : {repository.stargazers_count}
           </span>
         </div>
 
-        <div
-          style={{
-            textAlign: 'center',
-            padding: '1rem',
-            border: '1px solid #eee',
-            borderRadius: '4px',
-          }}
-        >
-          <span
-            style={{
-              display: 'block',
-              fontSize: '0.875rem',
-              marginBottom: '0.25rem',
-            }}
-          >
-            Forks
-          </span>
-          <span
-            style={{
-              display: 'block',
-              fontSize: '1.25rem',
-              fontWeight: 600,
-            }}
-          >
-            {repository.forks_count}
+        <div>
+          <span>
+            Forks : {repository.forks_count}
           </span>
         </div>
 
         {repository.language && (
-          <div
-            style={{
-              textAlign: 'center',
-              padding: '1rem',
-              border: '1px solid #eee',
-              borderRadius: '4px',
-            }}
-          >
-            <span
-              style={{
-                display: 'block',
-                fontSize: '0.875rem',
-                marginBottom: '0.25rem',
-              }}
-            >
-              Language
-            </span>
-            <span
-              style={{
-                display: 'block',
-                fontSize: '1.25rem',
-                fontWeight: 600,
-              }}
-            >
-              {repository.language}
+          <div>
+            <span>
+              Language : {repository.language}
+
             </span>
           </div>
         )}
 
-        <div
-          style={{
-            textAlign: 'center',
-            padding: '1rem',
-            border: '1px solid #eee',
-            borderRadius: '4px',
-          }}
-        >
-          <span
-            style={{
-              display: 'block',
-              fontSize: '0.875rem',
-              marginBottom: '0.25rem',
-            }}
-          >
-            Private
-          </span>
-          <span
-            style={{
-              display: 'block',
-              fontSize: '1.25rem',
-              fontWeight: 600,
-            }}
-          >
-            {repository.private ? 'Yes' : 'No'}
+        <div>
+          <span>
+            Private {repository.private ? 'Yes' : 'No'}
           </span>
         </div>
-      </div>
+      </HeadedCard>
 
-      <div style={{ borderTop: '1px solid #eee', paddingTop: '1rem' }}>
-        <p style={{ margin: '0.25rem 0' }}>
+      <div className={'flex justify-between'}>
+        <p>
           Created: {new Date(repository.created_at).toLocaleDateString()}
         </p>
-        <p style={{ margin: '0.25rem 0' }}>
+        <p>
           Updated: {new Date(repository.updated_at).toLocaleDateString()}
         </p>
       </div>
-    </div>
+    </HeadedCard>
   );
 }

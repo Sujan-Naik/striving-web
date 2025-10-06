@@ -5,7 +5,7 @@ It provides a guided workflow that moves from Idea → Project → Features → 
 
 Key features include:
 
-- GPT-5 powered GitHub Repository Generator – instantly create or edit GitHub repositories with AI assistance.
+- AI powered GitHub Repository Generator – instantly create or edit GitHub repositories with AI assistance.
 
 - Feature Architecture Visualization – map and organize features into a tree-like structure that stays in sync with documentation and manuals
 

@@ -25,8 +25,42 @@ type ChatTotals = {
   totalCost: number
 }
 
-// AVAILABLE_MODELS (includes o4-mini)
+// OpenAI Prices per MILLION tokens (MTok) - existing
+const OPENAI_PRICING = {
+  "gpt-5": { input: 1.25, output: 10.00 },
+  "gpt-5-mini": { input: 0.25, output: 2.00 },
+  "gpt-5-nano": { input: 0.05, output: 0.40 },
+  "gpt-5-chat-latest": { input: 1.25, output: 10.00 },
+  "gpt-4.1": { input: 2.00, output: 8.00 },
+  "gpt-4.1-mini": { input: 0.40, output: 1.60 },
+  "gpt-4.1-nano": { input: 0.10, output: 0.40 },
+  "gpt-4o": { input: 2.50, output: 10.00 },
+  "gpt-4o-2024-05-13": { input: 5.00, output: 15.00 },
+  "gpt-4o-mini": { input: 0.15, output: 0.60 },
+  "o3": { input: 2.00, output: 8.00 },
+  "o4-mini": { input: 1.10, output: 4.40 },
+  "o3-mini": { input: 1.10, output: 4.40 },
+  "o1-mini": { input: 1.10, output: 4.40 },
+  "gpt-4-turbo": { input: 10.00, output: 30.00 },
+  "gpt-3.5-turbo": { input: 0.50, output: 1.50 },
+} as const;
+
+// Grok Prices per MILLION tokens (MTok) - based on your provided list (input/output costs; context noted)
+const GROK_PRICING = {
+  "grok-code-fast-1": { input: 0.20, output: 1.50, context: 256000 }, // $/MTok input/output; context 256k
+  "grok-4-fast-reasoning": { input: 0.20, output: 0.80, context: 2000000 }, // Tiered input ~0.20-0.40; assumed base; context 2M
+  "grok-4-fast-non-reasoning": { input: 0.20, output: 0.80, context: 2000000 }, // Same as above
+  "grok-4-0709": { input: 5.00, output: 15.00, context: 256000 }, // Assumed similar to Grok-4 base; context 256k
+  "grok-3-mini": { input: 0.30, output: 0.50, context: 131072 }, // Assumed based on mini; context 131k
+  "grok-3": { input: 3.00, output: 15.00, context: 131072 }, // Input ~3, output 15 $/MTok; context 131k
+} as const;
+
+// Combined pricing
+const PRICING = { ...OPENAI_PRICING, ...GROK_PRICING } as const;
+
+// AVAILABLE_MODELS - extended with Grok models
 const AVAILABLE_MODELS = [
+  // OpenAI models (existing)
   { id: 'gpt-5', name: 'GPT-5', provider: 'OpenAI' },
   { id: 'gpt-5-mini', name: 'GPT-5 Mini', provider: 'OpenAI' },
   { id: 'gpt-5-nano', name: 'GPT-5 Nano', provider: 'OpenAI' },
@@ -40,12 +74,17 @@ const AVAILABLE_MODELS = [
   { id: 'gpt-4-turbo', name: 'GPT-4 Turbo', provider: 'OpenAI' },
   { id: 'gpt-3.5-turbo', name: 'GPT-3.5 Turbo', provider: 'OpenAI' },
   { id: 'o3', name: 'o3', provider: 'OpenAI' },
-  { id: 'o4-mini', name: 'o4-mini (efficient reasoning)', provider: 'OpenAI' }, // restored
+  { id: 'o4-mini', name: 'o4-mini (efficient reasoning)', provider: 'OpenAI' },
   { id: 'o3-mini', name: 'o3-mini', provider: 'OpenAI' },
   { id: 'o1-mini', name: 'o1-mini', provider: 'OpenAI' },
+  // Grok models (new)
+  { id: 'grok-code-fast-1', name: 'Grok-Code-Fast-1', provider: 'xAI' },
+  { id: 'grok-4-fast-reasoning', name: 'Grok-4-Fast Reasoning', provider: 'xAI' },
+  { id: 'grok-4-fast-non-reasoning', name: 'Grok-4-Fast Non-Reasoning', provider: 'xAI' },
+  { id: 'grok-4-0709', name: 'Grok-4-0709', provider: 'xAI' },
+  { id: 'grok-3-mini', name: 'Grok-3 Mini', provider: 'xAI' },
+  { id: 'grok-3', name: 'Grok-3', provider: 'xAI' },
 ] as const;
-
-
 
 type ModelId = typeof AVAILABLE_MODELS[number]['id'];
 
@@ -296,11 +335,16 @@ export default function Page() {
               fontSize: 14
             }}
           >
-            {AVAILABLE_MODELS.map(model => (
-              <option key={model.id} value={model.id}>
-                {model.name} ({model.provider})
-              </option>
-            ))}
+            {AVAILABLE_MODELS.map(model => {
+              const price = PRICING[model.id as keyof typeof PRICING];
+              if (!price) return null;
+              const contextStr = 'context' in price ? `, Context: ${price.context / 1000}k` : '';
+              return (
+                <option key={model.id} value={model.id}>
+                  {model.name} ({model.provider}) - In: ${price.input.toFixed(2)} / Out: ${price.output.toFixed(2)} per MTok{contextStr}
+                </option>
+              );
+            })}
           </select>
 
           {/* Focus streaming controls */}
