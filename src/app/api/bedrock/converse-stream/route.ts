@@ -8,20 +8,28 @@ const client = new OpenAI({ apiKey: process.env.OPENAI_TEST_KEY });
 // Marker your client listens for
 const USAGE_MARKER = "[[USAGE]]";
 
-// per 1k token pricing
+// Prices per MILLION tokens (MTok)
 const MODEL_PRICING = {
-  "gpt-5": { input: 1.25, output: 10.0 },
-  "gpt-5-mini": { input: 0.25, output: 2.0 },
-  "gpt-5-nano": { input: 0.05, output: 0.4 },
-  "gpt-5-chat-latest": { input: 1.25, output: 10.0 },
-  "gpt-5-codex": { input: 1.25, output: 10.0 },
-  "gpt-4.1": { input: 2.0, output: 8.0 },
-  "gpt-4.1-mini": { input: 0.4, output: 1.6 },
-  "gpt-4.1-nano": { input: 0.1, output: 0.4 },
-  "gpt-4o": { input: 2.5, output: 10.0 },
-  "gpt-4o-mini": { input: 0.00015, output: 0.0006 },
-  "gpt-4-turbo": { input: 0.01, output: 0.03 },
-  "gpt-3.5-turbo": { input: 0.0005, output: 0.0015 },
+  "gpt-5": { input: 1.25, output: 10.00 },
+  "gpt-5-mini": { input: 0.25, output: 2.00 },
+  "gpt-5-nano": { input: 0.05, output: 0.40 },
+  "gpt-5-chat-latest": { input: 1.25, output: 10.00 },
+  "gpt-4.1": { input: 2.00, output: 8.00 },
+  "gpt-4.1-mini": { input: 0.40, output: 1.60 },
+  "gpt-4.1-nano": { input: 0.10, output: 0.40 },
+  "gpt-4o": { input: 2.50, output: 10.00 },
+  "gpt-4o-2024-05-13": { input: 5.00, output: 15.00 },
+  "gpt-4o-mini": { input: 0.15, output: 0.60 },
+  // "o1": { input: 15.00, output: 60.00 },
+  // "o1-pro": { input: 150.00, output: 600.00 },
+  // "o3-pro": { input: 20.00, output: 80.00 },
+  "o3": { input: 2.00, output: 8.00 },
+  "o4-mini": { input: 1.10, output: 4.40 }, // restored
+  // "o3-deep-research": { input: 10.00, output: 40.00 },
+  "o3-mini": { input: 1.10, output: 4.40 },
+  "o1-mini": { input: 1.10, output: 4.40 },
+  "gpt-4-turbo": { input: 10.00, output: 30.00 },
+  "gpt-3.5-turbo": { input: 0.50, output: 1.50 },
 } as const;
 
 type ModelName = keyof typeof MODEL_PRICING;
@@ -45,7 +53,7 @@ interface UsageInfo {
   model: string;
 }
 
-// Capability map (different models support different params)
+// MODEL_CAPABILITIES (includes o4-mini)
 const MODEL_CAPABILITIES: Record<
   string,
   { supportsTemperature: boolean; tokenParam: "max_tokens" | "max_completion_tokens" }
@@ -54,16 +62,20 @@ const MODEL_CAPABILITIES: Record<
   "gpt-5-mini": { supportsTemperature: false, tokenParam: "max_completion_tokens" },
   "gpt-5-nano": { supportsTemperature: false, tokenParam: "max_completion_tokens" },
   "gpt-5-chat-latest": { supportsTemperature: false, tokenParam: "max_completion_tokens" },
-  "gpt-5-codex": { supportsTemperature: false, tokenParam: "max_completion_tokens" },
-
   "gpt-4.1": { supportsTemperature: true, tokenParam: "max_tokens" },
   "gpt-4.1-mini": { supportsTemperature: true, tokenParam: "max_tokens" },
   "gpt-4.1-nano": { supportsTemperature: true, tokenParam: "max_tokens" },
   "gpt-4o": { supportsTemperature: true, tokenParam: "max_tokens" },
+  "gpt-4o-2024-05-13": { supportsTemperature: true, tokenParam: "max_tokens" },
   "gpt-4o-mini": { supportsTemperature: true, tokenParam: "max_tokens" },
   "gpt-4-turbo": { supportsTemperature: true, tokenParam: "max_tokens" },
   "gpt-3.5-turbo": { supportsTemperature: true, tokenParam: "max_tokens" },
+  "o3": { supportsTemperature: false, tokenParam: "max_completion_tokens" },
+  "o4-mini": { supportsTemperature: false, tokenParam: "max_completion_tokens" }, // restored
+  "o3-mini": { supportsTemperature: false, tokenParam: "max_completion_tokens" },
+  "o1-mini": { supportsTemperature: false, tokenParam: "max_completion_tokens" },
 };
+
 
 export async function POST(request: Request) {
   const body: StreamRequest = await request.json();
@@ -153,8 +165,9 @@ export async function POST(request: Request) {
         const totalTokens =
           finalUsage?.total_tokens ?? inputTokens + outputTokens;
 
-        const inputCost = (inputTokens / 1000) * pricing.input;
-        const outputCost = (outputTokens / 1000) * pricing.output;
+        // Calculate costs per MILLION tokens
+        const inputCost = (inputTokens / 1_000_000) * pricing.input;
+        const outputCost = (outputTokens / 1_000_000) * pricing.output;
         const totalCost = inputCost + outputCost;
 
         const latencyMs = Date.now() - start;
