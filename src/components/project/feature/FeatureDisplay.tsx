@@ -53,7 +53,6 @@ export default function FeatureDisplay({ projectId }: FeatureDisplayProps) {
 
   return (
     <>
-      <h1>Features</h1>
             <HeadedTabs tabs={rootFeatures.map(value => value.title)} >
 
       {rootFeatures.map(feature => renderFeature(feature))}

@@ -6,7 +6,7 @@ export default function ManualList(){
 
     const project = useProject();
     console.log(project)
-    return <HeadedGrid  variant={VariantEnum.Primary} height={"100%"} width={"100%"} >
+    return <HeadedGrid  variant={VariantEnum.Outline} height={"100%"} width={"100%"} >
         {project.manual.map( (value, index) => {
            return  <HeadedLink variant={VariantEnum.Secondary} key={index} href={`manual/${value._id}`}>
            {value.content}

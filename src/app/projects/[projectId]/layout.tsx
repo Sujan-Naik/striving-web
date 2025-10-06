@@ -29,9 +29,11 @@ function LayoutContent({ editor, preview }: {editor: React.ReactNode, preview: R
                       {showEditor && showPreview &&
                           <>
                                   <HeadedCard variant={VariantEnum.Outline} width={'50%'} style={{display: 'flex', justifyContent: 'center'}}>
+                                      Toggle Editor
                                         <HeadedSwitch checked={showEditor} onChange={setShowEditor} variant={VariantEnum.Secondary}/>
                                   </HeadedCard>
                                   <HeadedCard variant={VariantEnum.Outline} width={'50%'} style={{display: 'flex', justifyContent: 'center'}}>
+                                      Toggle Preview
                                     <HeadedSwitch checked={showPreview} onChange={setShowPreview} variant={VariantEnum.Secondary}/>
                                   </HeadedCard>
                                   </>
@@ -39,6 +41,7 @@ function LayoutContent({ editor, preview }: {editor: React.ReactNode, preview: R
                       {showEditor && !showPreview &&
                           <div style={{display: 'flex', justifyContent: 'end', width: '100%'}}>
                                   <HeadedCard variant={VariantEnum.Outline} width={'50%'} style={{display: 'flex', justifyContent: 'center'}}>
+                                      Toggle Preview
                                     <HeadedSwitch checked={showPreview} onChange={setShowPreview} variant={VariantEnum.Secondary}/>
                                   </HeadedCard>
                                   </div>
@@ -48,6 +51,7 @@ function LayoutContent({ editor, preview }: {editor: React.ReactNode, preview: R
                       {!showEditor && showPreview &&
                           <>
                                   <HeadedCard variant={VariantEnum.Outline} width={'50%'} style={{display: 'flex', justifyContent: 'center'}}>
+                                      Toggle Editor
                                         <HeadedSwitch checked={showEditor} onChange={setShowEditor} variant={VariantEnum.Secondary}/>
                                   </HeadedCard>
                                   </>

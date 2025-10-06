@@ -1,9 +1,9 @@
 'use client';
 
-import {useState, useEffect, JSX} from 'react';
-import { useProject } from "@/context/ProjectContext";
+import {JSX, useEffect, useState} from 'react';
+import {useProject} from "@/context/ProjectContext";
 import ManualSectionDisplay from "@/components/project/manual/section/ManualSectionDisplay";
-import { HeadedTabs } from "headed-ui";
+import {HeadedCard, HeadedTabs, VariantEnum} from "headed-ui";
 import {IManual, IManualSectionOrder} from "@/types/project/Manual";
 import {useManual} from "@/context/ManualContext";
 import ReactMarkdown from "react-markdown";
@@ -97,9 +97,9 @@ export default function ManualDisplay() {
 
   return (
     <div>
-      <div className={"center-column"} style={{ whiteSpace: 'pre-wrap' }}>
+      <HeadedCard variant={VariantEnum.Primary}  className={"center-column"} style={{ whiteSpace: 'pre-wrap' }}>
         <ReactMarkdown remarkPlugins={[remarkGfm]}>{manual.content}</ReactMarkdown>
-      </div>
+      </HeadedCard>
 
       <HeadedTabs tabs={tabTitles}>
         {topLevelSections.map(section =>
