@@ -36,6 +36,10 @@
     --font-pixelify-sans: 'Pixelify Sans', monospace;
   }
 
+
+
+
+
   section {
     width: 100%
   }
@@ -44,6 +48,11 @@
     display: inline-block;
     overflow-x: hidden;
   }
+
+[data-testid="virtuoso-item-list"] {
+  width: 100% !important;
+  display: block !important;
+}
 
   textarea {
     user-select: text;
@@ -141,8 +150,8 @@
     border-left: 10px solid var(--border-color);
     border-bottom: var(--border-thickness) solid var(--border-color);
     border-top: var(--border-thickness) solid var(--border-color);
-    margin-right: 5vw;
-    width: calc(100% - 5vw);
+    margin-right: 1vw;
+    width: calc(100% - 1vw);
     padding-left: 5px;
   }
 }

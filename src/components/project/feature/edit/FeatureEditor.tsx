@@ -5,9 +5,10 @@ import ManualSectionEditor from "@/components/project/manual/section/ManualSecti
 import FeatureBasicInfo from "@/components/project/feature/edit/FeatureBasicInfo";
 import {IFeature} from "@/types/project/Feature";
 import {HeadedCard, VariantEnum} from "headed-ui";
+import {useRouter} from "next/navigation";
 
-
-export default function FeatureEditor({projectId, feature} : {projectId: string, feature: IFeature}) {
+export default function FeatureEditor({projectId, feature, onFeatureUpdate} : {projectId: string, feature: IFeature, onFeatureUpdate: () => void;}) {
+  const router = useRouter();
 
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -27,6 +28,8 @@ export default function FeatureEditor({projectId, feature} : {projectId: string,
       });
 
       if (response.ok) {
+            onFeatureUpdate()
+
         const updated = await response.json();
       }
     } catch (error) {
@@ -34,10 +37,10 @@ export default function FeatureEditor({projectId, feature} : {projectId: string,
     } finally {
       setSaving(false);
     }
+
   };
 
-
-   return (
+  return (
     <HeadedCard variant={VariantEnum.Outline} width={"100%"} className={"center-column"}>
       <h2>Edit Feature: {feature.title}</h2>
       {error && <div style={{color: 'red', marginBottom: '1rem'}}>{error}</div>}
@@ -56,8 +59,9 @@ export default function FeatureEditor({projectId, feature} : {projectId: string,
       {/*  onUpdate={updateFeature}*/}
       {/*/>*/}
 
-        <DocsSectionEditor projectId={projectId} docsSection={feature.docsSection} />
-        <ManualSectionEditor projectId={projectId} manualSection={feature.manualSection} />
+      <DocsSectionEditor projectId={projectId} docsSection={feature.docsSection} onFeatureUpdate={onFeatureUpdate} />
+
+      <ManualSectionEditor projectId={projectId} manualSection={feature.manualSection} onFeatureUpdate={onFeatureUpdate} />
 
     </HeadedCard>
   );

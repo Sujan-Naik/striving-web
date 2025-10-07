@@ -1,22 +1,26 @@
-import {JSX, useEffect, useState} from 'react';
-import {HeadedCarousel, HeadedTabs, VariantEnum} from "headed-ui";
-import {IFeature} from "@/types/project/Feature";
+'use client';
+import { JSX, useEffect, useState } from 'react';
+import { HeadedTabs } from "headed-ui";
+import { IFeature } from "@/types/project/Feature";
 import FeatureDisplaySingle from "@/components/project/feature/FeatureDisplaySingle";
+import { useProject } from "@/context/ProjectContext"; // Import the useProject hook
 
-
-interface FeatureDisplayProps {
-  projectId: string;
-}
-
-export default function FeatureDisplay({ projectId }: FeatureDisplayProps) {
+export default function FeatureDisplay() {
+  const { project } = useProject()!; // Use the project context
   const [features, setFeatures] = useState<IFeature[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchFeatures = async () => {
+      if (!project?._id) {
+        setLoading(false);
+        return;
+      }
+
+      setLoading(true);
       try {
-        const response = await fetch(`/api/project/${projectId}/features`);
+        const response = await fetch(`/api/project/${project._id}/features`);
         if (!response.ok) throw new Error('Failed to fetch features');
         const data = await response.json();
         setFeatures(data);
@@ -28,10 +32,9 @@ export default function FeatureDisplay({ projectId }: FeatureDisplayProps) {
     };
 
     fetchFeatures();
-  }, [projectId]);
+  }, [project]); // Fetch features whenever the project changes
 
   const buildHierarchy = (features: IFeature[]): IFeature[] => {
-    const featureMap = new Map(features.map(f => [f._id, f]));
     return features.filter(f => !f.parent);
   };
 
@@ -39,8 +42,8 @@ export default function FeatureDisplay({ projectId }: FeatureDisplayProps) {
     const children = features.filter(f => f.parent === feature._id);
 
     return (
-      <div key={feature._id} style={{ marginLeft: `${level * 20}px`, marginBottom: '1rem', width: '100%'}} >
-        <FeatureDisplaySingle feature={feature}/>
+      <div key={feature._id} style={{ marginLeft: `${level * 20}px`, marginBottom: '1rem', width: '100%' }}>
+        <FeatureDisplaySingle feature={feature} showDocs={true} showManual={true} />
         {children.map(child => renderFeature(child, level + 1))}
       </div>
     );
@@ -53,11 +56,9 @@ export default function FeatureDisplay({ projectId }: FeatureDisplayProps) {
 
   return (
     <>
-      <h1>Features</h1>
-            <HeadedTabs tabs={rootFeatures.map(value => value.title)} >
-
-      {rootFeatures.map(feature => renderFeature(feature))}
-            </HeadedTabs>
+      <HeadedTabs tabs={rootFeatures.map(value => value.title)}>
+        {rootFeatures.map(feature => renderFeature(feature))}
+      </HeadedTabs>
     </>
   );
 }

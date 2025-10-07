@@ -256,8 +256,9 @@ export default function DocumentationGeneration({
         style={{ width: "350px" }}
       />
 
+      <div style={{ flex: 1, display: "flex", flexDirection: "row" }}>
       {/* Documentation Viewer */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", width: '50%'}}>
         {/* Header */}
         <div
           style={{
@@ -515,6 +516,23 @@ export default function DocumentationGeneration({
             </div>
           )}
         </div>
+      </div>
+        <div style={{ width: '50%' }}>
+  <pre style={{
+    backgroundColor: 'var(--background-secondary)',
+    padding: '16px',
+    borderRadius: 'var(--border-radius)',
+    overflow: 'auto',
+    fontFamily: 'monospace',
+    fontSize: '14px',
+    color: 'var(--foreground-primary)',
+    whiteSpace: 'pre-wrap', // Ensures long lines wrap
+  }}>
+    <code>
+      {markdownOutput}
+    </code>
+  </pre>
+</div>
       </div>
     </div>
   );

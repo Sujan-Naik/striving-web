@@ -16,6 +16,7 @@ export const FeatureProvider = ({
   useEffect(() => {
     const fetchFeature = async () => {
       try {
+        console.log(projectId)
         const response = await fetch(`/api/project/${projectId}/features`);
         if (!response.ok) {
           throw new Error('Failed to fetch feature');

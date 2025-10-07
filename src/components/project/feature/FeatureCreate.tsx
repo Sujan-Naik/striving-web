@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react';
 import {HeadedButton, HeadedInput, HeadedSelect, HeadedTextArea, VariantEnum} from "headed-ui";
+import {useRouter} from "next/navigation";
+import remarkGfm from "remark-gfm";
+import ReactMarkdown from "react-markdown";
 
 interface Feature {
   _id: string;
@@ -14,6 +17,7 @@ interface FeatureCreateProps {
 }
 
 export default function FeatureCreate({ projectId, onFeatureCreated }: FeatureCreateProps) {
+
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [parentId, setParentId] = useState('');
@@ -52,6 +56,7 @@ export default function FeatureCreate({ projectId, onFeatureCreated }: FeatureCr
       });
 
       if (!featureResponse.ok) throw new Error('Failed to create features');
+
 
       const feature = await featureResponse.json();
 
@@ -99,6 +104,7 @@ export default function FeatureCreate({ projectId, onFeatureCreated }: FeatureCr
       setDescription('');
       setParentId('');
       onFeatureCreated?.();
+
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
@@ -119,13 +125,21 @@ export default function FeatureCreate({ projectId, onFeatureCreated }: FeatureCr
           required
         />
         <h4>Feature Description</h4>
-        <HeadedTextArea width={"100%"} variant={VariantEnum.Outline}
-          placeholder="Feature description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          required
-                        markdown={true} height={'auto'}
-        />
+
+
+      <HeadedTextArea
+        width={"100%"}
+        variant={VariantEnum.Outline}
+                  placeholder="Feature description"
+
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        rows={10}
+        markdown={false}
+        height={'auto'}
+        required
+      />
+
 
       <div>
 

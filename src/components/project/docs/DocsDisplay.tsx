@@ -1,9 +1,9 @@
 'use client';
 
-import {useState, useEffect, JSX} from 'react';
-import { useProject } from "@/context/ProjectContext";
+import {JSX, useEffect, useState} from 'react';
+import {useProject} from "@/context/ProjectContext";
 import DocsSectionDisplay from "@/components/project/docs/section/DocsSectionDisplay";
-import { HeadedTabs } from "headed-ui";
+import {HeadedCard, HeadedTabs, VariantEnum} from "headed-ui";
 import {IDocs, IDocsSectionOrder} from "@/types/project/Docs";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -14,20 +14,19 @@ interface SectionNode extends IDocsSectionOrder {
 }
 
 export default function DocsDisplay() {
-  const  project  = useProject()!;
-  const projectId = project?._id;
+  const  {project}  = useProject();
   const [docs, setDocs] = useState<IDocs | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchDocs = async () => {
-      if (!projectId) {
+      if (!project._id) {
         setLoading(false);
         return;
       }
 
       try {
-        const response = await fetch(`/api/project/${projectId}/docs`);
+        const response = await fetch(`/api/project/${project._id}/docs`);
         if (response.ok) {
           const data = await response.json();
           setDocs(data);
@@ -40,7 +39,7 @@ export default function DocsDisplay() {
     };
 
     fetchDocs();
-  }, [projectId]);
+  }, [project]);
 
   const buildSectionTree = (sections: IDocsSectionOrder[]): SectionNode[] => {
     const sorted = sections.sort((a, b) => a.order - b.order);
@@ -97,9 +96,9 @@ export default function DocsDisplay() {
 
   return (
     <div className={'indented-block'}>
-      <div className={"center-column"} style={{ whiteSpace: 'pre-wrap'}}>
+      <HeadedCard variant={VariantEnum.Primary} className={"center-column"} style={{ whiteSpace: 'pre-wrap'}}>
         <ReactMarkdown remarkPlugins={[remarkGfm]}>{docs.content}</ReactMarkdown>
-      </div>
+      </HeadedCard>
 
       <HeadedTabs tabs={tabTitles}>
         {topLevelSections.map(section =>

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import {useUser} from "@/context/UserContext";
 import {HeadedButton, HeadedTextArea, VariantEnum} from "headed-ui";
+import {useRouter} from "next/navigation";
 
 interface ApplyToProjectProps {
   projectId: string;

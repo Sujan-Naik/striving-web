@@ -75,6 +75,7 @@ export default function MessageList({ messages, currentResponse, focusStreaming,
           Item: (props) => (
             <div {...props} style={{ ...props.style, display: 'block', boxSizing: 'border-box' }} />
           ),
+
         }}
       />
     </div>

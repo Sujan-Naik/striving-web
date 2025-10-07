@@ -7,7 +7,7 @@ import {ProjectMenu} from "@/components/project/ProjectMenu";
 import {HeadedCard, HeadedSwitch, VariantEnum} from "headed-ui";
 
 function LayoutContent({ editor, preview }: {editor: React.ReactNode, preview: React.ReactNode }) {
-  const project = useProject();
+    const { project, refreshProject } = useProject();
 
   const {user} = useUser();
   const [showEditor, setShowEditor] = useState(true);
@@ -22,16 +22,18 @@ function LayoutContent({ editor, preview }: {editor: React.ReactNode, preview: R
 
     return (
       <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-        <div style={{ flexShrink: 0 }}>
+        <div style={{ flexShrink: 0, display: 'block' }}>
           <ProjectMenu/>
         </div>
                   <div style={{ display: 'flex', flexDirection: 'row', width: '100vw' }}>
                       {showEditor && showPreview &&
                           <>
                                   <HeadedCard variant={VariantEnum.Outline} width={'50%'} style={{display: 'flex', justifyContent: 'center'}}>
+                                      Toggle Editor
                                         <HeadedSwitch checked={showEditor} onChange={setShowEditor} variant={VariantEnum.Secondary}/>
                                   </HeadedCard>
                                   <HeadedCard variant={VariantEnum.Outline} width={'50%'} style={{display: 'flex', justifyContent: 'center'}}>
+                                      Toggle Preview
                                     <HeadedSwitch checked={showPreview} onChange={setShowPreview} variant={VariantEnum.Secondary}/>
                                   </HeadedCard>
                                   </>
@@ -39,6 +41,7 @@ function LayoutContent({ editor, preview }: {editor: React.ReactNode, preview: R
                       {showEditor && !showPreview &&
                           <div style={{display: 'flex', justifyContent: 'end', width: '100%'}}>
                                   <HeadedCard variant={VariantEnum.Outline} width={'50%'} style={{display: 'flex', justifyContent: 'center'}}>
+                                      Toggle Preview
                                     <HeadedSwitch checked={showPreview} onChange={setShowPreview} variant={VariantEnum.Secondary}/>
                                   </HeadedCard>
                                   </div>
@@ -48,6 +51,7 @@ function LayoutContent({ editor, preview }: {editor: React.ReactNode, preview: R
                       {!showEditor && showPreview &&
                           <>
                                   <HeadedCard variant={VariantEnum.Outline} width={'50%'} style={{display: 'flex', justifyContent: 'center'}}>
+                                      Toggle Editor
                                         <HeadedSwitch checked={showEditor} onChange={setShowEditor} variant={VariantEnum.Secondary}/>
                                   </HeadedCard>
                                   </>
@@ -94,11 +98,11 @@ function LayoutContent({ editor, preview }: {editor: React.ReactNode, preview: R
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', overscrollBehaviorY: 'contain' }}>
-      <div style={{ flexShrink: 0 }}>
-      </div>
-      <div style={{ flex: 1, display: 'flex' }}>
-        <ProjectMenu />
-        <div style={{ width: '50%' }}>
+      <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ flexShrink: 0, display: 'block' }}>
+          <ProjectMenu/>
+        </div>
+        <div style={{ width: '100%' }}>
           {preview}
         </div>
       </div>
@@ -125,17 +129,16 @@ export default function Layout({
       return (
 
         <ProjectProvider projectId={projectId}>
-            <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-              <div style={{ flexShrink: 0 }}>
-              </div>
-              <div style={{ flex: 1, display: 'flex' }}>
-                <ProjectMenu />
-                <div style={{ width: '50%' }}>
+             <div style={{ height: '100%', display: 'flex', flexDirection: 'column', overscrollBehaviorY: 'contain' }}>
+              <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ flexShrink: 0, display: 'block' }}>
+                  <ProjectMenu/>
+                </div>
+                <div style={{ width: '100%' }}>
                   {preview}
                 </div>
               </div>
             </div>
-          );
         </ProjectProvider>
   );
   }

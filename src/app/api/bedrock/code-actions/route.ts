@@ -1,13 +1,64 @@
+// api/bedrock/code-actions route (assuming this is the file, e.g., app/api/bedrock/code-actions/route.ts)
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
-const PRICING: Record<string, { prompt: number; completion: number }> = {
-  "o4-mini": { prompt: 1.10, completion: 4.40 },
-  "gpt-4o": { prompt: 2.50, completion: 10.00 },
-  "gpt-4o-mini": { prompt: 0.15, completion: 0.60 },
-};
+// Note: xAI SDK is hypothetical here; in reality, you'd install and import the xAI client library.
+// For this example, I'm assuming it's similar to OpenAI's API structure.
+// Replace with actual xAI SDK if available (e.g., npm install @xai/xai-sdk or similar).
+// Also, ensure process.env.XAI_API_KEY is set in your environment.
+class XAI {
+  chat: { completions: { create: (options: any) => Promise<any> } };
 
-const client = new OpenAI({ apiKey: process.env.OPENAI_TEST_KEY });
+  constructor({ apiKey }: { apiKey: string }) {
+    // Placeholder for xAI client initialization
+    // In reality: this.chat = new xAIClient(apiKey).chat;
+    this.chat = {
+      completions: {
+        create: async (options: any) => {
+          // Simulate xAI API call (replace with actual fetch or SDK call)
+          // Example using fetch to a hypothetical xAI endpoint:
+          const response = await fetch('https://api.x.ai/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${apiKey}`,
+            },
+            body: JSON.stringify(options),
+          });
+          if (!response.ok) throw new Error('xAI API error');
+          return response.json();
+        },
+      },
+    };
+  }
+}
+
+const PRICING: Record<string, { prompt: number; completion: number }> = {
+  // OpenAI
+  "gpt-5": { prompt: 1.25, completion: 10.00 },
+  "gpt-5-mini": { prompt: 0.25, completion: 2.00 },
+  "gpt-5-nano": { prompt: 0.05, completion: 0.40 },
+  "gpt-5-chat-latest": { prompt: 1.25, completion: 10.00 },
+  "gpt-4.1": { prompt: 2.00, completion: 8.00 },
+  "gpt-4.1-mini": { prompt: 0.40, completion: 1.60 },
+  "gpt-4.1-nano": { prompt: 0.10, completion: 0.40 },
+  "gpt-4o": { prompt: 2.50, completion: 10.00 },
+  "gpt-4o-2024-05-13": { prompt: 5.00, completion: 15.00 },
+  "gpt-4o-mini": { prompt: 0.15, completion: 0.60 },
+  "o3": { prompt: 2.00, completion: 8.00 },
+  "o4-mini": { prompt: 1.10, completion: 4.40 },
+  "o3-mini": { prompt: 1.10, completion: 4.40 },
+  "o1-mini": { prompt: 1.10, completion: 4.40 },
+  "gpt-4-turbo": { prompt: 10.00, completion: 30.00 },
+  "gpt-3.5-turbo": { prompt: 0.50, completion: 1.50 },
+  // Grok
+  "grok-code-fast-1": { prompt: 0.20, completion: 1.50 },
+  "grok-4-fast-reasoning": { prompt: 0.20, completion: 0.80 },
+  "grok-4-fast-non-reasoning": { prompt: 0.20, completion: 0.80 },
+  "grok-4-0709": { prompt: 5.00, completion: 15.00 },
+  "grok-3-mini": { prompt: 0.30, completion: 0.50 },
+  "grok-3": { prompt: 3.00, completion: 15.00 },
+};
 
 export async function POST(request: Request) {
   const {
@@ -16,12 +67,28 @@ export async function POST(request: Request) {
     repo,
     branch = "main",
     codebase = [],
+    model = "o4-mini", // Default model
   } = await request.json();
 
+  // Determine provider based on model
+  const provider = model.startsWith('grok-') ? 'xAI' : 'OpenAI';
+
+  let client: any;
+  if (provider === 'OpenAI') {
+    client = new OpenAI({ apiKey: process.env.OPENAI_TEST_KEY });
+  } else if (provider === 'xAI') {
+    if (!process.env.XAI_API_KEY) {
+      return NextResponse.json({ error: 'xAI API key not configured' }, { status: 500 });
+    }
+    client = new XAI({ apiKey: process.env.XAI_API_KEY });
+  } else {
+    return NextResponse.json({ error: `Unsupported provider for model: ${model}` }, { status: 400 });
+  }
+
   const systemPrompt = `
-Analyze ${owner}/${repo} (branch: ${branch}).
+  Analyze ${owner}/${repo} (branch: ${branch}).
 Return ONLY valid JSON:
-{
+  {
   "explanation": "Brief change summary",
   "actions": [
     {
@@ -32,15 +99,14 @@ Return ONLY valid JSON:
     }
   ],
   "commitMessage": "Overall commit message"
-}
-No extra text, no markdown fences.
+  }
+  No extra text, no markdown fences.
 ${codebase.length > 0 ? `\nCurrent codebase:\n${codebase
     .map((f: any) => `File: ${f.path}\n${f.content}`)
     .join("\n\n---\n\n")}` : ""}
   `.trim();
 
-  const model = "o4-mini";
-  const price = PRICING[model];
+  const price = PRICING[model as keyof typeof PRICING];
 
   if (!price) {
     return NextResponse.json(
@@ -58,7 +124,7 @@ ${codebase.length > 0 ? `\nCurrent codebase:\n${codebase
         { role: "system", content: systemPrompt },
         { role: "user", content: userQuery },
       ],
-      max_completion_tokens: 30000,
+      max_completion_tokens: 30000, // Adjust as needed for xAI if different
     });
 
     const { prompt_tokens: inT = 0, completion_tokens: outT = 0, total_tokens: totT } =
@@ -94,9 +160,9 @@ ${codebase.length > 0 ? `\nCurrent codebase:\n${codebase
     const parsedPayload = JSON.parse(jsonStr);
     return NextResponse.json(parsedPayload);
   } catch (err: any) {
-    console.error("Parse error:", err);
+    console.error("Error:", err);
     return NextResponse.json(
-      { error: `Parse error: ${err.message ?? err}` },
+      { error: `Error: ${err.message ?? err}` },
       { status: 500 }
     );
   }

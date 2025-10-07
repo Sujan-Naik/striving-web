@@ -6,16 +6,20 @@ import RepoForm from '@/components/github/RepoForm/RepoForm';
 import RepoList from '@/components/github/RepoList/RepoList';
 import {useGithubRepository} from "@/hooks/useGithubRepository";
 import {HeadedLink, VariantEnum} from "headed-ui";
-import {useUser} from "@/context/UserContext";
 import {useSession} from "next-auth/react";
+import {useRouter} from "next/navigation";
 
 export default function GitHubPage() {
+    const router = useRouter();
+
 
   const [isCreating, setIsCreating] = useState(false);
 
     const { repos, loading, error, refetch } = useGithubRepository()
 
   const session = useSession();
+
+
 
   const handleCreateRepo = async (data: CreateRepoData) => {
     setIsCreating(true);
@@ -35,7 +39,6 @@ export default function GitHubPage() {
         },
         body: JSON.stringify(data),
       });
-      await refetch();
     } catch (error) {
       console.error('Failed to create repository:', error);
     } finally {

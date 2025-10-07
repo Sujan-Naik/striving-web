@@ -22,14 +22,11 @@ export default function Home() {
 className="font-sans min-h-screen w-full">
         <main className="center-column">
 
-                <HeadedTextAnim
-                    speed={50}
-                    delay={1000}
-                    animation={TextAnimationType.SLIDE_UP}
+                <h1
                     className="mx-auto max-w-3xl text-center text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight tracking-tight"
                 >
                     Document as you Code
-                </HeadedTextAnim>
+                </h1>
 
                 <Hero/>
                 <About/>

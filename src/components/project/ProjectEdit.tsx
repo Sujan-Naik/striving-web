@@ -6,12 +6,13 @@ import {useRouter} from "next/navigation";
 
 
 export function ProjectEdit() {
-  const project = useProject();
+      const router = useRouter()
+
+    const { project, error, refreshProject } = useProject();
   console.log(project.name)
   const [name, setName] = useState(project.name);
   const [description, setDescription] = useState(project.description);
   const [loading, setLoading] = useState(false);
-    const router = useRouter()
   const updateProject = async () => {
         if (!name.trim()) return;
     setLoading(true);

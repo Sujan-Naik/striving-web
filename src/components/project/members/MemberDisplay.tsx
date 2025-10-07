@@ -10,11 +10,11 @@ interface Props {
 }
 
 export function MemberDisplay() {
-  const project = useProject()!
+    const { project, refreshProject } = useProject()!
 
 
   return (
-    <div>
+    <div className={'center-column'}>
       <h2 className="text-xl font-semibold mb-4">Members</h2>
 
       <div className="space-y-2">

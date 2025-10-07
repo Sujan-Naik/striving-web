@@ -11,7 +11,7 @@ import {HeadedButton, HeadedCarousel, HeadedInput, HeadedTextArea, VariantEnum} 
 import ManualSectionEditor from "@/components/project/manual/section/ManualSectionEditor";
 
 export default function ManualEditor() {
-const project = useProject()!;
+  const { project, refreshProject } = useProject()!;
 const projectId = project._id;
 
 const [manual, setManual] = useState<IManual>(useManual().manual);
@@ -334,6 +334,7 @@ if (editor) {
               key={feature.manualSection._id}
               projectId={projectId}
               manualSection={feature.manualSection}
+              onFeatureUpdate={refreshProject}
           />
         </label>
       </div>
