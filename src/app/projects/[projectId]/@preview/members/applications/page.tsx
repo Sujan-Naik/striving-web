@@ -5,7 +5,7 @@ import { useProject } from "@/context/ProjectContext";
 import { useUser } from "@/context/UserContext";
 
 export default function Page() {
-  const  project = useProject()!;
+  const  {project} = useProject()!;
   const { user } = useUser();
   const [hasApplied, setHasApplied] = useState(false);
   const [loading, setLoading] = useState(true);
