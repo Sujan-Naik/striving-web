@@ -3,7 +3,7 @@ import ProjectApplications from "@/components/project/applications/ProjectApplic
 import {useProject} from "@/context/ProjectContext";
 
 export default function Page(){
-    const project = useProject()!
+      const { project, refreshProject } = useProject()!
 
     return <div>
         <p>Review Project Applications here</p>

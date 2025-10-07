@@ -9,7 +9,7 @@ import {useFeatures} from "@/context/FeatureContext";
 
 export default function Page(){
 
-  const project = useProject()!;
+    const { project, refreshProject } = useProject()!;
   const projectId = project._id
   // const features = project.features
 
@@ -24,7 +24,7 @@ export default function Page(){
     if (children) {
       return (
           <div  key={feature._id} style={{marginLeft: `${level * 20}px`, width: '100%'}}>
-            <FeatureEditor projectId={projectId} feature={feature}/>
+            <FeatureEditor projectId={projectId} feature={feature} onFeatureUpdate={refreshProject}/>
             <HeadedAccordion>
               {children.map(child =>
                   <AccordionItem title={child.title} variant={VariantEnum.Outline} key={child._id} >
@@ -42,7 +42,7 @@ export default function Page(){
 
   return (
     <div style={{width: '100%'}}>
-      <FeatureCreate projectId={projectId}/>
+      <FeatureCreate projectId={projectId} onFeatureCreated={refreshProject}/>
       <HeadedTabs tabs={rootFeatures.map(value => value.title)} >
 
       {rootFeatures.map(feature => renderFeatureEditor(feature))}

@@ -8,9 +8,10 @@ export default function Layout({
   children: React.ReactNode;
 }) {
 
-      const projectId = useProject()._id;
+  const {project} = useProject();
+
   return (
-    <FeatureProvider projectId={projectId}>
+    <FeatureProvider projectId={project._id}>
       {children}
     </FeatureProvider>
   );

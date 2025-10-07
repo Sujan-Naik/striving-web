@@ -2,11 +2,14 @@
 import {useState} from 'react';
 import {useProject} from "@/context/ProjectContext";
 import {HeadedButton, HeadedInput, VariantEnum} from "headed-ui";
+import {useRouter} from "next/navigation";
 
 export default function ManualCreate(){
+      const router = useRouter();
+
   const [content, setContent] = useState('');
 
-      const project = useProject();
+        const { project, refreshProject } = useProject();
 
 
   const handleCreate = async () => {
@@ -16,6 +19,7 @@ export default function ManualCreate(){
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ content, project: project._id })
     });
+    await refreshProject();
   };
 
   return (

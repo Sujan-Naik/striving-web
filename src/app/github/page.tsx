@@ -7,8 +7,11 @@ import RepoList from '@/components/github/RepoList/RepoList';
 import {useGithubRepository} from "@/hooks/useGithubRepository";
 import {HeadedLink, VariantEnum} from "headed-ui";
 import {useSession} from "next-auth/react";
+import {useRouter} from "next/navigation";
 
 export default function GitHubPage() {
+    const router = useRouter();
+
 
   const [isCreating, setIsCreating] = useState(false);
 
@@ -36,7 +39,6 @@ export default function GitHubPage() {
         },
         body: JSON.stringify(data),
       });
-      await refetch();
     } catch (error) {
       console.error('Failed to create repository:', error);
     } finally {

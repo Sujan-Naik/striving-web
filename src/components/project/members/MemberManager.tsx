@@ -16,7 +16,7 @@ interface Props {
 export function MemberManager({ projectId }: Props) {
   const [members, setMembers] = useState<Member[]>([]);
   const [newMemberId, setNewMemberId] = useState('');
-  const project = useProject();
+    const { project, refreshProject } = useProject();
   const owner = project.owner;
   useEffect(() => {
     fetchMembers();
@@ -25,8 +25,6 @@ export function MemberManager({ projectId }: Props) {
   const fetchMembers = async () => {
     const res = await fetch(`/api/project/${projectId}/members`);
     const data = await res.json();
-        console.log(data)
-
     setMembers(data);
   };
 
@@ -46,7 +44,7 @@ export function MemberManager({ projectId }: Props) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ contributorId })
     });
-    fetchMembers();
+    await refreshProject();
   };
 
   return (

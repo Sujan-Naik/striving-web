@@ -10,7 +10,7 @@ interface Props {
 }
 
 export function MemberDisplay() {
-  const project = useProject()!
+    const { project, refreshProject } = useProject()!
 
 
   return (

@@ -7,7 +7,7 @@ import {ProjectMenu} from "@/components/project/ProjectMenu";
 import {HeadedCard, HeadedSwitch, VariantEnum} from "headed-ui";
 
 function LayoutContent({ editor, preview }: {editor: React.ReactNode, preview: React.ReactNode }) {
-  const project = useProject();
+    const { project, refreshProject } = useProject();
 
   const {user} = useUser();
   const [showEditor, setShowEditor] = useState(true);

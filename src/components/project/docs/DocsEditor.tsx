@@ -11,7 +11,7 @@ import {useFeatures} from "@/context/FeatureContext";
 import {HeadedButton, HeadedCard, HeadedCarousel, HeadedInput, HeadedTextArea, VariantEnum} from "headed-ui";
 
 export default function DocsEditor() {
-const project = useProject()!;
+  const { project, refreshProject } = useProject()!;
 const projectId = project._id;
 
 const [docs, setDocs] = useState<IDocs>(useDocs().docs);
@@ -326,6 +326,8 @@ const level = getFeatureLevel(feature._id);
 const isValidDropZone = !draggedItem || canDropAtPosition(draggedItem, index);
 const isDragging = draggedItem === docsSectionId;
 
+
+
 if (editor) {
   return (
 
@@ -337,6 +339,7 @@ if (editor) {
               key={feature.docsSection._id}
               projectId={projectId}
               docsSection={feature.docsSection}
+              onFeatureUpdate={refreshProject}
           />
         </label>
       </div>

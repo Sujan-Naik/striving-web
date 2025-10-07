@@ -14,20 +14,19 @@ interface SectionNode extends IManualSectionOrder {
 }
 
 export default function ManualDisplay() {
-  const  project  = useProject()!;
-  const projectId = project?._id;
+  const  {project}  = useProject();
   const [manual, setManual] = useState<IManual | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchManual = async () => {
-      if (!projectId) {
+      if (!project._id) {
         setLoading(false);
         return;
       }
 
       try {
-        const response = await fetch(`/api/project/${projectId}/manual`);
+        const response = await fetch(`/api/project/${project._id}/manual`);
         if (response.ok) {
           const data = await response.json();
           setManual(data);
@@ -40,7 +39,7 @@ export default function ManualDisplay() {
     };
 
     fetchManual();
-  }, [projectId]);
+  }, [project]);
 
   const buildSectionTree = (sections: IManualSectionOrder[]): SectionNode[] => {
     const sorted = sections.sort((a, b) => a.order - b.order);

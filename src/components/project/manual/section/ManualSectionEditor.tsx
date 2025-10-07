@@ -5,8 +5,15 @@ import { useRouter } from 'next/navigation';
 import {IManualSection} from "@/types/project/ManualSection";
 import {HeadedButton, HeadedInput, HeadedTextArea, VariantEnum} from "headed-ui";
 
-
-export default function ManualSectionEditor({projectId, manualSection}: {projectId: string, manualSection: IManualSection}) {
+export default function ManualSectionEditor({
+  projectId,
+  manualSection,
+  onFeatureUpdate // Add this prop
+}: {
+  projectId: string,
+  manualSection: IManualSection,
+  onFeatureUpdate: () => void; // Add this type
+}) {
   const [title, setTitle] = useState(manualSection.title);
   const [content, setContent] = useState(manualSection.content);
   const [saving, setSaving] = useState(false);
@@ -24,7 +31,8 @@ export default function ManualSectionEditor({projectId, manualSection}: {project
       });
       if (!response.ok) throw new Error('Failed to save section');
       const updatedSection = await response.json();
-      setSection(updatedSection)
+      setSection(updatedSection);
+      onFeatureUpdate(); // Call to refresh project after save
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save');
     } finally {
@@ -40,6 +48,7 @@ export default function ManualSectionEditor({projectId, manualSection}: {project
         method: 'DELETE',
       });
       if (!response.ok) throw new Error('Failed to delete section');
+      onFeatureUpdate(); // Call to refresh project before navigation (optional, as delete modifies project)
       router.push(`/project/${projectId}/manual`);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete');
@@ -59,7 +68,7 @@ export default function ManualSectionEditor({projectId, manualSection}: {project
         value={content}
         onChange={(e) => setContent(e.target.value)}
         rows={10}
-                      markdown={true} height={'auto'}
+        markdown={true} height={'auto'}
       />
       <div>
         <HeadedButton variant={VariantEnum.Outline} onClick={handleSave} disabled={saving}>
