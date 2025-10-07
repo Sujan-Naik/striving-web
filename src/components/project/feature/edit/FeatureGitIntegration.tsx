@@ -19,7 +19,7 @@ export default function FeatureGitIntegration({
   onUpdate
 }: FeatureGitIntegrationProps) {
 
-    const project = useProject()!;
+      const { project, refreshProject } = useProject()!;
     const githubRepo = project.githubRepo!
   return (
     <div className={"center-column"} style={{width: '100%'}}>

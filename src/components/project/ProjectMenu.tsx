@@ -5,7 +5,7 @@ import {FiUsers, FiBox, FiBook, FiStar, FiFileText, FiHome} from "react-icons/fi
 import { useState, useEffect, useRef } from "react";
 
 export function ProjectMenu() {
-  const project = useProject();
+    const { project, refreshProject } = useProject();
   const [useIcons, setUseIcons] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 

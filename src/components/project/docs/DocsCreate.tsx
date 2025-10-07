@@ -2,11 +2,14 @@
 import {useState} from 'react';
 import {useProject} from "@/context/ProjectContext";
 import {HeadedButton, HeadedInput, VariantEnum} from "headed-ui";
+import {useRouter} from "next/navigation";
 
 export default function DocsCreate(){
+      const router = useRouter();
+
   const [content, setContent] = useState('');
 
-      const project = useProject();
+        const { project, refreshProject } = useProject();
 
 
   const handleCreate = async () => {
@@ -16,6 +19,8 @@ export default function DocsCreate(){
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ content, project: project._id })
     });
+    await refreshProject();
+
   };
 
   return (
@@ -23,11 +28,11 @@ export default function DocsCreate(){
       <HeadedInput
         value={content}
         onChange={(e) => setContent(e.target.value)}
-        placeholder="Name your next Docs"
-        variant={VariantEnum.Secondary}
+        placeholder="Name your new Documentation"
+        variant={VariantEnum.Outline}
         width={'auto'}
       />
-      <HeadedButton variant={VariantEnum.Secondary} onClick={handleCreate} disabled={!content.trim()} >Create</HeadedButton>
+      <HeadedButton variant={VariantEnum.Outline} onClick={handleCreate} disabled={!content.trim()}>Create</HeadedButton>
     </div>
   );
 }

@@ -8,7 +8,7 @@ import remarkGfm from "remark-gfm";
 
 
 export default function ProjectPage() {
-    const project = useProject()!;
+      const { project, refreshProject } = useProject()!;
       return (
     <>
         <div className={'block w-full justify-center flex'}>

@@ -3,13 +3,15 @@
 import { useState } from 'react';
 import { useUser } from "@/context/UserContext";
 import { HeadedButton, HeadedInput, HeadedSelect, HeadedTextArea, VariantEnum } from "headed-ui";
-import { useGithubRepository } from "@/hooks/useGithubRepository"; // Update path as needed
+import { useGithubRepository } from "@/hooks/useGithubRepository";
+import {useRouter} from "next/navigation"; // Update path as needed
 
 interface CreateProjectProps {
   onProjectCreated?: (project: any) => void;
 }
 
 export default function CreateProject({ onProjectCreated }: CreateProjectProps) {
+  const router = useRouter();
   const { user } = useUser();
   const { repos, loading: loadingRepos, error: repoError } = useGithubRepository();
 
@@ -45,7 +47,8 @@ export default function CreateProject({ onProjectCreated }: CreateProjectProps) 
       const project = await response.json();
 
       onProjectCreated?.(project);
-      setFormData({ name: '', description: '', githubRepo: '' });
+      await router.push(`/projects/${project.name}`)
+      // setFormData({ name: '', description: '', githubRepo: '' });
     } catch (err) {
       setError('Failed to create project');
     } finally {

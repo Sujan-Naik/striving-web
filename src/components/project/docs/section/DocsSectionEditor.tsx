@@ -17,10 +17,12 @@ import {useProject} from "@/context/ProjectContext";
 
 export default function DocsSectionEditor({
   projectId,
-  docsSection
+  docsSection,
+  onFeatureUpdate // Add this prop
 }: {
   projectId: string;
   docsSection: IDocsSection;
+  onFeatureUpdate: () => void; // Add this type
 }) {
   const [title, setTitle] = useState(docsSection.title);
   const [content, setContent] = useState(docsSection.content);
@@ -45,6 +47,7 @@ export default function DocsSectionEditor({
       if (!response.ok) throw new Error('Failed to save section');
       const updatedSection = await response.json();
       setSection(updatedSection);
+      onFeatureUpdate(); // Call to refresh project after save
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save');
     } finally {
@@ -61,6 +64,7 @@ export default function DocsSectionEditor({
         { method: 'DELETE' }
       );
       if (!response.ok) throw new Error('Failed to delete section');
+      onFeatureUpdate(); // Call to refresh project before navigation (optional, as delete modifies project)
       router.push(`/project/${projectId}/docs`);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete');
@@ -76,8 +80,7 @@ export default function DocsSectionEditor({
   };
 
   if (error) return <div>Error: {error}</div>;
-  const project = useProject();
-
+  const { project, refreshProject } = useProject();
 
   const [owner, repo] = project.githubRepo.split('/');
 
@@ -143,10 +146,10 @@ export default function DocsSectionEditor({
             overflow: 'auto'
           }}>
             <DocumentationGeneration
-  owner={owner}
-  repo={repo}
-  initialBranch="main"
-/>
+              owner={owner}
+              repo={repo}
+              initialBranch="main"
+            />
           </div>
           <div style={{
             flex: 1,

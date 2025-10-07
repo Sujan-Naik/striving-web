@@ -14,20 +14,19 @@ interface SectionNode extends IDocsSectionOrder {
 }
 
 export default function DocsDisplay() {
-  const  project  = useProject()!;
-  const projectId = project?._id;
+  const  {project}  = useProject();
   const [docs, setDocs] = useState<IDocs | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchDocs = async () => {
-      if (!projectId) {
+      if (!project._id) {
         setLoading(false);
         return;
       }
 
       try {
-        const response = await fetch(`/api/project/${projectId}/docs`);
+        const response = await fetch(`/api/project/${project._id}/docs`);
         if (response.ok) {
           const data = await response.json();
           setDocs(data);
@@ -40,7 +39,7 @@ export default function DocsDisplay() {
     };
 
     fetchDocs();
-  }, [projectId]);
+  }, [project]);
 
   const buildSectionTree = (sections: IDocsSectionOrder[]): SectionNode[] => {
     const sorted = sections.sort((a, b) => a.order - b.order);
