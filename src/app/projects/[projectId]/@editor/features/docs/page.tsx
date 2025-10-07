@@ -1,8 +1,7 @@
-import {useProject} from "@/context/ProjectContext";
 import DocsList from "@/components/project/docs/DocsList";
 import DocsCreate from "@/components/project/docs/DocsCreate";
 
-export default function Page(){
+export default function Page() {
 
 
     // await fetch(`/api/project/${project._id}/docs`, {
@@ -15,7 +14,7 @@ export default function Page(){
 
     return <div className={'center-column'} style={{width: '100%'}}>
         <DocsCreate/>
-                <DocsList/>
+        <DocsList/>
 
     </div>
 }

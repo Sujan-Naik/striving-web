@@ -1,8 +1,7 @@
-import {useProject} from "@/context/ProjectContext";
 import ManualList from "@/components/project/manual/ManualList";
 import ManualCreate from "@/components/project/manual/ManualCreate";
 
-export default function Page(){
+export default function Page() {
 
 
     // await fetch(`/api/project/${project._id}/manual`, {
@@ -15,7 +14,7 @@ export default function Page(){
 
     return <div className={'center-column'} style={{width: '100%'}}>
         <ManualCreate/>
-                <ManualList/>
+        <ManualList/>
 
     </div>
 }

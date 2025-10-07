@@ -1,29 +1,28 @@
-import type { Metadata } from "next";
-import { Pixelify_Sans } from "next/font/google";
+import type {Metadata} from "next";
 import "@/styles/globals.css";
 import {SessionProvider} from "next-auth/react";
 import Header from "@/components/Header";
 
 
 export const metadata: Metadata = {
-  title: "Striving",
-  description: "A Comprehensive Work Companion Web App for Software Engineers",
+    title: "Striving",
+    description: "A Comprehensive Work Companion Web App for Software Engineers",
 };
 
 export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
+                                       children,
+                                   }: Readonly<{
+    children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en">
-<body className={`antialiased`}>
+    return (
+        <html lang="en">
+        <body className={`antialiased`}>
         <SessionProvider>
-                  <Header/>
+            <Header/>
 
-          {children}
+            {children}
         </SessionProvider>
-      </body>
-    </html>
-  );
+        </body>
+        </html>
+    );
 }

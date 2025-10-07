@@ -4,34 +4,35 @@ import {useProject} from "@/context/ProjectContext";
 import {HeadedButton, HeadedInput, VariantEnum} from "headed-ui";
 import {useRouter} from "next/navigation";
 
-export default function ManualCreate(){
-      const router = useRouter();
+export default function ManualCreate() {
+    const router = useRouter();
 
-  const [content, setContent] = useState('');
+    const [content, setContent] = useState('');
 
-        const { project, refreshProject } = useProject();
+    const {project, refreshProject} = useProject();
 
 
-  const handleCreate = async () => {
-      if (!content.trim()) return;
-    await fetch(`/api/project/${project._id}/manual`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ content, project: project._id })
-    });
-    await refreshProject();
-  };
+    const handleCreate = async () => {
+        if (!content.trim()) return;
+        await fetch(`/api/project/${project._id}/manual`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({content, project: project._id})
+        });
+        await refreshProject();
+    };
 
-  return (
-    <div className={'center-column'} style={{width: '100%'}}>
-      <HeadedInput
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        placeholder="Name your new Manual"
-        variant={VariantEnum.Outline}
-        width={'auto'}
-      />
-      <HeadedButton variant={VariantEnum.Outline} onClick={handleCreate} disabled={!content.trim()}>Create</HeadedButton>
-    </div>
-  );
+    return (
+        <div className={'center-column'} style={{width: '100%'}}>
+            <HeadedInput
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                placeholder="Name your new Manual"
+                variant={VariantEnum.Outline}
+                width={'auto'}
+            />
+            <HeadedButton variant={VariantEnum.Outline} onClick={handleCreate}
+                          disabled={!content.trim()}>Create</HeadedButton>
+        </div>
+    );
 }

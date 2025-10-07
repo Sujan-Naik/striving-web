@@ -1,8 +1,8 @@
 'use client'
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import ApplyToProject from "@/components/project/applications/ApplyToProject";
-import { useProject } from "@/context/ProjectContext";
-import { useUser } from "@/context/UserContext";
+import {useProject} from "@/context/ProjectContext";
+import {useUser} from "@/context/UserContext";
 
 export default function Page() {
   const  {project} = useProject()!;
@@ -33,22 +33,15 @@ export default function Page() {
       }
     };
 
-    checkApplication();
-  }, [project?._id, user]);
+    if (loading) return <div>Loading...</div>;
 
-  const handleApplicationSubmit = () => {
-    setHasApplied(true);
-  };
-
-  if (loading) return <div>Loading...</div>;
-
-  return (
-    <div>
-      <ApplyToProject
-        projectId={project._id!}
-        hasApplied={hasApplied}
-        onApplicationSubmit={handleApplicationSubmit}
-      />
-    </div>
-  );
+    return (
+        <div>
+            <ApplyToProject
+                projectId={project._id!}
+                hasApplied={hasApplied}
+                onApplicationSubmit={handleApplicationSubmit}
+            />
+        </div>
+    );
 }

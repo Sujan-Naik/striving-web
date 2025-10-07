@@ -1,10 +1,10 @@
 // tailwind.config.js
 export default {
-  theme: {
-    extend: {
-      fontFamily: {
-        sans: ["var(--font-pixelify-sans)", "sans-serif"],
-      },
+    theme: {
+        extend: {
+            fontFamily: {
+                sans: ["var(--font-pixelify-sans)", "sans-serif"],
+            },
+        },
     },
-  },
 };

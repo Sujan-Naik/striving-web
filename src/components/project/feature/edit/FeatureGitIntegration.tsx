@@ -4,40 +4,40 @@ import React from 'react';
 import {useProject} from "@/context/ProjectContext";
 
 interface FeatureGitIntegrationProps {
-  projectId: string;
-  featureId: string;
-  commitShas: string[];
-  pullRequestNumbers: number[];
-  onUpdate: (endpoint: string, data: any) => void;
+    projectId: string;
+    featureId: string;
+    commitShas: string[];
+    pullRequestNumbers: number[];
+    onUpdate: (endpoint: string, data: any) => void;
 }
 
 export default function FeatureGitIntegration({
-  projectId,
-  featureId,
-  commitShas,
-  pullRequestNumbers,
-  onUpdate
-}: FeatureGitIntegrationProps) {
+                                                  projectId,
+                                                  featureId,
+                                                  commitShas,
+                                                  pullRequestNumbers,
+                                                  onUpdate
+                                              }: FeatureGitIntegrationProps) {
 
-      const { project, refreshProject } = useProject()!;
+    const {project, refreshProject} = useProject()!;
     const githubRepo = project.githubRepo!
-  return (
-    <div className={"center-column"} style={{width: '100%'}}>
-      <h3>Git Integration</h3>
-      {/*<CommitsList*/}
-      {/*    githubRepo={githubRepo}*/}
-      {/*  projectId={projectId}*/}
-      {/*  featureId={featureId}*/}
-      {/*  commitShas={commitShas}*/}
-      {/*  onUpdate={onUpdate}*/}
-      {/*/>*/}
-      {/*<PullRequestsList*/}
-      {/*    githubRepo={githubRepo}*/}
-      {/*  projectId={projectId}*/}
-      {/*  featureId={featureId}*/}
-      {/*  pullRequestNumbers={pullRequestNumbers}*/}
-      {/*  onUpdate={onUpdate}*/}
-      {/*/>*/}
-    </div>
-  );
+    return (
+        <div className={"center-column"} style={{width: '100%'}}>
+            <h3>Git Integration</h3>
+            {/*<CommitsList*/}
+            {/*    githubRepo={githubRepo}*/}
+            {/*  projectId={projectId}*/}
+            {/*  featureId={featureId}*/}
+            {/*  commitShas={commitShas}*/}
+            {/*  onUpdate={onUpdate}*/}
+            {/*/>*/}
+            {/*<PullRequestsList*/}
+            {/*    githubRepo={githubRepo}*/}
+            {/*  projectId={projectId}*/}
+            {/*  featureId={featureId}*/}
+            {/*  pullRequestNumbers={pullRequestNumbers}*/}
+            {/*  onUpdate={onUpdate}*/}
+            {/*/>*/}
+        </div>
+    );
 }

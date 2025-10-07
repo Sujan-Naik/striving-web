@@ -1,66 +1,66 @@
-import { NextRequest, NextResponse } from 'next/server';
+import {NextRequest, NextResponse} from 'next/server';
 import dbConnect from "@/lib/mongodb";
 
 import featureService from "@/services/featureService";
 
 
-export async function GET(request: NextRequest, { params }: { params: Promise<{ featureId: string }> }) {
-  try {
-      await dbConnect()
-    const {featureId} = await params;
-    const feature = await featureService.getFeatureById(featureId);
-    if (!feature) {
-      return NextResponse.json({ error: 'Feature not found' }, { status: 404 });
+export async function GET(request: NextRequest, {params}: { params: Promise<{ featureId: string }> }) {
+    try {
+        await dbConnect()
+        const {featureId} = await params;
+        const feature = await featureService.getFeatureById(featureId);
+        if (!feature) {
+            return NextResponse.json({error: 'Feature not found'}, {status: 404});
+        }
+        return NextResponse.json(feature);
+    } catch (error) {
+        return NextResponse.json({error: 'Failed to fetch features'}, {status: 500});
     }
-    return NextResponse.json(feature);
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch features' }, { status: 500 });
-  }
 }
 
-export async function PUT(request: NextRequest, { params }: { params: Promise<{ featureId: string }> }) {
-  try {
-      await dbConnect()
-    const updateData = await request.json();
-          const {featureId} = await params;
-
-    const feature = await featureService.updateFeature(featureId, updateData);
-    if (!feature) {
-      return NextResponse.json({ error: 'Feature not found' }, { status: 404 });
-    }
-    return NextResponse.json(feature);
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to update features' }, { status: 500 });
-  }
-}
-
-export async function DELETE(request: NextRequest, { params }: { params: Promise<{ featureId: string }> }) {
-  try {
-      await dbConnect()
+export async function PUT(request: NextRequest, {params}: { params: Promise<{ featureId: string }> }) {
+    try {
+        await dbConnect()
+        const updateData = await request.json();
         const {featureId} = await params;
 
-    const deleted = await featureService.deleteFeature(featureId);
-    if (!deleted) {
-      return NextResponse.json({ error: 'Feature not found' }, { status: 404 });
+        const feature = await featureService.updateFeature(featureId, updateData);
+        if (!feature) {
+            return NextResponse.json({error: 'Feature not found'}, {status: 404});
+        }
+        return NextResponse.json(feature);
+    } catch (error) {
+        return NextResponse.json({error: 'Failed to update features'}, {status: 500});
     }
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to delete features' }, { status: 500 });
-  }
 }
 
-export async function PATCH(request: NextRequest, { params }: { params: Promise<{ featureId: string }> }) {
-  try {
-    await dbConnect()
-    const updateData = await request.json();
-    const {featureId} = await params;
+export async function DELETE(request: NextRequest, {params}: { params: Promise<{ featureId: string }> }) {
+    try {
+        await dbConnect()
+        const {featureId} = await params;
 
-    const feature = await featureService.updateFeature(featureId, updateData);
-    if (!feature) {
-      return NextResponse.json({ error: 'Feature not found' }, { status: 404 });
+        const deleted = await featureService.deleteFeature(featureId);
+        if (!deleted) {
+            return NextResponse.json({error: 'Feature not found'}, {status: 404});
+        }
+        return NextResponse.json({success: true});
+    } catch (error) {
+        return NextResponse.json({error: 'Failed to delete features'}, {status: 500});
     }
-    return NextResponse.json(feature);
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to update features' }, { status: 500 });
-  }
+}
+
+export async function PATCH(request: NextRequest, {params}: { params: Promise<{ featureId: string }> }) {
+    try {
+        await dbConnect()
+        const updateData = await request.json();
+        const {featureId} = await params;
+
+        const feature = await featureService.updateFeature(featureId, updateData);
+        if (!feature) {
+            return NextResponse.json({error: 'Feature not found'}, {status: 404});
+        }
+        return NextResponse.json(feature);
+    } catch (error) {
+        return NextResponse.json({error: 'Failed to update features'}, {status: 500});
+    }
 }

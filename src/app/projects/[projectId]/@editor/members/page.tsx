@@ -2,7 +2,7 @@
 import {MemberManager} from "@/components/project/members/MemberManager";
 import {useProject} from "@/context/ProjectContext";
 
-export default function Page(){
-      const { project, refreshProject } = useProject()!;
+export default function Page() {
+    const {project, refreshProject} = useProject()!;
     return (<MemberManager projectId={project._id}/>)
 }

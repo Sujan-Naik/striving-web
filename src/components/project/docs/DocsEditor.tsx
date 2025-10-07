@@ -8,425 +8,421 @@ import {IDocs, IDocsSectionOrder} from "@/types/project/Docs";
 import {IFeature} from "@/types/project/Feature";
 import {useDocs} from "@/context/DocsContext";
 import {useFeatures} from "@/context/FeatureContext";
-import {HeadedButton, HeadedCard, HeadedCarousel, HeadedInput, HeadedTextArea, VariantEnum} from "headed-ui";
+import {HeadedButton, HeadedCarousel, HeadedInput, HeadedTextArea, VariantEnum} from "headed-ui";
 
 export default function DocsEditor() {
-  const { project, refreshProject } = useProject()!;
-const projectId = project._id;
+    const {project, refreshProject} = useProject()!;
+    const projectId = project._id;
 
-const [docs, setDocs] = useState<IDocs>(useDocs().docs);
-const [features, setFeatures] = useState<IFeature[]>(useFeatures());
-const [selectedDocsSections, setSelectedDocsSections] = useState<string[]>(docs.docsSections.map(value => value.docsSection._id));
-const [loading, setLoading] = useState(false);
-const [docsExists, setDocsExists] = useState<boolean>(true);
-const [draggedItem, setDraggedItem] = useState<string | null>(null);
+    const [docs, setDocs] = useState<IDocs>(useDocs().docs);
+    const [features, setFeatures] = useState<IFeature[]>(useFeatures());
+    const [selectedDocsSections, setSelectedDocsSections] = useState<string[]>(docs.docsSections.map(value => value.docsSection._id));
+    const [loading, setLoading] = useState(false);
+    const [docsExists, setDocsExists] = useState<boolean>(true);
+    const [draggedItem, setDraggedItem] = useState<string | null>(null);
 
 
-const buildHierarchy = (features: IFeature[]): IFeature[] => {
-  return features.filter(f => !f.parent);
-};
+    const buildHierarchy = (features: IFeature[]): IFeature[] => {
+        return features.filter(f => !f.parent);
+    };
 
-const getFeatureLevel = (featureId: string, level = 0): number => {
-  const feature = features.find(f => f._id === featureId);
-  if (!feature?.parent) return level;
-  return getFeatureLevel(feature.parent, level + 1);
-};
+    const getFeatureLevel = (featureId: string, level = 0): number => {
+        const feature = features.find(f => f._id === featureId);
+        if (!feature?.parent) return level;
+        return getFeatureLevel(feature.parent, level + 1);
+    };
 
-const getParentDocsSection = (featureId: string): IDocsSection | undefined => {
-  const feature = features.find(f => f._id === featureId);
-  if (!feature?.parent) return undefined;
-  const parentFeature = features.find(f => f._id === feature.parent);
-  return parentFeature?.docsSection;
-};
+    const getParentDocsSection = (featureId: string): IDocsSection | undefined => {
+        const feature = features.find(f => f._id === featureId);
+        if (!feature?.parent) return undefined;
+        const parentFeature = features.find(f => f._id === feature.parent);
+        return parentFeature?.docsSection;
+    };
 
-const renderFeatureOption = (feature: IFeature, level = 0): React.ReactNode => {
-const children = features.filter(f => f.parent === feature._id);
-const isSelected = selectedDocsSections.includes(feature.docsSection._id!);
+    const renderFeatureOption = (feature: IFeature, level = 0): React.ReactNode => {
+        const children = features.filter(f => f.parent === feature._id);
+        const isSelected = selectedDocsSections.includes(feature.docsSection._id!);
 
-return (
-  <React.Fragment key={feature._id}>
-    {feature.docsSection && (
-      <div
-        style={{
-          padding: '8px',
-          margin: '4px 0',
-          marginLeft: `${level * 20}px`,
-          border: '1px solid #ccc',
-          backgroundColor: isSelected ? 'var(--highlight)' : 'var(--hover)',
-          display: 'block'
-        }}
-      >
-        <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <HeadedInput width={"100%"} variant={VariantEnum.Outline}
-            type="checkbox"
-            checked={isSelected}
-            onChange={() => handleDocsSectionToggle(feature)}
-          />
-          <span>{feature.title}</span>
-        </label>
-      </div>
-    )}
-    {children.map(child => renderFeatureOption(child, level + 1))}
-  </React.Fragment>
-);
-};
+        return (
+            <React.Fragment key={feature._id}>
+                {feature.docsSection && (
+                    <div
+                        style={{
+                            padding: '8px',
+                            margin: '4px 0',
+                            marginLeft: `${level * 20}px`,
+                            border: '1px solid #ccc',
+                            backgroundColor: isSelected ? 'var(--highlight)' : 'var(--hover)',
+                            display: 'block'
+                        }}
+                    >
+                        <label style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+                            <HeadedInput width={"100%"} variant={VariantEnum.Outline}
+                                         type="checkbox"
+                                         checked={isSelected}
+                                         onChange={() => handleDocsSectionToggle(feature)}
+                            />
+                            <span>{feature.title}</span>
+                        </label>
+                    </div>
+                )}
+                {children.map(child => renderFeatureOption(child, level + 1))}
+            </React.Fragment>
+        );
+    };
 
-const handleDocsSectionToggle = (feature: IFeature) => {
-  if (!feature.docsSection) return;
+    const handleDocsSectionToggle = (feature: IFeature) => {
+        if (!feature.docsSection) return;
 
-  const sectionId = feature.docsSection._id!;
+        const sectionId = feature.docsSection._id!;
 
-  setSelectedDocsSections(prev => {
-    if (prev.includes(sectionId)) {
-      // Deselecting: remove this section and all its children
-      const childSections = getChildSections(feature._id);
-      return prev.filter(id => id !== sectionId && !childSections.includes(id));
-    } else {
-      // Selecting: auto-select parent hierarchy
-      let newSections = [...prev];
+        setSelectedDocsSections(prev => {
+            if (prev.includes(sectionId)) {
+                // Deselecting: remove this section and all its children
+                const childSections = getChildSections(feature._id);
+                return prev.filter(id => id !== sectionId && !childSections.includes(id));
+            } else {
+                // Selecting: auto-select parent hierarchy
+                let newSections = [...prev];
 
-      // Collect all required parents
-      const requiredParents = getRequiredParents(feature._id);
+                // Collect all required parents
+                const requiredParents = getRequiredParents(feature._id);
 
-      // Add missing parents first
-      requiredParents.forEach(parentId => {
-        if (!newSections.includes(parentId)) {
-          const parentFeature = features.find(f => f.docsSection._id === parentId);
-          if (parentFeature) {
-            const insertIndex = findInsertionIndex(newSections, parentFeature);
-            newSections.splice(insertIndex, 0, parentId);
-          }
+                // Add missing parents first
+                requiredParents.forEach(parentId => {
+                    if (!newSections.includes(parentId)) {
+                        const parentFeature = features.find(f => f.docsSection._id === parentId);
+                        if (parentFeature) {
+                            const insertIndex = findInsertionIndex(newSections, parentFeature);
+                            newSections.splice(insertIndex, 0, parentId);
+                        }
+                    }
+                });
+
+                // Add the selected section
+                const insertIndex = findInsertionIndex(newSections, feature);
+                newSections.splice(insertIndex, 0, sectionId);
+
+                return newSections;
+            }
+        });
+    };
+
+    const getRequiredParents = (featureId: string): string[] => {
+        const parents: string[] = [];
+        let currentFeature = features.find(f => f._id === featureId);
+
+        while (currentFeature?.parent) {
+            const parentFeature = features.find(f => f._id === currentFeature!.parent);
+            if (parentFeature?.docsSection) {
+                parents.unshift(parentFeature.docsSection._id!);
+            }
+            currentFeature = parentFeature;
         }
-      });
 
-      // Add the selected section
-      const insertIndex = findInsertionIndex(newSections, feature);
-      newSections.splice(insertIndex, 0, sectionId);
-
-      return newSections;
-    }
-  });
-};
-
-const getRequiredParents = (featureId: string): string[] => {
-  const parents: string[] = [];
-  let currentFeature = features.find(f => f._id === featureId);
-
-  while (currentFeature?.parent) {
-    const parentFeature = features.find(f => f._id === currentFeature!.parent);
-    if (parentFeature?.docsSection) {
-      parents.unshift(parentFeature.docsSection._id!);
-    }
-    currentFeature = parentFeature;
-  }
-
-  return parents;
-};
+        return parents;
+    };
 
 
-const findInsertionIndex = (currentSections: string[], newFeature: IFeature): number => {
-  const newLevel = getFeatureLevel(newFeature._id);
-  const newParentSection = getParentDocsSection(newFeature._id);
-  const newParentId = newParentSection?._id || null;
+    const findInsertionIndex = (currentSections: string[], newFeature: IFeature): number => {
+        const newLevel = getFeatureLevel(newFeature._id);
+        const newParentSection = getParentDocsSection(newFeature._id);
+        const newParentId = newParentSection?._id || null;
 
-  // If it's a root level item, find the last root level item and insert after it
- if (newLevel === 0) {
-  // Find the last root item and its children, then insert after
-  let insertAfterIndex = 0;
-  for (let i = 0; i < currentSections.length; i++) {
-    const feature = features.find(f => f.docsSection._id === currentSections[i]);
-    if (feature && getFeatureLevel(feature._id) === 0) {
-      // Find end of this root's children
-      let j = i + 1;
-      while (j < currentSections.length) {
-        const childFeature = features.find(f => f.docsSection._id === currentSections[j]);
-        if (!childFeature || getFeatureLevel(childFeature._id) === 0) break;
-        j++;
-      }
-      insertAfterIndex = j;
-    }
-  }
-  return insertAfterIndex;
-}
-
-  // For non-root items, find the correct position within their parent's children
-  if (newParentId) {
-    const parentIndex = currentSections.indexOf(newParentId);
-    if (parentIndex !== -1) {
-      // Find the end of this parent's children section
-      let insertIndex = parentIndex + 1;
-      for (let i = parentIndex + 1; i < currentSections.length; i++) {
-        const feature = features.find(f => f.docsSection._id === currentSections[i]);
-        if (!feature) continue;
-
-        const featureParent = getParentDocsSection(feature._id);
-        const featureParentId = featureParent?._id || null;
-
-        // If we've moved beyond this parent's children, stop
-        if (featureParentId !== newParentId && getFeatureLevel(feature._id) <= newLevel) {
-          break;
+        // If it's a root level item, find the last root level item and insert after it
+        if (newLevel === 0) {
+            // Find the last root item and its children, then insert after
+            let insertAfterIndex = 0;
+            for (let i = 0; i < currentSections.length; i++) {
+                const feature = features.find(f => f.docsSection._id === currentSections[i]);
+                if (feature && getFeatureLevel(feature._id) === 0) {
+                    // Find end of this root's children
+                    let j = i + 1;
+                    while (j < currentSections.length) {
+                        const childFeature = features.find(f => f.docsSection._id === currentSections[j]);
+                        if (!childFeature || getFeatureLevel(childFeature._id) === 0) break;
+                        j++;
+                    }
+                    insertAfterIndex = j;
+                }
+            }
+            return insertAfterIndex;
         }
-        insertIndex = i + 1;
-      }
-      return insertIndex;
+
+        // For non-root items, find the correct position within their parent's children
+        if (newParentId) {
+            const parentIndex = currentSections.indexOf(newParentId);
+            if (parentIndex !== -1) {
+                // Find the end of this parent's children section
+                let insertIndex = parentIndex + 1;
+                for (let i = parentIndex + 1; i < currentSections.length; i++) {
+                    const feature = features.find(f => f.docsSection._id === currentSections[i]);
+                    if (!feature) continue;
+
+                    const featureParent = getParentDocsSection(feature._id);
+                    const featureParentId = featureParent?._id || null;
+
+                    // If we've moved beyond this parent's children, stop
+                    if (featureParentId !== newParentId && getFeatureLevel(feature._id) <= newLevel) {
+                        break;
+                    }
+                    insertIndex = i + 1;
+                }
+                return insertIndex;
+            }
+        }
+
+        return currentSections.length;
+    };
+
+    const getChildSections = (parentFeatureId: string): string[] => {
+        const childFeatures = features.filter(f => f.parent === parentFeatureId);
+        let childSections: string[] = [];
+
+        childFeatures.forEach(child => {
+            if (child.docsSection) {
+                childSections.push(child.docsSection._id!);
+                childSections = [...childSections, ...getChildSections(child._id)];
+            }
+        });
+
+        return childSections;
+    };
+
+    const buildDocsSections = (): IDocsSectionOrder[] => {
+        return selectedDocsSections.map((sectionId, index) => {
+            const feature = features.find(f => f.docsSection._id === sectionId)!;
+            const parentSection = getParentDocsSection(feature._id);
+
+            return {
+                docsSection: feature.docsSection,
+                order: index,
+                level: getFeatureLevel(feature._id),
+                parentSection: parentSection || undefined
+            };
+        });
+    };
+
+    const updateDocsSections = async () => {
+        setLoading(true);
+        try {
+            const docsSections = buildDocsSections();
+
+            const response = await fetch(`/api/project/${projectId}/docs/${docs._id}/docs-section`, {
+                method: 'PATCH',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({docsSections})
+            });
+
+
+            if (response.ok) {
+                setDocs(prev => ({...prev, docsSections}));
+                alert('Docs sections updated successfully');
+            }
+        } catch (error) {
+            console.error('Error updating docs sections:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+
+        try {
+
+            const response = await fetch(`/api/project/${projectId}/docs`, {
+                method: 'PUT',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    content: docs.content,
+                    project: projectId
+                })
+            });
+
+            if (response.ok) {
+                const savedDocs = await response.json();
+                setDocs(prev => ({...prev, ...savedDocs}));
+                setDocsExists(true);
+                alert(`Docs updated successfully`);
+            }
+        } catch (error) {
+            console.error('Error saving docs:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleDragStart = (docsSectionId: string) => {
+        setDraggedItem(docsSectionId);
+    };
+
+    const canDropAtPosition = (draggedSectionId: string, targetIndex: number): boolean => {
+        const draggedFeature = features.find(f => f.docsSection._id === draggedSectionId);
+        if (!draggedFeature) return false;
+
+        const draggedParentId = getParentDocsSection(draggedFeature._id)?._id || null;
+
+        if (targetIndex >= selectedDocsSections.length) return true;
+
+        const targetSectionId = selectedDocsSections[targetIndex];
+        const targetFeature = features.find(f => f.docsSection._id === targetSectionId);
+        if (!targetFeature) return false;
+
+        const targetParentId = getParentDocsSection(targetFeature._id)?._id || null;
+
+        return draggedParentId === targetParentId;
+    };
+
+
+    const handleDrop = (targetIndex: number) => {
+        if (!draggedItem) return;
+
+        const currentIndex = selectedDocsSections.indexOf(draggedItem);
+        if (currentIndex === -1 || currentIndex === targetIndex) return;
+
+        if (!canDropAtPosition(draggedItem, targetIndex)) {
+            setDraggedItem(null);
+            return;
+        }
+
+        const newOrder = [...selectedDocsSections];
+        const [movedItem] = newOrder.splice(currentIndex, 1);
+        const adjustedTargetIndex = targetIndex > currentIndex ? targetIndex - 1 : targetIndex;
+
+        // Get all children of the moved item
+        const movedFeature = features.find(f => f.docsSection._id === movedItem);
+        const childSections = movedFeature ? getChildSections(movedFeature._id) : [];
+
+        // Remove all children from their current positions
+        const childrenToMove = childSections.filter(childId => newOrder.includes(childId));
+        childrenToMove.forEach(childId => {
+            const childIndex = newOrder.indexOf(childId);
+            if (childIndex !== -1) {
+                newOrder.splice(childIndex, 1);
+            }
+        });
+
+        // Insert the moved item at the target position
+        newOrder.splice(adjustedTargetIndex, 0, movedItem);
+
+        // Insert all children immediately after the moved item
+        childrenToMove.forEach((childId, index) => {
+            newOrder.splice(adjustedTargetIndex + 1 + index, 0, childId);
+        });
+
+        setSelectedDocsSections(newOrder);
+        setDraggedItem(null);
+    };
+
+
+    const renderSelectedFeature = (docsSectionId: string, index: number, editor: boolean) => {
+        const feature = features.find(f => f.docsSection._id === docsSectionId);
+        if (!feature) return null;
+
+        const level = getFeatureLevel(feature._id);
+        const isValidDropZone = !draggedItem || canDropAtPosition(draggedItem, index);
+        const isDragging = draggedItem === docsSectionId;
+
+
+        if (editor) {
+            return (
+
+                <div
+                    key={docsSectionId}
+                >
+                    <label>
+                        <DocsSectionEditor
+                            key={feature.docsSection._id}
+                            projectId={projectId}
+                            docsSection={feature.docsSection}
+                            onFeatureUpdate={refreshProject}
+                        />
+                    </label>
+                </div>
+            )
+        } else {
+            return (
+                <div
+                    key={docsSectionId}
+                    draggable
+                    onDragStart={() => handleDragStart(docsSectionId)}
+                    onDragOver={(e) => isValidDropZone && e.preventDefault()}
+                    onDrop={() => handleDrop(index)}
+                    className={`feature-item ${!isValidDropZone ? 'invalid-drop' : ''} ${isDragging ? 'dragging' : ''}`}
+                    style={{
+                        marginLeft: `${level * 20}px`,
+                        opacity: isDragging ? 0.5 : 1,
+                        display: 'block'
+
+                    }}
+                >
+                    <HeadedInput width={"100%"} variant={VariantEnum.Outline}
+                                 type="checkbox"
+                                 checked
+                                 onChange={() => handleDocsSectionToggle(feature)}
+                    />
+                    <span>{feature.title}</span>
+                </div>
+            )
+        }
     }
-  }
-
-  return currentSections.length;
-};
-
-const getChildSections = (parentFeatureId: string): string[] => {
-const childFeatures = features.filter(f => f.parent === parentFeatureId);
-let childSections: string[] = [];
-
-childFeatures.forEach(child => {
-  if (child.docsSection) {
-    childSections.push(child.docsSection._id!);
-    childSections = [...childSections, ...getChildSections(child._id)];
-  }
-});
-
-return childSections;
-};
-
-const buildDocsSections = (): IDocsSectionOrder[] => {
-return selectedDocsSections.map((sectionId, index) => {
-  const feature = features.find(f => f.docsSection._id === sectionId)!;
-  const parentSection = getParentDocsSection(feature._id);
-
-  return {
-    docsSection: feature.docsSection,
-    order: index,
-    level: getFeatureLevel(feature._id),
-    parentSection: parentSection || undefined
-  };
-});
-};
-
-const updateDocsSections = async () => {
-  setLoading(true);
-  try {
-    const docsSections = buildDocsSections();
-
-    const response = await fetch(`/api/project/${projectId}/docs/${docs._id}/docs-section`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ docsSections })
-    });
 
 
-    if (response.ok) {
-      setDocs(prev => ({ ...prev, docsSections }));
-      alert('Docs sections updated successfully');
+    if (docsExists === null) {
+        // return <div>Loading...</div>;
     }
-  } catch (error) {
-    console.error('Error updating docs sections:', error);
-  } finally {
-    setLoading(false);
-  }
-};
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setLoading(true);
+    const rootFeatures = buildHierarchy(features);
+    return (
+        <div>
+            {!docsExists && (
+                <div>
+                    <h3>No docs found for this project</h3>
+                    <p>Create a new docs to get started.</p>
+                </div>
+            )}
 
-  try {
+            <form onSubmit={handleSubmit} className={'center-column'}>
+                <HeadedTextArea width={"100%"} variant={VariantEnum.Outline}
+                                value={docs.content}
+                                onChange={(e) => setDocs({...docs, content: e.target.value})}
+                                rows={15}
+                                markdown={true} height={'auto'}
+                />
+                <HeadedButton variant={VariantEnum.Outline} type="submit" disabled={loading}>
+                    {'Update Docs'}
+                </HeadedButton>
+            </form>
 
-    const response = await fetch(`/api/project/${projectId}/docs`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        content: docs.content,
-        project: projectId
-      })
-    });
+            <div className={'center-column'}>
+                <h3>Select & Order Docs Sections</h3>
+                <div style={{display: 'flex', gap: '20px'}}>
+                    <div style={{flex: 1}}>
+                        <h4>Available Sections</h4>
+                        {rootFeatures.map(feature => renderFeatureOption(feature))}
+                    </div>
 
-    if (response.ok) {
-      const savedDocs = await response.json();
-      setDocs(prev => ({ ...prev, ...savedDocs }));
-      setDocsExists(true);
-      alert(`Docs updated successfully`);
-    }
-  } catch (error) {
-    console.error('Error saving docs:', error);
-  } finally {
-    setLoading(false);
-  }
-};
+                    <div style={{flex: 1}}>
+                        <h4>Selected Sections (Ordered)</h4>
+                        {selectedDocsSections.map((docsSectionId, index) =>
+                            renderSelectedFeature(docsSectionId, index, false)
+                        )}
+                    </div>
+                </div>
 
-const handleDragStart = (docsSectionId: string) => {
-setDraggedItem(docsSectionId);
-};
-
-const canDropAtPosition = (draggedSectionId: string, targetIndex: number): boolean => {
-  const draggedFeature = features.find(f => f.docsSection._id === draggedSectionId);
-  if (!draggedFeature) return false;
-
-  const draggedParentId = getParentDocsSection(draggedFeature._id)?._id || null;
-
-  if (targetIndex >= selectedDocsSections.length) return true;
-
-  const targetSectionId = selectedDocsSections[targetIndex];
-  const targetFeature = features.find(f => f.docsSection._id === targetSectionId);
-  if (!targetFeature) return false;
-
-  const targetParentId = getParentDocsSection(targetFeature._id)?._id || null;
-
-  return draggedParentId === targetParentId;
-};
-
-
-const handleDrop = (targetIndex: number) => {
-  if (!draggedItem) return;
-
-  const currentIndex = selectedDocsSections.indexOf(draggedItem);
-  if (currentIndex === -1 || currentIndex === targetIndex) return;
-
-  if (!canDropAtPosition(draggedItem, targetIndex)) {
-    setDraggedItem(null);
-    return;
-  }
-
-  const newOrder = [...selectedDocsSections];
-  const [movedItem] = newOrder.splice(currentIndex, 1);
-  const adjustedTargetIndex = targetIndex > currentIndex ? targetIndex - 1 : targetIndex;
-
-  // Get all children of the moved item
-  const movedFeature = features.find(f => f.docsSection._id === movedItem);
-  const childSections = movedFeature ? getChildSections(movedFeature._id) : [];
-
-  // Remove all children from their current positions
-  const childrenToMove = childSections.filter(childId => newOrder.includes(childId));
-  childrenToMove.forEach(childId => {
-    const childIndex = newOrder.indexOf(childId);
-    if (childIndex !== -1) {
-      newOrder.splice(childIndex, 1);
-    }
-  });
-
-  // Insert the moved item at the target position
-  newOrder.splice(adjustedTargetIndex, 0, movedItem);
-
-  // Insert all children immediately after the moved item
-  childrenToMove.forEach((childId, index) => {
-    newOrder.splice(adjustedTargetIndex + 1 + index, 0, childId);
-  });
-
-  setSelectedDocsSections(newOrder);
-  setDraggedItem(null);
-};
-
-
-
-const renderSelectedFeature = (docsSectionId: string, index: number, editor: boolean) => {
-const feature = features.find(f => f.docsSection._id === docsSectionId);
-if (!feature) return null;
-
-const level = getFeatureLevel(feature._id);
-const isValidDropZone = !draggedItem || canDropAtPosition(draggedItem, index);
-const isDragging = draggedItem === docsSectionId;
-
-
-
-if (editor) {
-  return (
-
-      <div
-          key={docsSectionId}
-      >
-        <label>
-          <DocsSectionEditor
-              key={feature.docsSection._id}
-              projectId={projectId}
-              docsSection={feature.docsSection}
-              onFeatureUpdate={refreshProject}
-          />
-        </label>
-      </div>
-  )
-}
-else {
-  return (
-      <div
-          key={docsSectionId}
-          draggable
-          onDragStart={() => handleDragStart(docsSectionId)}
-          onDragOver={(e) => isValidDropZone && e.preventDefault()}
-          onDrop={() => handleDrop(index)}
-          className={`feature-item ${!isValidDropZone ? 'invalid-drop' : ''} ${isDragging ? 'dragging' : ''}`}
-          style={{
-            marginLeft: `${level * 20}px`,
-            opacity: isDragging ? 0.5 : 1,
-                      display: 'block'
-
-          }}
-      >
-      <HeadedInput width={"100%"} variant={VariantEnum.Outline}
-        type="checkbox"
-        checked
-        onChange={() => handleDocsSectionToggle(feature)}
-      />
-      <span>{feature.title}</span>
-        </div>
-  )
-  }
-}
-
-
-
-if (docsExists === null) {
-  // return <div>Loading...</div>;
-}
-
-const rootFeatures = buildHierarchy(features);
-return (
-  <div>
-    {!docsExists && (
-      <div>
-        <h3>No docs found for this project</h3>
-        <p>Create a new docs to get started.</p>
-      </div>
-    )}
-
-    <form onSubmit={handleSubmit} className={'center-column'}>
-      <HeadedTextArea width={"100%"} variant={VariantEnum.Outline}
-        value={docs.content}
-        onChange={(e) => setDocs({ ...docs, content: e.target.value })}
-        rows={15}
-                      markdown={true} height={'auto'}
-      />
-      <HeadedButton variant={VariantEnum.Outline} type="submit" disabled={loading}>
-        {'Update Docs'}
-      </HeadedButton>
-    </form>
-
-    <div className={'center-column'}>
-      <h3>Select & Order Docs Sections</h3>
-      <div style={{ display: 'flex', gap: '20px' }}>
-        <div style={{ flex: 1 }}>
-          <h4>Available Sections</h4>
-          {rootFeatures.map(feature => renderFeatureOption(feature))}
-        </div>
-
-        <div style={{ flex: 1 }}>
-          <h4>Selected Sections (Ordered)</h4>
-          {selectedDocsSections.map((docsSectionId, index) =>
-            renderSelectedFeature(docsSectionId, index, false)
-          )}
-        </div>
-      </div>
-
-      <HeadedButton variant={VariantEnum.Outline} onClick={updateDocsSections} disabled={loading}>
-        Update Docs Sections
-      </HeadedButton>
-    </div>
+                <HeadedButton variant={VariantEnum.Outline} onClick={updateDocsSections} disabled={loading}>
+                    Update Docs Sections
+                </HeadedButton>
+            </div>
 
             <HeadedCarousel variant={VariantEnum.Outline}>
-              {selectedDocsSections.map( (docsSection, index) => {
-                return renderSelectedFeature(docsSection, index, true)
-              })}
+                {selectedDocsSections.map((docsSection, index) => {
+                    return renderSelectedFeature(docsSection, index, true)
+                })}
 
-  </HeadedCarousel>
-  </div>
-);
+            </HeadedCarousel>
+        </div>
+    );
 }

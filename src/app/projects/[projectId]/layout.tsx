@@ -6,148 +6,156 @@ import {ProjectProvider, useProject} from "@/context/ProjectContext";
 import {ProjectMenu} from "@/components/project/ProjectMenu";
 import {HeadedCard, HeadedSwitch, VariantEnum} from "headed-ui";
 
-function LayoutContent({ editor, preview }: {editor: React.ReactNode, preview: React.ReactNode }) {
-    const { project, refreshProject } = useProject();
+function LayoutContent({editor, preview}: { editor: React.ReactNode, preview: React.ReactNode }) {
+    const {project, refreshProject} = useProject();
 
-  const {user} = useUser();
-  const [showEditor, setShowEditor] = useState(true);
-  const [showPreview, setShowPreview] = useState(true);
+    const {user} = useUser();
+    const [showEditor, setShowEditor] = useState(true);
+    const [showPreview, setShowPreview] = useState(true);
 
-  if (!project) return <div>No project found</div>;
+    if (!project) return <div>No project found</div>;
 
-  const isOwner = project.owner._id === user?._id;
+    const isOwner = project.owner._id === user?._id;
 
-  if (isOwner) {
-    const bothVisible = showEditor && showPreview;
+    if (isOwner) {
+        const bothVisible = showEditor && showPreview;
+
+        return (
+            <div style={{height: '100vh', display: 'flex', flexDirection: 'column'}}>
+                <div style={{flexShrink: 0, display: 'block'}}>
+                    <ProjectMenu/>
+                </div>
+                <div style={{display: 'flex', flexDirection: 'row', width: '100vw'}}>
+                    {showEditor && showPreview &&
+                        <>
+                            <HeadedCard variant={VariantEnum.Outline} width={'50%'}
+                                        style={{display: 'flex', justifyContent: 'center'}}>
+                                Toggle Editor
+                                <HeadedSwitch checked={showEditor} onChange={setShowEditor}
+                                              variant={VariantEnum.Secondary}/>
+                            </HeadedCard>
+                            <HeadedCard variant={VariantEnum.Outline} width={'50%'}
+                                        style={{display: 'flex', justifyContent: 'center'}}>
+                                Toggle Preview
+                                <HeadedSwitch checked={showPreview} onChange={setShowPreview}
+                                              variant={VariantEnum.Secondary}/>
+                            </HeadedCard>
+                        </>
+                    }
+                    {showEditor && !showPreview &&
+                        <div style={{display: 'flex', justifyContent: 'end', width: '100%'}}>
+                            <HeadedCard variant={VariantEnum.Outline} width={'50%'}
+                                        style={{display: 'flex', justifyContent: 'center'}}>
+                                Toggle Preview
+                                <HeadedSwitch checked={showPreview} onChange={setShowPreview}
+                                              variant={VariantEnum.Secondary}/>
+                            </HeadedCard>
+                        </div>
+
+                    }
+
+                    {!showEditor && showPreview &&
+                        <>
+                            <HeadedCard variant={VariantEnum.Outline} width={'50%'}
+                                        style={{display: 'flex', justifyContent: 'center'}}>
+                                Toggle Editor
+                                <HeadedSwitch checked={showEditor} onChange={setShowEditor}
+                                              variant={VariantEnum.Secondary}/>
+                            </HeadedCard>
+                        </>
+                    }
+                </div>
+
+                <div style={{display: 'flex', flex: 1}}>
+                    {showEditor && (
+                        <div style={{
+                            width: bothVisible ? '50vw' : '100%',
+                            borderRight: bothVisible ? '1px solid #ccc' : 'none',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            overflowY: 'auto',
+                            maxWidth: '100%',
+                            flexWrap: 'wrap',
+                            height: '100%',
+                            padding: '5px',
+                            overscrollBehaviorY: 'contain'
+                        }}>
+                            {editor}
+                        </div>
+                    )}
+
+                    {showPreview && (
+                        <div style={{
+                            width: bothVisible ? '50vw' : '100%',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            overflowY: 'auto',
+                            maxWidth: '100%',
+                            flexWrap: 'wrap',
+                            height: '100%',
+                            padding: '5px',
+                            overscrollBehaviorY: 'contain'
+                        }}>
+                            {preview}
+                        </div>
+                    )}
+                </div>
+            </div>
+        );
+    }
 
     return (
-      <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-        <div style={{ flexShrink: 0, display: 'block' }}>
-          <ProjectMenu/>
-        </div>
-                  <div style={{ display: 'flex', flexDirection: 'row', width: '100vw' }}>
-                      {showEditor && showPreview &&
-                          <>
-                                  <HeadedCard variant={VariantEnum.Outline} width={'50%'} style={{display: 'flex', justifyContent: 'center'}}>
-                                      Toggle Editor
-                                        <HeadedSwitch checked={showEditor} onChange={setShowEditor} variant={VariantEnum.Secondary}/>
-                                  </HeadedCard>
-                                  <HeadedCard variant={VariantEnum.Outline} width={'50%'} style={{display: 'flex', justifyContent: 'center'}}>
-                                      Toggle Preview
-                                    <HeadedSwitch checked={showPreview} onChange={setShowPreview} variant={VariantEnum.Secondary}/>
-                                  </HeadedCard>
-                                  </>
-                      }
-                      {showEditor && !showPreview &&
-                          <div style={{display: 'flex', justifyContent: 'end', width: '100%'}}>
-                                  <HeadedCard variant={VariantEnum.Outline} width={'50%'} style={{display: 'flex', justifyContent: 'center'}}>
-                                      Toggle Preview
-                                    <HeadedSwitch checked={showPreview} onChange={setShowPreview} variant={VariantEnum.Secondary}/>
-                                  </HeadedCard>
-                                  </div>
-
-                      }
-
-                      {!showEditor && showPreview &&
-                          <>
-                                  <HeadedCard variant={VariantEnum.Outline} width={'50%'} style={{display: 'flex', justifyContent: 'center'}}>
-                                      Toggle Editor
-                                        <HeadedSwitch checked={showEditor} onChange={setShowEditor} variant={VariantEnum.Secondary}/>
-                                  </HeadedCard>
-                                  </>
-                      }
-                  </div>
-
-        <div style={{ display: 'flex', flex: 1 }}>
-          {showEditor && (
-            <div style={{
-              width: bothVisible ? '50vw' : '100%',
-              borderRight: bothVisible ? '1px solid #ccc' : 'none',
-              display: 'flex',
-              justifyContent: 'center',
-                overflowY: 'auto',
-                maxWidth: '100%',
-                flexWrap: 'wrap',
-                height: '100%',
-                padding: '5px',
-                overscrollBehaviorY: 'contain'
-            }}>
-              {editor}
+        <div style={{height: '100%', display: 'flex', flexDirection: 'column', overscrollBehaviorY: 'contain'}}>
+            <div style={{height: '100vh', display: 'flex', flexDirection: 'column'}}>
+                <div style={{flexShrink: 0, display: 'block'}}>
+                    <ProjectMenu/>
+                </div>
+                <div style={{width: '100%'}}>
+                    {preview}
+                </div>
             </div>
-          )}
-
-          {showPreview && (
-            <div style={{
-              width: bothVisible ? '50vw' : '100%',
-              display: 'flex',
-              justifyContent: 'center',
-                overflowY: 'auto',
-                maxWidth: '100%',
-                flexWrap: 'wrap',
-                height: '100%',
-                padding: '5px',
-                overscrollBehaviorY: 'contain'
-            }}>
-              {preview}
-            </div>
-          )}
         </div>
-      </div>
     );
-  }
-
-  return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', overscrollBehaviorY: 'contain' }}>
-      <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-        <div style={{ flexShrink: 0, display: 'block' }}>
-          <ProjectMenu/>
-        </div>
-        <div style={{ width: '100%' }}>
-          {preview}
-        </div>
-      </div>
-    </div>
-  );
 }
 
 export default function Layout({
-  editor,
-  preview,
-  params
-}: {
-  children: React.ReactNode;
-  editor: React.ReactNode;
-  preview: React.ReactNode;
-  params: Promise<{ projectId: string }>;
+                                   editor,
+                                   preview,
+                                   params
+                               }: {
+    children: React.ReactNode;
+    editor: React.ReactNode;
+    preview: React.ReactNode;
+    params: Promise<{ projectId: string }>;
 }) {
-    const { data: session, status } = useSession();
+    const {data: session, status} = useSession();
 
-    const { projectId } = React.use(params);
+    const {projectId} = React.use(params);
 
-  if (status === "loading") return <div>Loading...</div>;
-  if (!session?.user?.name) {
-      return (
+    if (status === "loading") return <div>Loading...</div>;
+    if (!session?.user?.name) {
+        return (
 
-        <ProjectProvider projectId={projectId}>
-             <div style={{ height: '100%', display: 'flex', flexDirection: 'column', overscrollBehaviorY: 'contain' }}>
-              <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-                <div style={{ flexShrink: 0, display: 'block' }}>
-                  <ProjectMenu/>
+            <ProjectProvider projectId={projectId}>
+                <div style={{height: '100%', display: 'flex', flexDirection: 'column', overscrollBehaviorY: 'contain'}}>
+                    <div style={{height: '100vh', display: 'flex', flexDirection: 'column'}}>
+                        <div style={{flexShrink: 0, display: 'block'}}>
+                            <ProjectMenu/>
+                        </div>
+                        <div style={{width: '100%'}}>
+                            {preview}
+                        </div>
+                    </div>
                 </div>
-                <div style={{ width: '100%' }}>
-                  {preview}
-                </div>
-              </div>
-            </div>
-        </ProjectProvider>
-  );
-  }
+            </ProjectProvider>
+        );
+    }
 
-  return (
-          <UserProvider username={session.user.name}>
-        <ProjectProvider projectId={projectId}>
-          <LayoutContent editor={editor} preview={preview}/>
-        </ProjectProvider>
-          </UserProvider>
-  );
+    return (
+        <UserProvider username={session.user.name}>
+            <ProjectProvider projectId={projectId}>
+                <LayoutContent editor={editor} preview={preview}/>
+            </ProjectProvider>
+        </UserProvider>
+    );
 }
