@@ -32,7 +32,6 @@ export default function Header() {
      navLinks = [
     { href: "/", label: "Home" },
     { href: "/projects", label: "Projects" },
-    { href: "/llm", label: "LLM" },
     { href: "/login", label: "Login" },
      ];
   }
