@@ -5,7 +5,6 @@ import {useProject} from "@/context/ProjectContext";
 export default function Page(){
         const project = useProject()!;
 
-    return (<div>
-        <MemberDisplay/>
-    </div>)
+    return (
+        <MemberDisplay/>)
 }

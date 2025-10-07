@@ -33,7 +33,6 @@ export default function Header() {
     { href: "/", label: "Home" },
     { href: "/projects", label: "Projects" },
     { href: "/llm", label: "LLM" },
-    { href: "/github", label: "Github" },
     { href: "/login", label: "Login" },
      ];
   }

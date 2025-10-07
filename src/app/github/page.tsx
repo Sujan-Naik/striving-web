@@ -6,7 +6,6 @@ import RepoForm from '@/components/github/RepoForm/RepoForm';
 import RepoList from '@/components/github/RepoList/RepoList';
 import {useGithubRepository} from "@/hooks/useGithubRepository";
 import {HeadedLink, VariantEnum} from "headed-ui";
-import {useUser} from "@/context/UserContext";
 import {useSession} from "next-auth/react";
 
 export default function GitHubPage() {
@@ -16,6 +15,8 @@ export default function GitHubPage() {
     const { repos, loading, error, refetch } = useGithubRepository()
 
   const session = useSession();
+
+
 
   const handleCreateRepo = async (data: CreateRepoData) => {
     setIsCreating(true);

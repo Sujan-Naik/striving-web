@@ -150,8 +150,8 @@
     border-left: 10px solid var(--border-color);
     border-bottom: var(--border-thickness) solid var(--border-color);
     border-top: var(--border-thickness) solid var(--border-color);
-    margin-right: 5vw;
-    width: calc(100% - 5vw);
+    margin-right: 1vw;
+    width: calc(100% - 1vw);
     padding-left: 5px;
   }
 }

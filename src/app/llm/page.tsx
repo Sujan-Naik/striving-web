@@ -347,6 +347,8 @@ export default function Page() {
             })}
           </select>
 
+          <div>NEVER SHARE PERSONAL INFORMATION AI PROVIDERS CAN SEE WHAT YOU SEND HERE</div>
+
           {/* Focus streaming controls */}
           <label style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "6px", fontSize: 13 }}>
             <input

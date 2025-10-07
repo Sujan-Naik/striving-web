@@ -22,7 +22,7 @@ function LayoutContent({ editor, preview }: {editor: React.ReactNode, preview: R
 
     return (
       <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-        <div style={{ flexShrink: 0 }}>
+        <div style={{ flexShrink: 0, display: 'block' }}>
           <ProjectMenu/>
         </div>
                   <div style={{ display: 'flex', flexDirection: 'row', width: '100vw' }}>
@@ -98,11 +98,11 @@ function LayoutContent({ editor, preview }: {editor: React.ReactNode, preview: R
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', overscrollBehaviorY: 'contain' }}>
-      <div style={{ flexShrink: 0 }}>
-      </div>
-      <div style={{ flex: 1, display: 'flex' }}>
-        <ProjectMenu />
-        <div style={{ width: '50%' }}>
+      <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ flexShrink: 0, display: 'block' }}>
+          <ProjectMenu/>
+        </div>
+        <div style={{ width: '100%' }}>
           {preview}
         </div>
       </div>
@@ -129,17 +129,16 @@ export default function Layout({
       return (
 
         <ProjectProvider projectId={projectId}>
-            <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-              <div style={{ flexShrink: 0 }}>
-              </div>
-              <div style={{ flex: 1, display: 'flex' }}>
-                <ProjectMenu />
-                <div style={{ width: '50%' }}>
+             <div style={{ height: '100%', display: 'flex', flexDirection: 'column', overscrollBehaviorY: 'contain' }}>
+              <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ flexShrink: 0, display: 'block' }}>
+                  <ProjectMenu/>
+                </div>
+                <div style={{ width: '100%' }}>
                   {preview}
                 </div>
               </div>
             </div>
-          );
         </ProjectProvider>
   );
   }

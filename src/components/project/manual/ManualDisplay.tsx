@@ -5,9 +5,9 @@ import {useProject} from "@/context/ProjectContext";
 import ManualSectionDisplay from "@/components/project/manual/section/ManualSectionDisplay";
 import {HeadedCard, HeadedTabs, VariantEnum} from "headed-ui";
 import {IManual, IManualSectionOrder} from "@/types/project/Manual";
-import {useManual} from "@/context/ManualContext";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+
 
 interface SectionNode extends IManualSectionOrder {
   children: SectionNode[];
@@ -16,7 +16,7 @@ interface SectionNode extends IManualSectionOrder {
 export default function ManualDisplay() {
   const  project  = useProject()!;
   const projectId = project?._id;
-  const [manual, setManual] = useState<IManual | null>(useManual().manual);
+  const [manual, setManual] = useState<IManual | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -76,14 +76,14 @@ export default function ManualDisplay() {
   };
 
   const renderSectionNode = (node: SectionNode): JSX.Element => (
-    <div key={node.manualSection._id} style={{ marginLeft: `${node.level * 20}px` }}>
+    <div  className={'indented-block'} key={node.manualSection._id} style={{ marginLeft: `${node.level * 20}px`, display: 'block' }}>
       <ManualSectionDisplay section={node.manualSection} />
       {node.children.map(child => renderSectionNode(child))}
     </div>
   );
 
   const renderTabContent = (rootNode: SectionNode): JSX.Element => (
-    <div key={rootNode.manualSection._id}>
+    <div key={rootNode.manualSection._id} >
       {rootNode.children.map(child => renderSectionNode(child))}
     </div>
   );
@@ -96,8 +96,8 @@ export default function ManualDisplay() {
   const tabTitles = topLevelSections.map(section => section.manualSection.title);
 
   return (
-    <div>
-      <HeadedCard variant={VariantEnum.Primary}  className={"center-column"} style={{ whiteSpace: 'pre-wrap' }}>
+    <div className={'indented-block'}>
+      <HeadedCard variant={VariantEnum.Primary} className={"center-column"} style={{ whiteSpace: 'pre-wrap'}}>
         <ReactMarkdown remarkPlugins={[remarkGfm]}>{manual.content}</ReactMarkdown>
       </HeadedCard>
 
