@@ -1,6 +1,6 @@
 "use client"
-import {HeadedCard, HeadedDropdown, HeadedDropdownOption, HeadedLink, VariantEnum} from 'headed-ui';
-import {useState, useEffect, useRef} from 'react';
+import {HeadedCard, HeadedLink, VariantEnum} from 'headed-ui';
+import {useEffect, useRef, useState} from 'react';
 import {useSession} from "next-auth/react";
 
 export default function Header() {
@@ -108,6 +108,8 @@ export default function Header() {
             </div>
           </HeadedCard>
 
+          <div className={'flex flex-col w-full'}>
+
           <HeadedCard
             variant={VariantEnum.Primary}
             width="auto"
@@ -129,6 +131,10 @@ export default function Header() {
               ))}
             </nav>
           </HeadedCard>
+            <HeadedLink variant={VariantEnum.Primary} href={'https://forms.gle/g8tKMz4UdYxK7HJcA'}>
+              Give Feedback Here!
+            </HeadedLink>
+            </div>
         </div>
       </header>
 

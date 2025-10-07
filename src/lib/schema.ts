@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, integer, primaryKey } from "drizzle-orm/pg-core"
+import {pgTable, text, timestamp, integer, primaryKey, boolean} from "drizzle-orm/pg-core"
 
 export const user = pgTable("user", {
   id: text("id")
@@ -7,8 +7,9 @@ export const user = pgTable("user", {
   name: text("name"),
   email: text("email").unique(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
-    image: text("image"),
-})
+  image: text("image"),
+  alphaApproved: boolean("alphaApproved").default(false),
+});
 
 export const account = pgTable(
   "account",
