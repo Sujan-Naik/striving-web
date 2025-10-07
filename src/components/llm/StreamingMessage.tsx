@@ -1,15 +1,15 @@
 import BaseMessageBubble from './BaseMessageBubble';
 
 interface StreamingMessageProps {
-  content: string;
+    content: string;
 }
 
-export default function StreamingMessage({ content }: StreamingMessageProps) {
-  return (
-    <BaseMessageBubble
-      role="assistant"
-      content={content}
-      isStreaming
-    />
-  );
+export default function StreamingMessage({content}: StreamingMessageProps) {
+    return (
+        <BaseMessageBubble
+            role="assistant"
+            content={content}
+            isStreaming
+        />
+    );
 }

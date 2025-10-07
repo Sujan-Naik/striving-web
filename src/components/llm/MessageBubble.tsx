@@ -1,16 +1,16 @@
-import { Message } from '@/types/messages';
+import {Message} from '@/types/messages';
 import BaseMessageBubble from './BaseMessageBubble';
 
 interface MessageBubbleProps {
-  message: Message;
+    message: Message;
 }
 
-export default function MessageBubble({ message }: MessageBubbleProps) {
-  return (
-    <BaseMessageBubble
-      role={message.role}
-      content={message.content}
-      timestamp={message.timestamp}
-    />
-  );
+export default function MessageBubble({message}: MessageBubbleProps) {
+    return (
+        <BaseMessageBubble
+            role={message.role}
+            content={message.content}
+            timestamp={message.timestamp}
+        />
+    );
 }

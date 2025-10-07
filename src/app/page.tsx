@@ -1,5 +1,4 @@
 "use client"
-import {HeadedTextAnim, TextAnimationType} from "headed-ui";
 import Hero from "@/components/Hero";
 import {useEffect, useState} from "react";
 import Load from "@/components/Load";
@@ -19,8 +18,8 @@ export default function Home() {
     }
     return (
         <div
-className="font-sans min-h-screen w-full">
-        <main className="center-column">
+            className="font-sans min-h-screen w-full">
+            <main className="center-column">
 
                 <h1
                     className="mx-auto max-w-3xl text-center text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight tracking-tight"

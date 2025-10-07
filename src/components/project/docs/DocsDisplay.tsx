@@ -10,105 +10,106 @@ import remarkGfm from "remark-gfm";
 
 
 interface SectionNode extends IDocsSectionOrder {
-  children: SectionNode[];
+    children: SectionNode[];
 }
 
 export default function DocsDisplay() {
-  const  {project}  = useProject();
-  const [docs, setDocs] = useState<IDocs | null>(null);
-  const [loading, setLoading] = useState(true);
+    const {project} = useProject();
+    const [docs, setDocs] = useState<IDocs | null>(null);
+    const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchDocs = async () => {
-      if (!project._id) {
-        setLoading(false);
-        return;
-      }
+    useEffect(() => {
+        const fetchDocs = async () => {
+            if (!project._id) {
+                setLoading(false);
+                return;
+            }
 
-      try {
-        const response = await fetch(`/api/project/${project._id}/docs`);
-        if (response.ok) {
-          const data = await response.json();
-          setDocs(data);
-        }
-      } catch (error) {
-        console.error('Error fetching docs:', error);
-      } finally {
-        setLoading(false);
-      }
+            try {
+                const response = await fetch(`/api/project/${project._id}/docs`);
+                if (response.ok) {
+                    const data = await response.json();
+                    setDocs(data);
+                }
+            } catch (error) {
+                console.error('Error fetching docs:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchDocs();
+    }, [project]);
+
+    const buildSectionTree = (sections: IDocsSectionOrder[]): SectionNode[] => {
+        const sorted = sections.sort((a, b) => a.order - b.order);
+        const sectionMap = new Map<string, SectionNode>();
+
+        // Initialize all sections as nodes
+        sorted.forEach(section => {
+            sectionMap.set(section.docsSection._id, {
+                ...section,
+                children: []
+            });
+        });
+
+        const rootSections: SectionNode[] = [];
+
+        // Build the tree structure
+        sorted.forEach(section => {
+            const node = sectionMap.get(section.docsSection._id)!;
+
+            if (section.parentSection) {
+                const parent = sectionMap.get(section.parentSection._id);
+                if (parent) {
+                    parent.children.push(node);
+                } else {
+                    rootSections.push(node);
+                }
+            } else {
+                rootSections.push(node);
+            }
+        });
+
+        return rootSections;
     };
 
-    fetchDocs();
-  }, [project]);
-
-  const buildSectionTree = (sections: IDocsSectionOrder[]): SectionNode[] => {
-    const sorted = sections.sort((a, b) => a.order - b.order);
-    const sectionMap = new Map<string, SectionNode>();
-
-    // Initialize all sections as nodes
-    sorted.forEach(section => {
-      sectionMap.set(section.docsSection._id, {
-        ...section,
-        children: []
-      });
-    });
-
-    const rootSections: SectionNode[] = [];
-
-    // Build the tree structure
-    sorted.forEach(section => {
-      const node = sectionMap.get(section.docsSection._id)!;
-
-      if (section.parentSection) {
-        const parent = sectionMap.get(section.parentSection._id);
-        if (parent) {
-          parent.children.push(node);
-        } else {
-          rootSections.push(node);
-        }
-      } else {
-        rootSections.push(node);
-      }
-    });
-
-    return rootSections;
-  };
-
-  const renderSectionNode = (node: SectionNode): JSX.Element => (
-    <div  className={'indented-block'} key={node.docsSection._id} style={{ marginLeft: `${node.level * 20}px`, display: 'block' }}>
-      <DocsSectionDisplay section={node.docsSection} />
-      {node.children.map(child => renderSectionNode(child))}
-    </div>
-  );
-
-  const renderTabContent = (rootNode: SectionNode): JSX.Element => (
-    <div key={rootNode.docsSection._id} >
-      {rootNode.children.map(child => renderSectionNode(child))}
-    </div>
-  );
-
-  if (loading) return <div>Loading...</div>;
-  if (!docs) return <div>No docs found</div>;
-
-  const sectionTree = buildSectionTree(docs.docsSections);
-  const topLevelSections = sectionTree.filter(node => node.level === 0);
-  const tabTitles = topLevelSections.map(section => section.docsSection.title);
-
-  return (
-    <div className={'indented-block'}>
-      <HeadedCard variant={VariantEnum.Primary} className={"center-column"} style={{ whiteSpace: 'pre-wrap'}}>
-        <ReactMarkdown remarkPlugins={[remarkGfm]}>{docs.content}</ReactMarkdown>
-      </HeadedCard>
-
-      <HeadedTabs tabs={tabTitles}>
-        {topLevelSections.map(section =>
-            <div>
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>{section.docsSection.content}</ReactMarkdown>
-              {renderTabContent(section)}
+    const renderSectionNode = (node: SectionNode): JSX.Element => (
+        <div className={'indented-block'} key={node.docsSection._id}
+             style={{marginLeft: `${node.level * 20}px`, display: 'block'}}>
+            <DocsSectionDisplay section={node.docsSection}/>
+            {node.children.map(child => renderSectionNode(child))}
         </div>
-        )}
+    );
 
-      </HeadedTabs>
-    </div>
-  );
+    const renderTabContent = (rootNode: SectionNode): JSX.Element => (
+        <div key={rootNode.docsSection._id}>
+            {rootNode.children.map(child => renderSectionNode(child))}
+        </div>
+    );
+
+    if (loading) return <div>Loading...</div>;
+    if (!docs) return <div>No docs found</div>;
+
+    const sectionTree = buildSectionTree(docs.docsSections);
+    const topLevelSections = sectionTree.filter(node => node.level === 0);
+    const tabTitles = topLevelSections.map(section => section.docsSection.title);
+
+    return (
+        <div className={'indented-block'}>
+            <HeadedCard variant={VariantEnum.Primary} className={"center-column"} style={{whiteSpace: 'pre-wrap'}}>
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{docs.content}</ReactMarkdown>
+            </HeadedCard>
+
+            <HeadedTabs tabs={tabTitles}>
+                {topLevelSections.map(section =>
+                    <div>
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{section.docsSection.content}</ReactMarkdown>
+                        {renderTabContent(section)}
+                    </div>
+                )}
+
+            </HeadedTabs>
+        </div>
+    );
 }
